@@ -223,3 +223,11 @@ canvas {
   border: 2px solid #f39c12;
   border-radius: 5px;
 }
+#stop-playback {
+  background-color: #f44336; /* Red color */
+  color: white;
+}
+
+#stop-playback:hover:not(:disabled) {
+  background-color: #da190b;
+}
