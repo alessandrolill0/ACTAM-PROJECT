@@ -7,9 +7,6 @@ import { Yin } from "https://cdn.jsdelivr.net/npm/@dipscope/pitch-detector/+esm"
 const yinOptions = { bufferSize: 2048, threshold: 0.15 };
 const yin = new Yin(yinOptions);
 
-// Import MidiWriterJS from the window object
-const MidiWriter = window.MidiWriter;
-
 // ==========================
 // DOM Elements Selection
 // ==========================
@@ -527,10 +524,6 @@ function stopPitchDetection() {
   }*/
   renderSequencer();
 }
-
-// ==========================
-// MIDI Saving and Playback Functions
-// ==========================
 
 /**
  * Plays back the recorded melody using sine waves with ADSR envelope.
