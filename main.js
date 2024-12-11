@@ -60,6 +60,8 @@ const MIN_TIME_BETWEEN_NOTES = 0.3; // Seconds
 const SEMITONE_THRESHOLD = 1; // Minimum semitone difference
 const labelWidth = 100; // Space between each note label
 const rowHeight = 20; // Height of each row in the sequencer
+const BEATS_PER_BAR = 1; // 4/4 time signature
+const TOTAL_BARS = 16;
 
 // ==========================
 // Utility Functions
@@ -1000,12 +1002,10 @@ document.addEventListener("keydown", (event) => {
  */
 bpmInput.addEventListener("input", (event) => {
   bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
-
   if (metronomeActive) {
     stopMetronome(); // Stop current metronome
     startMetronome(); // Restart metronome with new BPM
   }
-
   // Disable BPM input during recording to maintain consistent recording duration
   if (isDetecting) {
     bpmInput.disabled = true;
@@ -1014,11 +1014,6 @@ bpmInput.addEventListener("input", (event) => {
   }
 });
 
-
-
-
-const BEATS_PER_BAR = 1; // Assuming 4/4 time signature
-const TOTAL_BARS = 16;
 
 /**
  * Calculates the total duration based on BPM and number of bars.
