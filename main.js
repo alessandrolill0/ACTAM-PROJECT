@@ -499,7 +499,6 @@ async function startPitchDetection() {
  */
 function stopPitchDetection() {
   if (!isDetecting) return;
-
   isDetecting = false;
   startButton.disabled = false;
   stopButton.disabled = true;
@@ -509,18 +508,17 @@ function stopPitchDetection() {
   deleteNoteButton.disabled = recordedNotes.length === 0;
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Detected Note: N/A";
-
   if (source) source.disconnect();
   if (audioContext) audioContext.close();
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-    // Clear the recording timeout if it exists
+  // Clear the recording timeout if it exists
   if (recordingTimeout) {
     clearTimeout(recordingTimeout);
     recordingTimeout = null;}
 
-    // Hide the progress bar
+  // Hide the progress bar
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
 
@@ -532,8 +530,6 @@ function stopPitchDetection() {
   }*/
   renderSequencer();
 }
-
-
 
 // ==========================
 // MIDI Saving and Playback Functions
@@ -547,7 +543,6 @@ saveMidiButton.addEventListener("click", () => {
     alert("No notes recorded to save.");
     return;
   }
-
   const track = new MidiWriter.Track();
   track.setTempo(bpm); // Set BPM
   track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 })); // Choose instrument
@@ -615,7 +610,6 @@ playMelodyButton.addEventListener("click", async () => {
 
   // Start playback
   const playbackStartTime = Tone.now() + 0.1;
-
   recordedNotes.forEach((note) => {
     const frequency = note.frequency;
 
