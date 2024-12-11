@@ -229,19 +229,18 @@ function adjustCanvasWidth(time) {
  * Renders the sequencer on the canvas.
  */
 function renderSequencer() {
-   // Calculate total duration for 16 bars
-   const totalDuration = calculateTotalDuration(bpm, TOTAL_BARS);
+  // Calcola la durata totale per 16 battute
+  const totalDuration = calculateTotalDuration(bpm, TOTAL_BARS);
 
-   // Adjust canvas width based on totalDuration
-   const pixelsPerSecond = 100; // You can adjust this value for zooming
-   const desiredWidth = labelWidth + totalDuration * pixelsPerSecond;
-   sequencerCanvas.width = desiredWidth;
- 
-  
+  // Regola la larghezza del canvas in base alla durata totale
+  const pixelsPerSecond = 100; // Puoi regolare questo valore per lo zoom
+  const desiredWidth = labelWidth + totalDuration * pixelsPerSecond;
+  sequencerCanvas.width = desiredWidth;
+
   sequencerCanvas.height = (108 - 36 + 1) * rowHeight; // 36 = C2, 108 = C8
   ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
 
-  // Define the range of notes (C2 to C8)
+  // Definisci l'intervallo di note (C2 a C8)
   const noteRange = [];
   for (let octave = 2; octave <= 8; octave++) {
     for (let name of noteNames) {
@@ -249,20 +248,20 @@ function renderSequencer() {
     }
   }
 
-  // Draw note labels and horizontal lines
+  // Disegna le etichette delle note e le linee orizzontali
   ctx.font = "12px Arial";
   ctx.textAlign = "right";
   ctx.textBaseline = "middle";
 
   noteRange.forEach((note, index) => {
-    // Calculate inverted Y position
+    // Calcola la posizione Y invertita
     const y = index * rowHeight + rowHeight / 2;
 
-    // Draw the note label
+    // Disegna l'etichetta della nota
     ctx.fillStyle = "#333";
     ctx.fillText(note, labelWidth - 10, sequencerCanvas.height - y);
 
-    // Draw the horizontal line
+    // Disegna la linea orizzontale
     ctx.strokeStyle = "#ddd";
     ctx.beginPath();
     ctx.moveTo(labelWidth, sequencerCanvas.height - y);
@@ -270,8 +269,7 @@ function renderSequencer() {
     ctx.stroke();
   });
 
-
-  // Draw grid lines for each bar
+  // Disegna le linee della griglia per ogni battuta
   const totalBeats = TOTAL_BARS * BEATS_PER_BAR;
   const secondsPerBeat = 60 / bpm;
   const secondsPerBar = BEATS_PER_BAR * secondsPerBeat;
@@ -285,41 +283,67 @@ function renderSequencer() {
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
 
-    // Label each bar
+    // Etichetta ogni battuta
     ctx.fillStyle = "#333";
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(`Bar ${bar}`, x, 10);
   }
 
-  // Draw recorded notes
-  recordedNotes.forEach((note) => {
+  // Disegna le note registrate con evidenziazione per la nota selezionata
+  recordedNotes.forEach((note, i) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
 
-    // Calculate Y position for the note (inverted)
+    // Calcola la posizione Y per la nota (invertita)
     const noteIndex = midiNumber - 36; // Offset C2=36
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
 
-    // Calculate X position and width of the note
+    // Calcola la posizione X e la larghezza della nota
     const xStart = labelWidth + note.startTime * 100;
     const xEnd = labelWidth + (note.startTime + note.duration) * 100;
     const noteWidth = xEnd - xStart;
 
-   
-
-
-    // Draw the note as a colored rectangle
-    ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
+    // Imposta il colore di riempimento basato sulla selezione
+    if (i === selectedNoteIndex) {
+      // Aggiungi ombra
+      ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+      ctx.shadowBlur = 10;
+      
+      // Imposta il colore di riempimento e disegna la nota
+      ctx.fillStyle = "rgba(255, 0, 0, 0.6)";
+      ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+    
+      // Aggiungi un bordo rosso più spesso
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+    
+      // Rimuovi l'ombra per le note successive
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
+      ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+    }
+    
+    // Disegna il rettangolo della nota
     ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
 
-    // Draw the note name above the rectangle
+    // Aggiungi un bordo rosso se la nota è selezionata
+    if (i === selectedNoteIndex) {
+      ctx.strokeStyle = "red"; // Colore del bordo
+      ctx.lineWidth = 2; // Spessore del bordo
+      ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+    }
+
+    // Disegna il nome della nota sopra il rettangolo
     ctx.fillStyle = "white";
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(note.note, xStart + noteWidth / 2, y);
   });
 }
+
 
 // ==========================
 // Pitch Detection Functions
@@ -656,9 +680,10 @@ resetMelodyButton.addEventListener("click", () => {
     stopPitchDetection();
   }
 
-  // Reset variables
-  recordedNotes = [];
-  renderSequencer();
+   // Reset variables
+   recordedNotes = [];
+   selectedNoteIndex = null; // Deselect any selected note
+   renderSequencer();
 
   // Update button states
   saveMidiButton.disabled = true;
@@ -824,6 +849,9 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
       }
     }
   }
+  // If no note is selected, deselect any previously selected note
+  selectedNoteIndex = null;
+  renderSequencer();
 });
 
 
@@ -999,6 +1027,9 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
       return;
     }
   }
+   // If no note is selected, deselect any previously selected note
+   selectedNoteIndex = null;
+   renderSequencer();
 });
 
 /**
