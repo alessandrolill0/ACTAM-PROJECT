@@ -967,6 +967,7 @@ document.getElementById("delete-note").addEventListener("click", () => {
       // Remove the note from the recordedNotes array
       console.log("Deleting a note...");
       recordedNotes.splice(selectedNoteIndex, 1);
+      recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
       lastSelectedNoteIndex = null;
       renderSequencer(); // Update the sequencer visualization
