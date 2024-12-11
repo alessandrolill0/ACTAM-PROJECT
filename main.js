@@ -2,9 +2,8 @@
 // Imports and Configurations
 // ==========================
 
-// Import Yin for pitch detection
+// Import Yin for pitch detection and its configuration
 import { Yin } from "https://cdn.jsdelivr.net/npm/@dipscope/pitch-detector/+esm";
-// Configuration for Yin
 const yinOptions = { bufferSize: 2048, threshold: 0.15 };
 const yin = new Yin(yinOptions);
 
@@ -40,14 +39,27 @@ let source = null;
 let stream = null;
 let isDetecting = false;
 let startTime = 0;
-let lastSelectedNoteIndex = null;
-
+let lastSelectedNoteIndex = null; //index of last selected note, helpful for stretching and moving the notes around
 let metronomeActive = false;
 let metronomeAudioCtx = null;
 let metronomeInterval = null;
+let recordingTimeout = null; // To store the timeout reference
+let activeNote = null;
+let silenceStartTime = null;
+let isResizingStart = false; // Flag for resizing the start of the note
+let isResizingEnd = false;   // Flag for resizing the end of the note
+let emaFrequency = 0; // Variable to store the Exponential Moving Average frequency
+const EMA_ALPHA = 0.2; // Smoothing factor for EMA (between 0 and 1)
+let selectedNoteIndex = null; // Index of the currently selected note in the recordedNotes array
+let isDragging = false;       // Flag to indicate if a note is being dragged
+let dragOffsetX = 0;          // Horizontal offset during dragging
+let dragOffsetY = 0;          // Vertical offset during dragging
+const stabilizationTime = 0.1; // Stabilization period for a note
+const silenceThreshold = 0.2; // Lower threshold to detect silence
+const minTimeBetweenNotes = 0.0001; // Minimum time between two notes
+const maxSemitoneChange = 4; // Max semitone change allowed for same note
 
-// Constants for notes and sequencing
-const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]; // Constants for notes and sequencing
 const MIN_TIME_BETWEEN_NOTES = 0.3; // Seconds
 const SEMITONE_THRESHOLD = 1; // Minimum semitone difference
 
@@ -65,17 +77,16 @@ const rowHeight = 20; // Height of each row in the sequencer
  * @returns {string|null} - Note name or null if out of range.
  */
 function frequencyToNote(frequency) {
-  if (frequency <= 0) return null;
+  if (frequency <= 0) 
+    return null;
 
-  const A4 = 440;
   const semitoneOffset = 12 * Math.log2(frequency / A4);
   const midiNumber = Math.round(semitoneOffset) + 69;
   const octave = Math.floor(midiNumber / 12) - 1;
   const noteName = noteNames[midiNumber % 12];
 
-  // From C2 (MIDI 36) to C8 (MIDI 108)
-  if (midiNumber < 36 || midiNumber > 108) return null;
-
+  if (midiNumber < 36 || midiNumber > 108) 
+    return null;  // From C2 (MIDI 36) to C8 (MIDI 108) 
   return `${noteName}${octave}`;
 }
 
@@ -85,11 +96,12 @@ function frequencyToNote(frequency) {
  * @returns {number|null} - MIDI number or null if invalid format.
  */
 function midiFromNoteName(note) {
-  const regex = /^([A-G]#?)(\d)$/;
-  const match = note.match(regex);
-  if (!match) return null;
+  const regex = /^([A-G]#?)(\d)$/;   // Regular expression to validate and capture the note name and octave.
+  const match = note.match(regex);  // Attempt to match the input string against the regex
+  if (!match) 
+    return null;
   const name = match[1];
-  const octave = parseInt(match[2], 10);
+  const octave = parseInt(match[2], 10); // Convert octave string to an integer.
   const index = noteNames.indexOf(name);
   return index + (octave + 1) * 12;
 }
@@ -313,7 +325,7 @@ function renderSequencer() {
 // Pitch Detection Functions
 // ==========================
 
-let recordingTimeout = null; // To store the timeout reference
+
 
 /**
  * Starts pitch detection.
@@ -373,12 +385,7 @@ async function startPitchDetection() {
           alert("Recording stopped after 16 bars.");
         }, totalDuration * 1000);
 
-    let activeNote = null;
-    let silenceStartTime = null;
-    const stabilizationTime = 0.1; // Stabilization period for a note
-    const silenceThreshold = 0.2; // Lower threshold to detect silence
-    const minTimeBetweenNotes = 0.0001; // Minimum time between two notes
-    const maxSemitoneChange = 4; // Max semitone change allowed for same note
+   
 
     /**
      * Recursive function for pitch detection.
@@ -754,9 +761,7 @@ document.getElementById("shift-octave-down").addEventListener("click", () => shi
 
 
 
-// Flags to indicate if a note is being resized
-let isResizingStart = false; // Flag for resizing the start of the note
-let isResizingEnd = false;   // Flag for resizing the end of the note
+
 
 /**
  * Handles the mousedown event on the sequencer canvas.
@@ -883,8 +888,7 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
 
   renderSequencer(); // Update the sequencer visualization
 });
-let emaFrequency = 0; // Variable to store the Exponential Moving Average frequency
-const EMA_ALPHA = 0.2; // Smoothing factor for EMA (between 0 and 1)
+
 
 /**
  * Updates the Exponential Moving Average (EMA) with the new frequency.
@@ -911,10 +915,6 @@ function snapFrequencyToNearestNoteFrequency(frequency) {
 // Note Interaction Functions
 // ==========================
 
-let selectedNoteIndex = null; // Index of the currently selected note in the recordedNotes array
-let isDragging = false;       // Flag to indicate if a note is being dragged
-let dragOffsetX = 0;          // Horizontal offset during dragging
-let dragOffsetY = 0;          // Vertical offset during dragging
 
 /**
  * Checks if a new note position overlaps with existing notes.
