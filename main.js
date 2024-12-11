@@ -20,7 +20,8 @@ const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const saveMidiButton = document.getElementById("save-midi");
 const playMelodyButton = document.getElementById("play-melody");
-const resetMelodyButton = document.getElementById("reset-melody"); 
+const resetMelodyButton = document.getElementById("reset-melody");
+const deleteNoteButton = document.getElementById("delete-note");
 const sequencerCanvas = document.getElementById("sequencer");
 const ctx = sequencerCanvas.getContext("2d");
 const bpmInput = document.getElementById("bpm-input");
@@ -47,23 +48,20 @@ let recordingTimeout = null; // To store the timeout reference
 let activeNote = null;
 let silenceStartTime = null;
 let isResizingStart = false; // Flag for resizing the start of the note
-let isResizingEnd = false;   // Flag for resizing the end of the note
+let isResizingEnd = false;  // Flag for resizing the end of the note
 let emaFrequency = 0; // Variable to store the Exponential Moving Average frequency
 const EMA_ALPHA = 0.2; // Smoothing factor for EMA (between 0 and 1)
 let selectedNoteIndex = null; // Index of the currently selected note in the recordedNotes array
-let isDragging = false;       // Flag to indicate if a note is being dragged
-let dragOffsetX = 0;          // Horizontal offset during dragging
-let dragOffsetY = 0;          // Vertical offset during dragging
+let isDragging = false; // Flag to indicate if a note is being dragged
+let dragOffsetX = 0; // Horizontal offset during dragging
+let dragOffsetY = 0; // Vertical offset during dragging
 const stabilizationTime = 0.1; // Stabilization period for a note
 const silenceThreshold = 0.2; // Lower threshold to detect silence
 const minTimeBetweenNotes = 0.0001; // Minimum time between two notes
 const maxSemitoneChange = 4; // Max semitone change allowed for same note
-
 const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]; // Constants for notes and sequencing
 const MIN_TIME_BETWEEN_NOTES = 0.3; // Seconds
 const SEMITONE_THRESHOLD = 1; // Minimum semitone difference
-
-// Sequencer configuration
 const labelWidth = 100; // Space between each note label
 const rowHeight = 20; // Height of each row in the sequencer
 
@@ -92,7 +90,7 @@ function frequencyToNote(frequency) {
 
 /**
  * Converts a note name to its corresponding MIDI number.
- * @param {string} note - Note name (e.g., "C4").
+ * @param {string} note - Note name
  * @returns {number|null} - MIDI number or null if invalid format.
  */
 function midiFromNoteName(note) {
@@ -195,14 +193,13 @@ function startMetronome() {
  * Stops the metronome.
  */
 function stopMetronome() {
-  if (!metronomeActive) return;
+  if (!metronomeActive) 
+    return;
 
   metronomeActive = false;
   metronomeToggle.textContent = "Start Metronome";
-
   clearInterval(metronomeInterval);
   metronomeInterval = null;
-
   if (metronomeAudioCtx) {
     metronomeAudioCtx.close();
     metronomeAudioCtx = null;
@@ -254,14 +251,9 @@ function renderSequencer() {
   ctx.textBaseline = "middle";
 
   noteRange.forEach((note, index) => {
-    // Calcola la posizione Y invertita
-    const y = index * rowHeight + rowHeight / 2;
-
-    // Disegna l'etichetta della nota
-    ctx.fillStyle = "#333";
+    const y = index * rowHeight + rowHeight / 2; //Y position
+    ctx.fillStyle = "#333"; // Draw the note
     ctx.fillText(note, labelWidth - 10, sequencerCanvas.height - y);
-
-    // Disegna la linea orizzontale
     ctx.strokeStyle = "#ddd";
     ctx.beginPath();
     ctx.moveTo(labelWidth, sequencerCanvas.height - y);
@@ -304,30 +296,22 @@ function renderSequencer() {
     const xEnd = labelWidth + (note.startTime + note.duration) * 100;
     const noteWidth = xEnd - xStart;
 
-    // Imposta il colore di riempimento basato sulla selezione
+    //Selected note
     if (i === selectedNoteIndex) {
-      // Aggiungi ombra
-      ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.5)"; //Add shadows
       ctx.shadowBlur = 10;
-      
-      // Imposta il colore di riempimento e disegna la nota
-      ctx.fillStyle = "rgba(255, 0, 0, 0.6)";
+      ctx.fillStyle = "rgba(255, 0, 0, 0.6)"; //Draw the note
       ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-    
-      // Aggiungi un bordo rosso più spesso
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "red"; //red border
       ctx.lineWidth = 3;
       ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-    
-      // Rimuovi l'ombra per le note successive
-      ctx.shadowBlur = 0;
+      ctx.shadowBlur = 0; //No shadows for the next notes
     } else {
       ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
       ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
     }
     
-    // Disegna il rettangolo della nota
-    ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+    ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4); //Draw the rectangle
 
     // Aggiungi un bordo rosso se la nota è selezionata
     if (i === selectedNoteIndex) {
@@ -335,10 +319,8 @@ function renderSequencer() {
       ctx.lineWidth = 2; // Spessore del bordo
       ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
     }
-
-    // Disegna il nome della nota sopra il rettangolo
-    ctx.fillStyle = "white";
-    ctx.font = "10px Arial";
+    ctx.fillStyle = "white"; //Draw the note name on the note
+    ctx.font = "8px Arial";
     ctx.textAlign = "center";
     ctx.fillText(note.note, xStart + noteWidth / 2, y);
   });
@@ -348,27 +330,24 @@ function renderSequencer() {
 // ==========================
 // Pitch Detection Functions
 // ==========================
-
-
-
 /**
  * Starts pitch detection.
  */
 async function startPitchDetection() {
   try {
-    if (isDetecting) return;
+    if (isDetecting) 
+      return;
     isDetecting = true;
     startButton.disabled = true;
-    stopButton.disabled = false;
-    saveMidiButton.disabled = true;
-    playMelodyButton.disabled = true;
+    stopButton.disabled = false; //no stop if you are not recording yet
+    saveMidiButton.disabled = true; //Disable saveMidi while recording
+    playMelodyButton.disabled = true; //Disable play melody while recording
     resetMelodyButton.disabled = true; // Disable reset during recording
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
-   // deleteNoteButton.disabled = true; // Disable delete during recording
+   deleteNoteButton.disabled = true; // Disable delete during recording
 
-    // Reset recorded notes
-    recordedNotes = [];
+    recordedNotes = [];    // Reset recorded notes
     renderSequencer();
 
     // Access the microphone
@@ -526,8 +505,8 @@ function stopPitchDetection() {
   stopButton.disabled = true;
   saveMidiButton.disabled = recordedNotes.length === 0;
   playMelodyButton.disabled = recordedNotes.length === 0;
-  resetMelodyButton.disabled = recordedNotes.length === 0; // Enable reset if there are notes
-  //deleteNoteButton.disabled = recordedNotes.length === 0;
+  resetMelodyButton.disabled = recordedNotes.length === 0;
+  deleteNoteButton.disabled = recordedNotes.length === 0;
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Detected Note: N/A";
 
@@ -536,25 +515,21 @@ function stopPitchDetection() {
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-
     // Clear the recording timeout if it exists
-    if (recordingTimeout) {
-      clearTimeout(recordingTimeout);
-      recordingTimeout = null;
-    }
+  if (recordingTimeout) {
+    clearTimeout(recordingTimeout);
+    recordingTimeout = null;}
 
     // Hide the progress bar
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
 
-
   // Update the duration of the last note
-  if (recordedNotes.length > 0) {
+ /* if (recordedNotes.length > 0) {
     const lastNote = recordedNotes[recordedNotes.length - 1];
     const endTime = audioContext.currentTime - startTime;
     lastNote.duration = endTime - lastNote.startTime;
-  }
-
+  }*/
   renderSequencer();
 }
 
@@ -784,10 +759,6 @@ function shiftOctave(direction) {
 document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
 
-
-
-
-
 /**
  * Handles the mousedown event on the sequencer canvas.
  * Determines if a note is being selected for dragging or resizing.
@@ -815,13 +786,10 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
     const resizeThreshold = 5; // Pixels near the edge to trigger resizing
 
     // Check if the click is within the vertical bounds of the note
-    if (
-      y >= yCenter - rowHeight / 2 &&
-      y <= yCenter + rowHeight / 2
-    ) {
+    if ( y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       if (x >= xStart - resizeThreshold && x <= xStart + resizeThreshold) {
         // Clicked near the start of the note for resizing
-        console.log("ciao");
+        console.log("near the start clicked");
         selectedNoteIndex = i;
         isResizingStart = true;
         dragOffsetX = x - xStart; // Calculate horizontal offset
@@ -829,6 +797,7 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         return;
       } else if (x >= xEnd - resizeThreshold && x <= xEnd + resizeThreshold) {
         // Clicked near the end of the note for resizing
+        console.log("near the end clicked");
         selectedNoteIndex = i;
         isResizingEnd = true;
         dragOffsetX = x - xEnd; // Calculate horizontal offset
@@ -836,15 +805,13 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         return;
       } else if (x >= xStart && x <= xEnd) {
         // Clicked inside the note for moving
-        console.log("inside");
+        console.log("inside clicked");
         selectedNoteIndex = i;
         lastSelectedNoteIndex= i;
         dragOffsetX = x - xStart; // Calculate horizontal offset
         dragOffsetY = y - yCenter; // Calculate vertical offset
         isDragging = true; // Enter dragging mode
         document.getElementById("delete-note").disabled=false;
-        //lastNote= selectedNoteIndex;
-
         return;
       }
     }
@@ -866,12 +833,9 @@ function snapToGrid(time) {
   return Math.round(time / gridSize) * gridSize;
 }
 
-
-
 sequencerCanvas.addEventListener("mousemove", (event) => {
-  if (!isDragging || selectedNoteIndex === null) return; // Exit if not dragging
-
-
+  if (!isDragging || selectedNoteIndex === null) 
+    return; // Exit if not dragging
   const rect = sequencerCanvas.getBoundingClientRect();
 
   // Adjust coordinates based on canvas scaling
@@ -1012,12 +976,7 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
     const xEnd = xStart + note.duration * 100;
 
     // Check if the touch is within the bounds of the note
-    if (
-      x >= xStart &&
-      x <= xEnd &&
-      y >= yCenter - rowHeight / 2 &&
-      y <= yCenter + rowHeight / 2
-    ) {
+    if ( x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       lastSelectedNoteIndex = i;
       selectedNoteIndex = i;
       dragOffsetX = x - xStart; // Calculate horizontal offset
