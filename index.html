@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registratore di Melodie Web</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Registratore di Melodie Web</h1>
+  </header>
+
+  <main>
+    <!-- Controlli principali -->
+    <div id="controls">
+      <button id="start">Start Recording</button>
+      <button id="stop" disabled>Stop Recording</button>
+      <button id="save-midi" disabled>Salva come MIDI</button>
+      <button id="play-melody" disabled>Play Melody</button>
+      <button id="metronome-toggle">Metronome</button>
+      <button id="shift-octave-up">Shift Octave Up</button>
+      <button id="shift-octave-down">Shift Octave Down</button>
+      <button id="reset-melody" disabled>Reset Melody</button>
+      <button id="delete-note" disabled>Delete Note</button>
+
+    </div>
+    <div id="recording-progress-container" style="display: none; margin-top: 10px;">
+      <label for="recording-progress">Recording Progress:</label>
+      <progress id="recording-progress" value="0" max="100" style="width: 100%;"></progress>
+    </div>
+    <!-- Configurazione BPM -->
+    <div id="bpm-control">
+      <label for="bpm-input">BPM:</label>
+      <input type="number" id="bpm-input" value="120" min="20" max="300" step="1">
+    </div>
+    <!-- Gain Control Section -->
+    <div id="gain-control">
+      <label for="gain-slider">Gain:</label>
+      <input type="range" id="gain-slider" min="1" max="10" step="0.1" value="2">
+      <span id="gain-value">2.0x</span>
+    </div>
+  </div>
+
+
+    <!-- Stato attuale -->
+    <div id="status">
+      <div id="pitch">Pitch: N/A</div>
+      <div id="note">Nota Rilevata: N/A</div>
+    </div>
+
+    <!-- Confidence Meter -->
+    <div id="confidence-meter">
+      <div id="confidence-level" style="width: 0%;"></div>
+    </div>
+
+    <!-- Sequencer -->
+    <div id="sequencer-container">
+      <canvas id="sequencer" width="1500" height="800"></canvas>
+    </div>
+
+    <div class="container">
+      <h2>Vox2Seq</h2>
+    
+      <h3>Waveform 1</h3>
+      <label for="waveform1-select">Wave Type:</label>
+      <select id="waveform1-select">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+      </select>
+      <label for="volume1-slider">Volume:</label>
+      <input type="range" id="volume1-slider" min="0" max="1" step="0.01" value="0.5">
+    
+      <h3>Waveform 2</h3>
+      <label for="waveform2-select">Wave Type:</label>
+      <select id="waveform2-select">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+      </select>
+      <label for="volume2-slider">Volume:</label>
+      <input type="range" id="volume2-slider" min="0" max="1" step="0.01" value="0.5">
+     
+        <h3>Waveform 3</h3>
+      <label for="waveform3-select">Wave Type:</label>
+      <select id="waveform3-select">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+      </select>
+      <label for="volume2-slider">Volume:</label>
+      <input type="range" id="volume3-slider" min="0" max="1" step="0.01" value="0.5">
+    
+      <h3>ADSR Envelope</h3>
+      <label for="attack-slider">Attack:</label>
+      <input type="range" class="adsr-slider" id="attack-slider" data-param="attack" min="0" max="5" step="0.01" value="0.1">
+      <span id="attack-value">0.1</span>
+      <br>
+    
+      <label for="decay-slider">Decay:</label>
+      <input type="range" class="adsr-slider" id="decay-slider" data-           param="decay" min="0" max="5" step="0.01" value="0.2">
+      <span id="decay-value">0.2</span>
+      <br>
+    
+      <label for="sustain-slider">Sustain:</label>
+      <input type="range" class="adsr-slider" id="sustain-slider" data-         param="sustain" min="0" max="1" step="0.01" value="0.5">
+      <span id="sustain-value">0.5</span>
+      <br>
+    
+      <label for="release-slider">Release:</label>
+      <input type="range" class="adsr-slider" id="release-slider" data-param="release" min="0" max="5" step="0.01" value="1.5">
+      <span id="release-value">1.5</span>
+      <br>
+     
+        <h3>LFO</h3>
+      <label for="lfo-waveform">Waveform:</label>
+      <select id="lfo-waveform">
+        <option value="sine">Sine</option>
+        <option value="triangle">Triangle</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+      </select>
+      <br>
+      <label for="lfo-frequency">Frequency:</label>
+      <input type="range" id="lfo-frequency" min="0.1" max="10" step="0.1"     value="0.5">
+      <span id="lfo-frequency-value">0.5 Hz</span>
+      <br>
+      <label for="lfo-amount">Amount:</label>
+      <input type="range" id="lfo-amount" min="0" max="500" step="10"           value="100">
+      <span id="lfo-amount-value">100</span>
+      <br>
+      <label for="lfo-toggle">Enable LFO:</label>
+      <input type="checkbox" id="lfo-toggle" checked>
+     
+      <h3>Filter</h3>
+      <label for="filter-frequency">Frequency:</label>
+      <input type="range" id="filter-frequency" min="50" max="10000"           step="5" value="500">
+      <span id="filter-frequency-value">500 Hz</span>
+      <br>
+      <label for="filter-resonance">Resonance (Q):</label>
+      <input type="range" id="filter-resonance" min="0.1" max="50" step="0.1"   value="1">
+      <span id="filter-resonance-value">1</span>
+     
+      <h3>Distortion</h3>
+      <label for="distortion-slider">Amount:</label>
+      <input type="range" id="distortion-slider" min="0" max="1" step="0.01"     value="0.4">
+      <span id="distortion-value">0.4</span>
+     
+      <h3>Chorus</h3>
+      <label for="chorus-frequency">Frequency:</label>
+      <input type="range" id="chorus-frequency"           min="0.1" max="10" step="0.1" value="1.5">
+      <span id="chorus-frequency-value">1.5 Hz</span>
+      <br>
+      <label for="chorus-depth">Depth:</label>
+      <input type="range" id="chorus-depth" min="0"       max="1" step="0.1" value="0">
+      <span id="chorus-depth-value"></span>
+      <br>
+      <label for="chorus-spread">Spread:</label>
+      <input type="range" id="chorus-spread" min="0"     max="360" step="10" value="180">
+      <span id="chorus-spread-value"></span>
+     
+    
+    </div>
+
+  </main>
+
+  <!-- Includi MidiWriterJS -->
+  <script src="https://cdn.jsdelivr.net/npm/midi-writer-js@2.1.1/build/MidiWriter.min.js"></script>
+
+  <!-- Includi lo script principale -->
+  <script type="module" src="main.js"></script>
+
+  <script src="http://unpkg.com/tone"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f0f0;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  #controls {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  #start {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  #start:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+  #stop {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  #stop:hover:not(:disabled) {
+    background-color: #da190b;
+  }
+  
+  #save-midi {
+    background-color: #008CBA;
+    color: white;
+  }
+  
+  #save-midi:hover:not(:disabled) {
+    background-color: #007bb5;
+  }
+  
+  #play-melody {
+    background-color: #e7e7e7;
+    color: black;
+  }
+  
+  #play-melody:hover:not(:disabled) {
+    background-color: #d6d6d6;
+  }
+  
+  #reset-melody { /* New Button Styling */
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  #reset-melody:hover:not(:disabled) {
+    background-color: #e68900;
+  }
+  
+  #status {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  #pitch, #note {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 18px;
+  }
+  
+  #sequencer-container {
+    display: flex;
+    justify-content: center;
+    overflow: auto; /* Allows both horizontal and vertical scrolling */
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 100%;
+    max-height: 800px; /* Set a max height to enable vertical scrolling if needed */
+  }
+  
+  #sequencer {
+    border: 1px solid #ccc;
+    width: 1600px; /* Adjusted to accommodate 16 bars */
+    height: 800px;
+    background-color: #fafafa;
+    position: relative;
+  }
+  
+  #bpm-input {
+    font-size: 16px;
+    width: 80px;
+    text-align: center;
+    padding: 5px;
+    margin-left: 10px;
+  }
+  #metronome-toggle {
+    background-color: #9C27B0;
+    color: white;
+  }
+  
+  #metronome-toggle:hover:not(:disabled) {
+    background-color: #7B1FA2;
+  }
+  
+  
+  canvas:active {
+    cursor: grabbing;
+  }
+
+  
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  text-align: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #1f1f1f;
+  border: 1px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+h2, h3 {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+label {
+  font-weight: bold;
+}
+
+select, input[type="range"], button {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #000;
+  background-color: #f39c12;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+select {
+  background-color: #f39c12;
+  color: #000;
+}
+
+input[type="range"] {
+  width: 200px;
+  background-color: #666;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: #f39c12;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+button {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #444;
+  border: 1px solid #888;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #f39c12;
+  color: #000;
+}
+
+#sequencer-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  background-color: #444;
+  border: 1px solid #666;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.step.active {
+  background-color: #f39c12;
+}
+
+canvas {
+  margin-top: 20px;
+  background: #000;
+  border: 2px solid #f39c12;
+  border-radius: 5px;
+}
