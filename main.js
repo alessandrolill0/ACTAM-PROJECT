@@ -18,7 +18,6 @@ const pitchDisplay = document.getElementById("pitch");
 const noteDisplay = document.getElementById("note");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
-const saveMidiButton = document.getElementById("save-midi");
 const playMelodyButton = document.getElementById("play-melody");
 const resetMelodyButton = document.getElementById("reset-melody");
 const deleteNoteButton = document.getElementById("delete-note");
@@ -340,7 +339,6 @@ async function startPitchDetection() {
     isDetecting = true;
     startButton.disabled = true;
     stopButton.disabled = false; //no stop if you are not recording yet
-    saveMidiButton.disabled = true; //Disable saveMidi while recording
     playMelodyButton.disabled = true; //Disable play melody while recording
     resetMelodyButton.disabled = true; // Disable reset during recording
     pitchDisplay.textContent = "Pitch: N/A";
@@ -502,7 +500,6 @@ function stopPitchDetection() {
   isDetecting = false;
   startButton.disabled = false;
   stopButton.disabled = true;
-  saveMidiButton.disabled = recordedNotes.length === 0;
   playMelodyButton.disabled = recordedNotes.length === 0;
   resetMelodyButton.disabled = recordedNotes.length === 0;
   deleteNoteButton.disabled = recordedNotes.length === 0;
@@ -534,62 +531,6 @@ function stopPitchDetection() {
 // ==========================
 // MIDI Saving and Playback Functions
 // ==========================
-
-/**
- * Saves the recorded notes as a MIDI file.
- */
-saveMidiButton.addEventListener("click", () => {
-  if (recordedNotes.length === 0) {
-    alert("No notes recorded to save.");
-    return;
-  }
-  const track = new MidiWriter.Track();
-  track.setTempo(bpm); // Set BPM
-  track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 })); // Choose instrument
-
-  recordedNotes.forEach((note) => {
-    const midiNote = note.note;
-    const durationSeconds = note.duration;
-
-    // Convert duration from seconds to MIDI duration based on BPM
-    const quarterNoteDuration = 60 / bpm; // Duration based on BPM
-    const durationInBeats = durationSeconds / quarterNoteDuration;
-
-    // Determine the closest MIDI duration
-    let midiDuration = '4'; // Default: quarter note
-    if (durationInBeats >= 4) {
-      midiDuration = '1'; // Whole note
-    } else if (durationInBeats >= 2) {
-      midiDuration = '2'; // Half note
-    } else if (durationInBeats >= 1) {
-      midiDuration = '4'; // Quarter note
-    } else if (durationInBeats >= 0.5) {
-      midiDuration = '8'; // Eighth note
-    } else if (durationInBeats >= 0.25) {
-      midiDuration = '16'; // Sixteenth note
-    } else {
-      midiDuration = '32'; // Thirty-second note
-    }
-
-    track.addEvent(new MidiWriter.NoteEvent({
-      pitch: midiNote,
-      duration: midiDuration,
-      velocity: 100
-    }));
-  });
-
-  const write = new MidiWriter.Writer(track);
-  const midiData = write.buildFile();
-
-  // Create a Blob and trigger the download
-  const blob = new Blob([midiData], { type: 'audio/midi' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'recorded_melody.mid';
-  a.click();
-  URL.revokeObjectURL(url);
-});
 
 /**
  * Plays back the recorded melody using sine waves with ADSR envelope.
@@ -648,17 +589,13 @@ resetMelodyButton.addEventListener("click", () => {
   if (isDetecting) {
     stopPitchDetection();
   }
-
    // Reset variables
    recordedNotes = [];
    selectedNoteIndex = null; // Deselect any selected note
    renderSequencer();
-
   // Update button states
-  saveMidiButton.disabled = true;
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true;
-
   // Reset visual displays
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Note: N/A";
@@ -705,7 +642,6 @@ stopButton.addEventListener("click", stopPitchDetection);
 
 document.addEventListener("DOMContentLoaded", () => {
   stopButton.disabled = true;
-  saveMidiButton.disabled = true;
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true; // Initialize reset button as disabled
   renderSequencer();
@@ -913,7 +849,6 @@ function snapFrequencyToNearestNoteFrequency(frequency) {
 function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   for (let i = 0; i < recordedNotes.length; i++) {
     if (i === excludeIndex) continue; // Skip the note being moved
-
     const note = recordedNotes[i];
     const noteStart = note.startTime;
     const noteEnd = note.startTime + note.duration;
@@ -929,8 +864,6 @@ function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   }
   return false; // No overlap
 }
-
-
 
 /**
  * Handles the mouseup event to stop dragging or resizing.
