@@ -371,7 +371,11 @@ noteRange.forEach((note, index) => {
 async function startPitchDetection() {
   try {
     if (isDetecting) return;
-
+    if (melodyPart) {
+      melodyPart.stop();
+      melodyPart.dispose();
+      melodyPart = null;
+    }
     // Initial preparation
     isDetecting = true;
     startButton.disabled = true; // Disable the start button
@@ -381,6 +385,7 @@ async function startPitchDetection() {
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disable delete button
+    stopPlaybackButton
 
     recordedNotes = []; // Reset the recorded notes
     renderSequencer();
