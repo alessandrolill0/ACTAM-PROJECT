@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registratore di Melodie Web</title>
+  <title>Chord2Vox</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>Registratore di Melodie Web</h1>
+    <h1>Chord2Vox</h1>
   </header>
 
   <main>
-    <!-- Controlli principali -->
+    <!-- Controllers-->
     <div id="controls">
       <button id="start">Start Recording</button>
       <button id="stop" disabled>Stop Recording</button>
@@ -22,7 +22,7 @@
       <button id="shift-octave-down">Shift Octave Down</button>
       <button id="reset-melody" disabled>Reset Melody</button>
       <button id="delete-note" disabled>Delete Note</button>
-      <button id="stop-playback" disabled>Stop Playback</button> <!-- New Button -->
+      <button id="stop-playback" disabled>Stop Playback</button> 
       
 
     </div>
@@ -30,7 +30,7 @@
       <label for="recording-progress">Recording Progress:</label>
       <progress id="recording-progress" value="0" max="100" style="width: 100%;"></progress>
     </div>
-    <!-- Configurazione BPM -->
+    <!--  BPM Configuration -->
     <div id="bpm-control">
       <label for="bpm-input">BPM:</label>
       <input type="number" id="bpm-input" value="120" min="20" max="300" step="1">
@@ -38,7 +38,7 @@
   </div>
 
 
-    <!-- Stato attuale -->
+    <!-- Actual State -->
     <div id="status">
       <div id="pitch">Pitch: N/A</div>
       <div id="note">Nota Rilevata: N/A</div>
@@ -160,7 +160,7 @@
     </div>
   </main>
 
-  <!-- Includi lo script principale -->
+  <!-- Import of the principle script -->
   <script type="module" src="main.js"></script>
 
   <script src="http://unpkg.com/tone"></script>
