@@ -73,16 +73,13 @@ let melodyPart = null; // Add this line
  * @returns {string|null} - Note name or null if out of range.
  */
 function frequencyToNote(frequency) {
-  if (frequency <= 0) 
-    return null;
-
+  if (frequency <= 0) {return null;}
   const semitoneOffset = 12 * Math.log2(frequency / A4);
   const midiNumber = Math.round(semitoneOffset) + 69;
   const octave = Math.floor(midiNumber / 12) - 1;
   const noteName = noteNames[midiNumber % 12];
-
-  if (midiNumber < 36 || midiNumber > 108) 
-    return null;  // From C2 (MIDI 36) to C8 (MIDI 108) 
+  if (midiNumber < 36 || midiNumber > 108) {
+    return null; } // From C2 (MIDI 36) to C8 (MIDI 108) 
   return `${noteName}${octave}`;
 }
 
@@ -91,6 +88,7 @@ function frequencyToNote(frequency) {
  * @param {string} note - Note name
  * @returns {number|null} - MIDI number or null if invalid format.
  */
+
 function midiFromNoteName(note) {
   const regex = /^([A-G]#?)(\d)$/;   // Regular expression to validate and capture the note name and octave.
   const match = note.match(regex);  // Attempt to match the input string against the regex
@@ -220,18 +218,22 @@ function adjustCanvasWidth(time) {
   }
 }
 
+function isBlackKey(note) {
+  // Lista di note diesis
+  const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
+  const name = note.slice(0, -1); // Estrai il nome della nota senza l'ottava
+  return blackKeys.includes(name);
+}
+ 
 /**
  * Renders the sequencer on the canvas.
  */
 function renderSequencer() {
-  // Calcola la durata totale per 16 battute
+  //Calculating 16 bars
   const totalDuration = calculateTotalDuration(bpm, TOTAL_BARS);
-
-  // Regola la larghezza del canvas in base alla durata totale
-  const pixelsPerSecond = 100; // Puoi regolare questo valore per lo zoom
+  const pixelsPerSecond = 100; // zoom orizzontale
   const desiredWidth = labelWidth + totalDuration * pixelsPerSecond;
   sequencerCanvas.width = desiredWidth;
-
   sequencerCanvas.height = (108 - 36 + 1) * rowHeight; // 36 = C2, 108 = C8
   ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
 
@@ -242,22 +244,64 @@ function renderSequencer() {
       noteRange.push(`${name}${octave}`);
     }
   }
+  // Disegna linee orizzontali per ogni nota
+ctx.strokeStyle = "rgba(200, 200, 200, 0.5)"; // Colore chiaro per le linee della griglia
+ctx.lineWidth = 1;
 
-  // Disegna le etichette delle note e le linee orizzontali
-  ctx.font = "12px Arial";
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
+noteRange.forEach((_, index) => {
+  const y = index * rowHeight;
+  ctx.beginPath();
+  ctx.moveTo(labelWidth, y); // Inizia la linea dalla fine delle etichette
+  ctx.lineTo(sequencerCanvas.width, y); // Fino alla fine del canvas
+  ctx.stroke();
+});
+const whiteKeyWidth = 60; // Larghezza delle note bianche (più pronunciate)
+const blackKeyWidth = 47; // Larghezza delle note nere (più strette)
+const keyHeight = rowHeight; // Altezza di ogni tasto
 
-  noteRange.forEach((note, index) => {
-    const y = index * rowHeight + rowHeight / 2; //Y position
-    ctx.fillStyle = "#333"; // Draw the note
-    ctx.fillText(note, labelWidth - 10, sequencerCanvas.height - y);
-    ctx.strokeStyle = "#ddd";
-    ctx.beginPath();
-    ctx.moveTo(labelWidth, sequencerCanvas.height - y);
-    ctx.lineTo(sequencerCanvas.width, sequencerCanvas.height - y);
-    ctx.stroke();
-  });
+noteRange.forEach((note, index) => {
+  const y = index * rowHeight; // Posizione verticale
+  const isBlack = isBlackKey(note); // Controlla se è un diesis
+  if (isBlack) {
+    // Disegna tasto nero (spostato verso destra)
+    const blackKeyOffset = whiteKeyWidth - blackKeyWidth; // Differenza per allineare a destra
+    ctx.fillStyle = "#000";
+    ctx.fillRect(
+      labelWidth - blackKeyWidth - blackKeyOffset, // Sposta il tasto nero verso destra
+      sequencerCanvas.height - y - keyHeight,
+      blackKeyWidth,
+      keyHeight
+    );
+  } else {
+    // Disegna tasto bianco
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(
+      labelWidth - whiteKeyWidth, // Rimane in posizione
+      sequencerCanvas.height - y - keyHeight,
+      whiteKeyWidth,
+      keyHeight
+    );
+    ctx.strokeStyle = "#000"; // Bordo nero per i tasti bianchi
+    ctx.strokeRect(
+      labelWidth - whiteKeyWidth,
+      sequencerCanvas.height - y - keyHeight,
+      whiteKeyWidth,
+      keyHeight
+    );
+
+    // Disegna l'etichetta "C" per le note bianche
+    if (note.startsWith("C")) {
+      ctx.fillStyle = "#333";
+      ctx.font = "11px Verdana";
+      ctx.textAlign = "start";
+      ctx.fillText(
+        note,
+        labelWidth - whiteKeyWidth / 2,
+        sequencerCanvas.height - y - keyHeight / 2
+      );
+    }
+  }
+});
 
   // Disegna le linee della griglia per ogni battuta
   const totalBeats = TOTAL_BARS * BEATS_PER_BAR;
@@ -279,45 +323,41 @@ function renderSequencer() {
     ctx.textAlign = "center";
     ctx.fillText(`Bar ${bar}`, x, 10);
   }
-
+  
   // Disegna le note registrate con evidenziazione per la nota selezionata
   recordedNotes.forEach((note, i) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
-
     // Calcola la posizione Y per la nota (invertita)
     const noteIndex = midiNumber - 36; // Offset C2=36
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
-
     // Calcola la posizione X e la larghezza della nota
     const xStart = labelWidth + note.startTime * 100;
     const xEnd = labelWidth + (note.startTime + note.duration) * 100;
     const noteWidth = xEnd - xStart;
-
-    //Selected note
-    if (i === selectedNoteIndex) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.5)"; //Add shadows
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = "rgba(255, 0, 0, 0.6)"; //Draw the note
-      ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-      ctx.strokeStyle = "red"; //red border
-      ctx.lineWidth = 3;
-      ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-      ctx.shadowBlur = 0; //No shadows for the next notes
-    } else {
-      ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
-      ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-    }
-    
-    ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4); //Draw the rectangle
-
     // Aggiungi un bordo rosso se la nota è selezionata
+
+    // Debug: Log delle informazioni della nota
+  console.log(`Drawing note: ${note.note}`);
+  console.log(`Frequency: ${note.frequency}, Start Time: ${note.startTime}, Duration: ${note.duration}`);
+  console.log(`MIDI Number: ${midiNumber}, X Start: ${xStart}, X End: ${xEnd}, Width: ${noteWidth}, Y: ${y}`);
     if (i === selectedNoteIndex) {
       ctx.strokeStyle = "red"; // Colore del bordo
       ctx.lineWidth = 2; // Spessore del bordo
       ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
     }
-    ctx.fillStyle = "white"; //Draw the note name on the note
+
+    // Disegna la nota
+    ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
+    ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+
+    // Disegna il bordo della nota
+    ctx.strokeStyle = i === selectedNoteIndex ? "red" : "black";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
+
+    // Etichetta della nota
+    ctx.fillStyle = "#fff";
     ctx.font = "8px Arial";
     ctx.textAlign = "center";
     ctx.fillText(note.note, xStart + noteWidth / 2, y);
@@ -472,16 +512,12 @@ async function startPitchDetection() {
         };
         recordedNotes.push(activeNote);
       }
-
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
-
       adjustCanvasWidth(currentTime);
       renderSequencer();
-
       requestAnimationFrame(detectPitch);
     }
-
     detectPitch();
   } catch (err) {
     console.error("Error during pitch detection:", err);
@@ -663,7 +699,11 @@ resetMelodyButton.addEventListener("click", () => {
   // Confirm the action
   const confirmReset = confirm("Are you sure you want to reset the melody?");
   if (!confirmReset) return;
-
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
   // Stop pitch detection if active
   if (isDetecting) {
     stopPitchDetection();
@@ -675,6 +715,7 @@ resetMelodyButton.addEventListener("click", () => {
   // Update button states
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true;
+  stopPlaybackButton.disabled = true;
   // Reset visual displays
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Note: N/A";
@@ -724,6 +765,7 @@ document.addEventListener("DOMContentLoaded", () => {
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true; // Initialize reset button as disabled
   stopPlaybackButton.disabled = true; // Initialize the Stop Playback button as disabled
+ 
   renderSequencer();
 });
 /**
