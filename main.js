@@ -62,7 +62,7 @@ const labelWidth = 100; // Space between each note label
 const rowHeight = 20; // Height of each row in the sequencer
 const BEATS_PER_BAR = 1; // 4/4 time signature
 const TOTAL_BARS = 16;
-let melodyPart = null; // Add this line
+let melodyPart = null;
 // ==========================
 // Utility Functions
 // ==========================
@@ -72,6 +72,7 @@ let melodyPart = null; // Add this line
  * @param {number} frequency - Frequency in Hz.
  * @returns {string|null} - Note name or null if out of range.
  */
+
 function frequencyToNote(frequency) {
   if (frequency <= 0) {return null;}
   const semitoneOffset = 12 * Math.log2(frequency / A4);
@@ -171,9 +172,7 @@ function startMetronome() {
 
   const beatsPerBar = 4; // Number of beats per bar
   let currentBeat = 0;
-
   const interval = getMetronomeInterval(bpm) * 1000; // Interval in milliseconds
-
   metronomeInterval = setInterval(() => {
     currentBeat++;
     const isLastBeat = currentBeat === beatsPerBar;
@@ -221,7 +220,7 @@ function adjustCanvasWidth(time) {
 function isBlackKey(note) {
   // Lista di note diesis
   const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
-  const name = note.slice(0, -1); // Estrai il nome della nota senza l'ottava
+  const name = note.slice(0, -1); //Get the note name without the octave
   return blackKeys.includes(name);
 }
  
@@ -237,51 +236,51 @@ function renderSequencer() {
   sequencerCanvas.height = (108 - 36 + 1) * rowHeight; // 36 = C2, 108 = C8
   ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
 
-  // Definisci l'intervallo di note (C2 a C8)
+  //From c2 to c6
   const noteRange = [];
   for (let octave = 2; octave <= 8; octave++) {
     for (let name of noteNames) {
       noteRange.push(`${name}${octave}`);
     }
   }
-  // Disegna linee orizzontali per ogni nota
+  //Draw the horizontal lines
 ctx.strokeStyle = "rgba(200, 200, 200, 0.5)"; // Colore chiaro per le linee della griglia
 ctx.lineWidth = 1;
 
 noteRange.forEach((_, index) => {
   const y = index * rowHeight;
   ctx.beginPath();
-  ctx.moveTo(labelWidth, y); // Inizia la linea dalla fine delle etichette
-  ctx.lineTo(sequencerCanvas.width, y); // Fino alla fine del canvas
+  ctx.moveTo(labelWidth, y); //Start the target line
+  ctx.lineTo(sequencerCanvas.width, y); //To the end of the canvas
   ctx.stroke();
 });
-const whiteKeyWidth = 60; // Larghezza delle note bianche (più pronunciate)
-const blackKeyWidth = 47; // Larghezza delle note nere (più strette)
+const whiteKeyWidth = 60; // white notes width
+const blackKeyWidth = 47; //black notes width
 const keyHeight = rowHeight; // Altezza di ogni tasto
 
 noteRange.forEach((note, index) => {
-  const y = index * rowHeight; // Posizione verticale
-  const isBlack = isBlackKey(note); // Controlla se è un diesis
+  const y = index * rowHeight; //Vertical position
+  const isBlack = isBlackKey(note); //Checks if diesis
   if (isBlack) {
     // Disegna tasto nero (spostato verso destra)
-    const blackKeyOffset = whiteKeyWidth - blackKeyWidth; // Differenza per allineare a destra
+    const blackKeyOffset = whiteKeyWidth - blackKeyWidth; //Having the same length of white keys
     ctx.fillStyle = "#000";
     ctx.fillRect(
-      labelWidth - blackKeyWidth - blackKeyOffset, // Sposta il tasto nero verso destra
+      labelWidth - blackKeyWidth - blackKeyOffset, //Putting the key in the right position
       sequencerCanvas.height - y - keyHeight,
       blackKeyWidth,
       keyHeight
     );
   } else {
-    // Disegna tasto bianco
+    //Draw white key
     ctx.fillStyle = "#fff";
     ctx.fillRect(
-      labelWidth - whiteKeyWidth, // Rimane in posizione
+      labelWidth - whiteKeyWidth, //Same position
       sequencerCanvas.height - y - keyHeight,
       whiteKeyWidth,
       keyHeight
     );
-    ctx.strokeStyle = "#000"; // Bordo nero per i tasti bianchi
+    ctx.strokeStyle = "#000"; //Black margin for white keys
     ctx.strokeRect(
       labelWidth - whiteKeyWidth,
       sequencerCanvas.height - y - keyHeight,
@@ -289,8 +288,8 @@ noteRange.forEach((note, index) => {
       keyHeight
     );
 
-    // Disegna l'etichetta "C" per le note bianche
-    if (note.startsWith("C")) {
+    // C for white notes as reference
+  if (note.startsWith("C")) {
       ctx.fillStyle = "#333";
       ctx.font = "11px Verdana";
       ctx.textAlign = "start";
@@ -303,7 +302,7 @@ noteRange.forEach((note, index) => {
   }
 });
 
-  // Disegna le linee della griglia per ogni battuta
+  //Draw the guidance lines for each bar
   const totalBeats = TOTAL_BARS * BEATS_PER_BAR;
   const secondsPerBeat = 60 / bpm;
   const secondsPerBar = BEATS_PER_BAR * secondsPerBeat;
@@ -317,46 +316,37 @@ noteRange.forEach((note, index) => {
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
 
-    // Etichetta ogni battuta
+    //Each bar has an associated number
     ctx.fillStyle = "#333";
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(`Bar ${bar}`, x, 10);
   }
   
-  // Disegna le note registrate con evidenziazione per la nota selezionata
+  //Draw the recorded notes
   recordedNotes.forEach((note, i) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
-    // Calcola la posizione Y per la nota (invertita)
+    //Calc Y position
     const noteIndex = midiNumber - 36; // Offset C2=36
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
-    // Calcola la posizione X e la larghezza della nota
+    //Calc X position
     const xStart = labelWidth + note.startTime * 100;
     const xEnd = labelWidth + (note.startTime + note.duration) * 100;
     const noteWidth = xEnd - xStart;
-    // Aggiungi un bordo rosso se la nota è selezionata
-
-    // Debug: Log delle informazioni della nota
-  console.log(`Drawing note: ${note.note}`);
-  console.log(`Frequency: ${note.frequency}, Start Time: ${note.startTime}, Duration: ${note.duration}`);
-  console.log(`MIDI Number: ${midiNumber}, X Start: ${xStart}, X End: ${xEnd}, Width: ${noteWidth}, Y: ${y}`);
     if (i === selectedNoteIndex) {
-      ctx.strokeStyle = "red"; // Colore del bordo
-      ctx.lineWidth = 2; // Spessore del bordo
+      ctx.strokeStyle = "red"; //red margin
+      ctx.lineWidth = 2; //width
       ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
     }
-
-    // Disegna la nota
+    //Draw the note
     ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
     ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-
-    // Disegna il bordo della nota
+    //Draw the margin
     ctx.strokeStyle = i === selectedNoteIndex ? "red" : "black";
     ctx.lineWidth = 2;
     ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-
-    // Etichetta della nota
+    //Note name
     ctx.fillStyle = "#fff";
     ctx.font = "8px Arial";
     ctx.textAlign = "center";
@@ -408,20 +398,18 @@ async function startPitchDetection() {
     countdownContainer.style.textShadow = "2px 2px 8px rgba(0, 0, 0, 0.5)"; // Subtle shadow
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
-
     // Countdown logic linked to BPM
-const beatDuration = 60 / bpm; // Calculate beat duration based on BPM
+    const beatDuration = 60 / bpm; // Calculate beat duration based on BPM
+    for (let i = 3; i > 0; i--) {
+      countdownContainer.textContent = i; // Display the current countdown number
+      await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Wait for one beat
+    }
 
-for (let i = 3; i > 0; i--) {
-  countdownContainer.textContent = i; // Display the current countdown number
-  await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Wait for one beat
-}
+    countdownContainer.textContent = "It's time to record!"; // Final message
+    countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
+    setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Remove the message after 1.5 beats
 
-countdownContainer.textContent = "It's time to record!"; // Final message
-countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
-setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Remove the message after 1.5 beats
-
-    // Access the microphone and initialize the audio
+    //Access the microphone and initialize the audio
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -685,8 +673,6 @@ function updateMelodyPart() {
 
   melodyPart.start(0); // Restart the melody
 }
-
-
 
 // ==========================
 // Melody Reset Function
@@ -1225,7 +1211,7 @@ function toggleLfo(enabled) {
   } else {
     lfo.disconnect(filter.frequency);
     filter.frequency.value = 500;
-    document.getElementById("filter-frequency-        value").textContent = "500 Hz";
+    document.getElementById("filter-frequency-value").textContent = "500 Hz";
   }
   lfoEnabled = enabled;
 }
@@ -1441,6 +1427,8 @@ stopPlaybackButton.addEventListener("click", () => {
   playMelodyButton.disabled = false;
   stopPlaybackButton.disabled = true;
 });
+
+//Metronome toggle during the rec
 metronomeToggle.addEventListener("change", () => {
   if (!isDetecting) {
     if (metronomeToggle.checked) {
