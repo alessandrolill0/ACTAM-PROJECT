@@ -368,26 +368,47 @@ noteRange.forEach((note, index) => {
 // ==========================
 // Pitch Detection Functions
 // ==========================
-/**
- * Starts pitch detection.
- */
 async function startPitchDetection() {
   try {
-    if (isDetecting) 
-      return;
+    if (isDetecting) return;
+
+    // Initial preparation
     isDetecting = true;
-    startButton.disabled = true;
-    stopButton.disabled = false; //no stop if you are not recording yet
-    playMelodyButton.disabled = true; //Disable play melody while recording
-    resetMelodyButton.disabled = true; // Disable reset during recording
+    startButton.disabled = true; // Disable the start button
+    stopButton.disabled = true;  // Disable the stop button during countdown
+    playMelodyButton.disabled = true; // Disable playback button
+    resetMelodyButton.disabled = true; // Disable reset button
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
-   deleteNoteButton.disabled = true; // Disable delete during recording
+    deleteNoteButton.disabled = true; // Disable delete button
 
-    recordedNotes = [];    // Reset recorded notes
+    recordedNotes = []; // Reset the recorded notes
     renderSequencer();
 
-    // Access the microphone
+    // Create a container for the countdown display
+    const countdownContainer = document.createElement("div");
+    countdownContainer.style.position = "fixed";
+    countdownContainer.style.top = "50%";
+    countdownContainer.style.left = "50%";
+    countdownContainer.style.transform = "translate(-50%, -50%)";
+    countdownContainer.style.fontSize = "120px";
+    countdownContainer.style.fontWeight = "bold";
+    countdownContainer.style.color = "#000"; // Black text color for numbers and message
+    countdownContainer.style.fontFamily = "'Arial Black', sans-serif"; // Custom font
+    countdownContainer.style.textShadow = "2px 2px 8px rgba(0, 0, 0, 0.5)"; // Subtle shadow
+    countdownContainer.style.textAlign = "center";
+    document.body.appendChild(countdownContainer);
+
+    // Countdown logic: show "3", "2", "1", then "It's time to record!"
+    for (let i = 3; i > 0; i--) {
+      countdownContainer.textContent = i; // Display the current countdown number
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+    }
+    countdownContainer.textContent = "It's time to record!"; // Final message
+    countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
+    setTimeout(() => document.body.removeChild(countdownContainer), 1500); // Remove the message after 1.5 seconds
+
+    // Access the microphone and initialize the audio
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -398,38 +419,35 @@ async function startPitchDetection() {
 
     source.connect(analyser);
     startTime = audioContext.currentTime;
-     // Calculate total duration for 16 bars
-     const totalDuration = calculateTotalDuration(bpm, 16); // 16 bars
-     const progressContainer = document.getElementById("recording-progress-container");
-     const progressBar = document.getElementById("recording-progress");
-     progressContainer.style.display = "block";
-     progressBar.value = 0;
 
-        // Update progress bar periodically
-        const updateInterval = 100; // Update every 100ms
-        const totalIntervals = totalDuration * 1000 / updateInterval;
-        let currentInterval = 0;
-    
-        const progressTimer = setInterval(() => {
-          currentInterval++;
-          const progress = (currentInterval / totalIntervals) * 100;
-          progressBar.value = progress;
-          if (currentInterval >= totalIntervals) {
-            clearInterval(progressTimer);
-          }
-        }, updateInterval);
-    
-        // Set a timeout to stop recording after totalDuration seconds
-        recordingTimeout = setTimeout(() => {
-          stopPitchDetection();
-          alert("Recording stopped after 16 bars.");
-        }, totalDuration * 1000);
+    // Configure the recording progress bar
+    const totalDuration = calculateTotalDuration(bpm, 16); // Total duration for 16 bars
+    const progressContainer = document.getElementById("recording-progress-container");
+    const progressBar = document.getElementById("recording-progress");
+    progressContainer.style.display = "block";
+    progressBar.value = 0;
 
-   
+    // Update the progress bar periodically
+    const updateInterval = 100; // Update every 100ms
+    const totalIntervals = (totalDuration * 1000) / updateInterval;
+    let currentInterval = 0;
 
-    /**
-     * Recursive function for pitch detection.
-     */
+    const progressTimer = setInterval(() => {
+      currentInterval++;
+      const progress = (currentInterval / totalIntervals) * 100;
+      progressBar.value = progress;
+      if (currentInterval >= totalIntervals) {
+        clearInterval(progressTimer);
+      }
+    }, updateInterval);
+
+    // Stop recording automatically after the total duration
+    recordingTimeout = setTimeout(() => {
+      stopPitchDetection();
+      alert("Recording stopped after 16 bars.");
+    }, totalDuration * 1000);
+
+    // Recursive function for pitch detection
     function detectPitch() {
       if (!isDetecting) return;
 
@@ -440,33 +458,27 @@ async function startPitchDetection() {
 
       const frequency = yin.detect(buffer, audioContext.sampleRate);
 
-      // Silence detection: end note only after prolonged silence
+      // Logic for silence detection and note stabilization
       if (maxAmplitude < silenceThreshold) {
         if (silenceStartTime === null) {
-          silenceStartTime = currentTime; // Start silence timer
+          silenceStartTime = currentTime;
         }
-
         if (currentTime - silenceStartTime >= minTimeBetweenNotes && activeNote) {
-          // End active note after prolonged silence
           activeNote.duration = currentTime - activeNote.startTime;
           recordedNotes.push(activeNote);
-          activeNote = null; // Reset active note
+          activeNote = null;
         }
-
         requestAnimationFrame(detectPitch);
         return;
       }
 
-      // Reset silence timer
       silenceStartTime = null;
 
-      // Skip invalid frequencies
       if (!frequency || frequency < 40 || frequency > 5000) {
         requestAnimationFrame(detectPitch);
         return;
       }
 
-      // Determine the current note
       const note = frequencyToNote(frequency);
       if (!note) {
         requestAnimationFrame(detectPitch);
@@ -475,50 +487,34 @@ async function startPitchDetection() {
 
       if (activeNote) {
         const elapsedTime = currentTime - activeNote.startTime;
-
-        // Stabilization period: Prevent switching notes during stabilization
-        if (elapsedTime < stabilizationTime) {
-          const semitoneDifference = getSemitoneDifference(note, activeNote.note);
-          if (Math.abs(semitoneDifference) > maxSemitoneChange) {
-            // Ignore changes beyond allowed semitone range
-            requestAnimationFrame(detectPitch);
-            return;
-          }
-        }
-
-        // Check if the current note is similar to the active note
         const semitoneDifference = getSemitoneDifference(note, activeNote.note);
+        if (elapsedTime < stabilizationTime && Math.abs(semitoneDifference) > maxSemitoneChange) {
+          requestAnimationFrame(detectPitch);
+          return;
+        }
         if (Math.abs(semitoneDifference) <= maxSemitoneChange) {
-          // Extend the active note
           activeNote.duration = currentTime - activeNote.startTime;
         } else {
-          // End the current note and start a new one
           activeNote.duration = currentTime - activeNote.startTime;
           recordedNotes.push(activeNote);
-          activeNote = {
-            frequency,
-            note,
-            startTime: currentTime,
-            duration: 0,
-          };
+          activeNote = { frequency, note, startTime: currentTime, duration: 0 };
         }
       } else {
-        // Start a new note
-        activeNote = {
-          frequency,
-          note,
-          startTime: currentTime,
-          duration: 0,
-        };
+        activeNote = { frequency, note, startTime: currentTime, duration: 0 };
         recordedNotes.push(activeNote);
       }
+
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
+
       adjustCanvasWidth(currentTime);
       renderSequencer();
+
       requestAnimationFrame(detectPitch);
     }
+
     detectPitch();
+    stopButton.disabled = false; // Enable the stop button after recording starts
   } catch (err) {
     console.error("Error during pitch detection:", err);
     pitchDisplay.textContent = "Pitch: Error";
@@ -526,6 +522,7 @@ async function startPitchDetection() {
     stopPitchDetection();
   }
 }
+
 
 /**
  * Stops pitch detection.
