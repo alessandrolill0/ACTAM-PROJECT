@@ -62,7 +62,7 @@ const labelWidth = 100; // Space between each note label
 const rowHeight = 20; // Height of each row in the sequencer
 const BEATS_PER_BAR = 1; // 4/4 time signature
 const TOTAL_BARS = 16;
-let melodyPart = null; // Add this line
+let melodyPart = null;
 // ==========================
 // Utility Functions
 // ==========================
@@ -72,6 +72,7 @@ let melodyPart = null; // Add this line
  * @param {number} frequency - Frequency in Hz.
  * @returns {string|null} - Note name or null if out of range.
  */
+
 function frequencyToNote(frequency) {
   if (frequency <= 0) {return null;}
   const semitoneOffset = 12 * Math.log2(frequency / A4);
@@ -171,9 +172,7 @@ function startMetronome() {
 
   const beatsPerBar = 4; // Number of beats per bar
   let currentBeat = 0;
-
   const interval = getMetronomeInterval(bpm) * 1000; // Interval in milliseconds
-
   metronomeInterval = setInterval(() => {
     currentBeat++;
     const isLastBeat = currentBeat === beatsPerBar;
@@ -219,9 +218,8 @@ function adjustCanvasWidth(time) {
 }
 
 function isBlackKey(note) {
-  // Lista di note diesis
   const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
-  const name = note.slice(0, -1); // Estrai il nome della nota senza l'ottava
+  const name = note.slice(0, -1); //Get the note name without the octave
   return blackKeys.includes(name);
 }
  
@@ -231,57 +229,57 @@ function isBlackKey(note) {
 function renderSequencer() {
   //Calculating 16 bars
   const totalDuration = calculateTotalDuration(bpm, TOTAL_BARS);
-  const pixelsPerSecond = 100; // zoom orizzontale
+  const pixelsPerSecond = 100; //Horizontal zoom
   const desiredWidth = labelWidth + totalDuration * pixelsPerSecond;
   sequencerCanvas.width = desiredWidth;
   sequencerCanvas.height = (108 - 36 + 1) * rowHeight; // 36 = C2, 108 = C8
   ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
 
-  // Definisci l'intervallo di note (C2 a C8)
+  //From c2 to c6
   const noteRange = [];
   for (let octave = 2; octave <= 8; octave++) {
     for (let name of noteNames) {
       noteRange.push(`${name}${octave}`);
     }
   }
-  // Disegna linee orizzontali per ogni nota
-ctx.strokeStyle = "rgba(200, 200, 200, 0.5)"; // Colore chiaro per le linee della griglia
+  //Draw the horizontal lines
+ctx.strokeStyle = "rgba(200, 200, 200, 0.5)"; //Light color for the grid
 ctx.lineWidth = 1;
 
 noteRange.forEach((_, index) => {
   const y = index * rowHeight;
   ctx.beginPath();
-  ctx.moveTo(labelWidth, y); // Inizia la linea dalla fine delle etichette
-  ctx.lineTo(sequencerCanvas.width, y); // Fino alla fine del canvas
+  ctx.moveTo(labelWidth, y); //Start the target line
+  ctx.lineTo(sequencerCanvas.width, y); //To the end of the canvas
   ctx.stroke();
 });
-const whiteKeyWidth = 60; // Larghezza delle note bianche (più pronunciate)
-const blackKeyWidth = 47; // Larghezza delle note nere (più strette)
+const whiteKeyWidth = 60; // white notes width
+const blackKeyWidth = 47; //black notes width
 const keyHeight = rowHeight; // Altezza di ogni tasto
 
 noteRange.forEach((note, index) => {
-  const y = index * rowHeight; // Posizione verticale
-  const isBlack = isBlackKey(note); // Controlla se è un diesis
+  const y = index * rowHeight; //Vertical position
+  const isBlack = isBlackKey(note); //Checks if diesis
   if (isBlack) {
     // Disegna tasto nero (spostato verso destra)
-    const blackKeyOffset = whiteKeyWidth - blackKeyWidth; // Differenza per allineare a destra
+    const blackKeyOffset = whiteKeyWidth - blackKeyWidth; //Having the same length of white keys
     ctx.fillStyle = "#000";
     ctx.fillRect(
-      labelWidth - blackKeyWidth - blackKeyOffset, // Sposta il tasto nero verso destra
+      labelWidth - blackKeyWidth - blackKeyOffset, //Putting the key in the right position
       sequencerCanvas.height - y - keyHeight,
       blackKeyWidth,
       keyHeight
     );
   } else {
-    // Disegna tasto bianco
+    //Draw white key
     ctx.fillStyle = "#fff";
     ctx.fillRect(
-      labelWidth - whiteKeyWidth, // Rimane in posizione
+      labelWidth - whiteKeyWidth, //Same position
       sequencerCanvas.height - y - keyHeight,
       whiteKeyWidth,
       keyHeight
     );
-    ctx.strokeStyle = "#000"; // Bordo nero per i tasti bianchi
+    ctx.strokeStyle = "#000"; //Black margin for white keys
     ctx.strokeRect(
       labelWidth - whiteKeyWidth,
       sequencerCanvas.height - y - keyHeight,
@@ -289,8 +287,8 @@ noteRange.forEach((note, index) => {
       keyHeight
     );
 
-    // Disegna l'etichetta "C" per le note bianche
-    if (note.startsWith("C")) {
+    // C for white notes as reference
+  if (note.startsWith("C")) {
       ctx.fillStyle = "#333";
       ctx.font = "11px Verdana";
       ctx.textAlign = "start";
@@ -303,7 +301,7 @@ noteRange.forEach((note, index) => {
   }
 });
 
-  // Disegna le linee della griglia per ogni battuta
+  //Draw the guidance lines for each bar
   const totalBeats = TOTAL_BARS * BEATS_PER_BAR;
   const secondsPerBeat = 60 / bpm;
   const secondsPerBar = BEATS_PER_BAR * secondsPerBeat;
@@ -317,46 +315,37 @@ noteRange.forEach((note, index) => {
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
 
-    // Etichetta ogni battuta
+    //Each bar has an associated number
     ctx.fillStyle = "#333";
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(`Bar ${bar}`, x, 10);
   }
   
-  // Disegna le note registrate con evidenziazione per la nota selezionata
+  //Draw the recorded notes
   recordedNotes.forEach((note, i) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
-    // Calcola la posizione Y per la nota (invertita)
+    //Calc Y position
     const noteIndex = midiNumber - 36; // Offset C2=36
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
-    // Calcola la posizione X e la larghezza della nota
+    //Calc X position
     const xStart = labelWidth + note.startTime * 100;
     const xEnd = labelWidth + (note.startTime + note.duration) * 100;
     const noteWidth = xEnd - xStart;
-    // Aggiungi un bordo rosso se la nota è selezionata
-
-    // Debug: Log delle informazioni della nota
-  console.log(`Drawing note: ${note.note}`);
-  console.log(`Frequency: ${note.frequency}, Start Time: ${note.startTime}, Duration: ${note.duration}`);
-  console.log(`MIDI Number: ${midiNumber}, X Start: ${xStart}, X End: ${xEnd}, Width: ${noteWidth}, Y: ${y}`);
     if (i === selectedNoteIndex) {
-      ctx.strokeStyle = "red"; // Colore del bordo
-      ctx.lineWidth = 2; // Spessore del bordo
+      ctx.strokeStyle = "red"; //red margin
+      ctx.lineWidth = 2; //width
       ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
     }
-
-    // Disegna la nota
+    //Draw the note
     ctx.fillStyle = "rgba(0, 123, 255, 0.6)";
     ctx.fillRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-
-    // Disegna il bordo della nota
+    //Draw the margin
     ctx.strokeStyle = i === selectedNoteIndex ? "red" : "black";
     ctx.lineWidth = 2;
     ctx.strokeRect(xStart, y - rowHeight / 2 + 2, noteWidth, rowHeight - 4);
-
-    // Etichetta della nota
+    //Note name
     ctx.fillStyle = "#fff";
     ctx.font = "8px Arial";
     ctx.textAlign = "center";
@@ -376,26 +365,26 @@ async function startPitchDetection() {
       melodyPart.dispose();
       melodyPart = null;
     }
-    // Initial preparation
+    //Initial preparation
     isDetecting = true;
-    startButton.disabled = true; // Disable the start button
-    stopButton.disabled = true;  // Disable the stop button during countdown
-    playMelodyButton.disabled = true; // Disable playback button
-    resetMelodyButton.disabled = true; // Disable reset button
+    startButton.disabled = true; //Disable the start button
+    stopButton.disabled = true;  //Disable the stop button during countdown
+    playMelodyButton.disabled = true; //Disable playback button
+    resetMelodyButton.disabled = true; //Disable reset button
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
-    deleteNoteButton.disabled = true; // Disable delete button
+    deleteNoteButton.disabled = true; //Disable delete button
     stopPlaybackButton
 
-    recordedNotes = []; // Reset the recorded notes
+    recordedNotes = []; //Reset the recorded notes
     renderSequencer();
 
-    // Check if metronome toggle is enabled
+    //Check if metronome toggle is enabled
     if (metronomeToggle.checked) {
       startMetronome(); // Start metronome in sync with recording
     }
 
-    // Create a container for the countdown display
+    //Create a container for the countdown display
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
     countdownContainer.style.top = "50%";
@@ -408,20 +397,18 @@ async function startPitchDetection() {
     countdownContainer.style.textShadow = "2px 2px 8px rgba(0, 0, 0, 0.5)"; // Subtle shadow
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
+    //Countdown logic linked to BPM
+    const beatDuration = 60 / bpm; // Calculate beat duration based on BPM
+    for (let i = 3; i > 0; i--) {
+      countdownContainer.textContent = i; //Display the current countdown number
+      await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Wait for one beat
+    }
 
-    // Countdown logic linked to BPM
-const beatDuration = 60 / bpm; // Calculate beat duration based on BPM
+    countdownContainer.textContent = "It's time to record!"; //Final message
+    countdownContainer.style.fontSize = "100px"; //Adjust font size for the message
+    setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); //Remove the message after 1.5 beats
 
-for (let i = 3; i > 0; i--) {
-  countdownContainer.textContent = i; // Display the current countdown number
-  await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Wait for one beat
-}
-
-countdownContainer.textContent = "It's time to record!"; // Final message
-countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
-setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Remove the message after 1.5 beats
-
-    // Access the microphone and initialize the audio
+    //Access the microphone and initialize the audio
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -433,14 +420,14 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
     source.connect(analyser);
     startTime = audioContext.currentTime;
 
-    // Configure the recording progress bar
+    //Configure the recording progress bar
     const totalDuration = calculateTotalDuration(bpm, 16); // Total duration for 16 bars
     const progressContainer = document.getElementById("recording-progress-container");
     const progressBar = document.getElementById("recording-progress");
     progressContainer.style.display = "block";
     progressBar.value = 0;
 
-    // Update the progress bar periodically
+    //Update the progress bar periodically
     const updateInterval = 100; // Update every 100ms
     const totalIntervals = (totalDuration * 1000) / updateInterval;
     let currentInterval = 0;
@@ -454,13 +441,13 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
       }
     }, updateInterval);
 
-    // Stop recording automatically after the total duration
+    //Stop recording automatically after the total duration
     recordingTimeout = setTimeout(() => {
       stopPitchDetection();
       alert("Recording stopped after 16 bars.");
     }, totalDuration * 1000);
 
-    // Recursive function for pitch detection
+    //Recursive function for pitch detection
     function detectPitch() {
       if (!isDetecting) return;
 
@@ -471,7 +458,7 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
 
       const frequency = yin.detect(buffer, audioContext.sampleRate);
 
-      // Logic for silence detection and note stabilization
+      //Logic for silence detection and note stabilization
       if (maxAmplitude < silenceThreshold) {
         if (silenceStartTime === null) {
           silenceStartTime = currentTime;
@@ -522,12 +509,11 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
 
       adjustCanvasWidth(currentTime);
       renderSequencer();
-
       requestAnimationFrame(detectPitch);
     }
 
     detectPitch();
-    stopButton.disabled = false; // Enable the stop button after recording starts
+    stopButton.disabled = false; //Enable the stop button after recording starts
   } catch (err) {
     console.error("Error during pitch detection:", err);
     pitchDisplay.textContent = "Pitch: Error";
@@ -535,7 +521,6 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
     stopPitchDetection();
   }
 }
-
 
 /**
  * Stops pitch detection.
@@ -555,12 +540,12 @@ function stopPitchDetection() {
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-  // Clear the recording timeout if it exists
+  //Clear the recording timeout if it exists
   if (recordingTimeout) {
     clearTimeout(recordingTimeout);
     recordingTimeout = null;}
 
-  // Hide the progress bar
+  //Hide the progress bar
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
 
@@ -580,22 +565,22 @@ playMelodyButton.addEventListener("click", async () => {
     alert("No melody recorded to play.");
     return;
   }
-
-  // Start the Tone.js context
+  //Devo mettere qui un update melody?
+  //Start the Tone.js context
   await Tone.start();
 
-  // Calculate scaling factor based on BPM
+  //Calculate scaling factor based on BPM
   const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
   const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
   const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
 
-  // Stop any existing melodyPart before creating a new one
+  //Stop any existing melodyPart before creating a new one
   if (melodyPart) {
     melodyPart.stop();
     melodyPart.dispose();
   }
 
-  // Create a new Tone.Part for the recorded melody
+  //Create a new Tone.Part for the recorded melody
   melodyPart = new Tone.Part((time, note) => {
     const osc = new Tone.Oscillator(note.frequency, "sine").toDestination();
     osc.start(time).stop(time + note.duration * timeScale); // Play the note with the scaled duration
@@ -605,35 +590,35 @@ playMelodyButton.addEventListener("click", async () => {
     duration: note.duration * timeScale,
   })));
 
-  melodyPart.loop = true; // Enable looping
+  melodyPart.loop = true; //Enable looping
   melodyPart.loopStart = 0;
   melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale; // Loop duration based on the melody length
 
-  melodyPart.start(0); // Start the melody at the beginning
-  Tone.Transport.start(); // Start the Tone.js Transport
+  melodyPart.start(0); //Start the melody at the beginning
+  Tone.Transport.start(); //Start the Tone.js Transport
 
-  // Enable the Stop Playback button and disable the Play Melody button
+  //Enable the Stop Playback button and disable the Play Melody button
   stopPlaybackButton.disabled = false;
   playMelodyButton.disabled = true;
 });
 
 function updateMelodyPart() {
   if (melodyPart) {
-    melodyPart.stop(); // Stop the current part
-    melodyPart.dispose(); // Dispose of the current part
+    melodyPart.stop(); //Stop the current part
+    melodyPart.dispose(); //Dispose of the current part
   }
 
   // Calculate scaling factor based on BPM
-  const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
-  const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
+  const defaultQuarterNoteDuration = 60 / 120; //Reference BPM
+  const scaledQuarterNoteDuration = 60 / bpm; //Current BPM duration
   const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
 
-  // Recreate melodyPart with updated recordedNotes
+  //Recreate melodyPart with updated recordedNotes
   melodyPart = new Tone.Part((time, note) => {
-    // Create a new oscillator
+    //Create a new oscillator
     const osc = new Tone.Oscillator(note.frequency, document.getElementById("waveform1-select").value);
 
-    // Create a new ADSR envelope
+    //Create a new ADSR envelope
     const envelope = new Tone.AmplitudeEnvelope({
       attack: parseFloat(document.getElementById("attack-slider").value),
       decay: parseFloat(document.getElementById("decay-slider").value),
@@ -641,20 +626,20 @@ function updateMelodyPart() {
       release: parseFloat(document.getElementById("release-slider").value),
     });
 
-    // Create a new filter
+    //Create a new filter
     const filter = new Tone.Filter({
       frequency: parseFloat(document.getElementById("filter-frequency").value),
       Q: parseFloat(document.getElementById("filter-resonance").value), // Resonance
       type: "lowpass",
     });
 
-    // Create a new distortion
+    //Create a new distortion
     const distortion = new Tone.Distortion({
       distortion: parseFloat(document.getElementById("distortion-slider").value),
       oversample: "4x",
     });
 
-    // Create a new chorus
+    //Create a new chorus
     const chorus = new Tone.Chorus({
       frequency: parseFloat(document.getElementById("chorus-frequency").value),
       depth: parseFloat(document.getElementById("chorus-depth").value),
@@ -663,14 +648,14 @@ function updateMelodyPart() {
       delayTime: 3.5,
     }).start();
 
-    // Chain effects
+    //Chain effects
     osc.connect(filter);
     filter.connect(distortion);
     distortion.connect(chorus);
     chorus.connect(envelope);
     envelope.toDestination();
 
-    // Start and stop the oscillator with the envelope
+    //Start and stop the oscillator with the envelope
     envelope.triggerAttackRelease(note.duration * timeScale, time);
     osc.start(time).stop(time + note.duration * timeScale);
   }, recordedNotes.map(note => ({
@@ -682,11 +667,8 @@ function updateMelodyPart() {
   melodyPart.loop = true; // Enable looping
   melodyPart.loopStart = 0;
   melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale;
-
   melodyPart.start(0); // Restart the melody
 }
-
-
 
 // ==========================
 // Melody Reset Function
@@ -701,7 +683,7 @@ resetMelodyButton.addEventListener("click", () => {
     return;
   }
 
-  // Confirm the action
+  //Confirm the action
   const confirmReset = confirm("Are you sure you want to reset the melody?");
   if (!confirmReset) return;
   if (melodyPart) {
@@ -709,19 +691,19 @@ resetMelodyButton.addEventListener("click", () => {
     melodyPart.dispose();
     melodyPart = null;
   }
-  // Stop pitch detection if active
+  //Stop pitch detection if active
   if (isDetecting) {
     stopPitchDetection();
   }
-   // Reset variables
+   //Reset variables
    recordedNotes = [];
    selectedNoteIndex = null; // Deselect any selected note
    renderSequencer();
-  // Update button states
+  //Update button states
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true;
   stopPlaybackButton.disabled = true;
-  // Reset visual displays
+  //Reset visual displays
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Note: N/A";
 });
@@ -730,7 +712,7 @@ resetMelodyButton.addEventListener("click", () => {
 // Event Listeners
 // ==========================
 
-// Handle metronome toggle button
+//Handle metronome toggle button
 metronomeToggle.addEventListener("click", () => {
   if (metronomeActive) {
     stopMetronome();
@@ -741,13 +723,11 @@ metronomeToggle.addEventListener("click", () => {
 
 bpmInput.addEventListener("input", (event) => {
   bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
-
   if (metronomeActive) {
     stopMetronome(); // Stop current metronome
     startMetronome(); // Restart metronome with new BPM
   }
-
-  // Disable BPM input during recording to maintain consistent recording duration
+  //Disable BPM input during recording to maintain consistent recording duration
   if (isDetecting) {
     bpmInput.disabled = true;
   } else {
@@ -756,8 +736,7 @@ bpmInput.addEventListener("input", (event) => {
   renderSequencer();
 });
 
-
-// Add event listeners to pitch control buttons
+//Add event listeners to pitch control buttons
 startButton.addEventListener("click", startPitchDetection);
 stopButton.addEventListener("click", stopPitchDetection);
 
@@ -770,7 +749,6 @@ document.addEventListener("DOMContentLoaded", () => {
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true; // Initialize reset button as disabled
   stopPlaybackButton.disabled = true; // Initialize the Stop Playback button as disabled
- 
   renderSequencer();
 });
 /**
@@ -786,15 +764,14 @@ function shiftOctave(direction) {
     alert("No notes to shift.");
     return;
   }
-
   recordedNotes.forEach((note) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
 
-    // Shift MIDI number by 12 semitones (1 octave)
+    //Shift MIDI number by 12 semitones (1 octave)
     const newMidiNumber = midiNumber + direction * 12;
 
-    // Ensure it remains within the valid MIDI range (C2 to C8)
+    //Ensure it remains within the valid MIDI range (C2 to C8)
     if (newMidiNumber < 36 || newMidiNumber > 108) {
       alert("Shifting exceeds the valid range of C2 to C8. Adjustment canceled.");
       return;
@@ -803,7 +780,7 @@ function shiftOctave(direction) {
     const newNoteName = noteNames[newMidiNumber % 12] + Math.floor(newMidiNumber / 12 - 1);
     note.note = newNoteName; // Update note name
 
-    // Update frequency based on the new MIDI number
+    //Update frequency based on the new MIDI number
     const A4 = 440;
     note.frequency = A4 * Math.pow(2, (newMidiNumber - 69) / 12);
     
@@ -813,7 +790,7 @@ function shiftOctave(direction) {
 }
 
 
-// Event listeners for the octave shift buttons
+//Event listeners for the octave shift buttons
 document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
 
@@ -824,13 +801,13 @@ document.getElementById("shift-octave-down").addEventListener("click", () => shi
 sequencerCanvas.addEventListener("mousedown", (event) => {
   const rect = sequencerCanvas.getBoundingClientRect();
   const lastNote=null;
-  // Adjust coordinates based on canvas scaling
+  //Adjust coordinates based on canvas scaling
   const scaleX = sequencerCanvas.width / rect.width;
   const scaleY = sequencerCanvas.height / rect.height;
 
   const x = (event.clientX - rect.left) * scaleX;
   const y = (event.clientY - rect.top) * scaleY;
-  // Iterate through all recorded notes to check for interaction
+  //Iterate through all recorded notes to check for interaction
   for (let i = 0; i < recordedNotes.length; i++) {
     lastSelectedNoteIndex = i;
     const note = recordedNotes[i];
@@ -841,9 +818,9 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
     const xStart = labelWidth + note.startTime * 100;
     const xEnd = xStart + note.duration * 100;
 
-    const resizeThreshold = 5; // Pixels near the edge to trigger resizing
+    const resizeThreshold = 5; //Pixels near the edge to trigger resizing
 
-    // Check if the click is within the vertical bounds of the note
+    //Check if the click is within the vertical bounds of the note
     if ( y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       if (x >= xStart - resizeThreshold && x <= xStart + resizeThreshold) {
         // Clicked near the start of the note for resizing
@@ -877,7 +854,7 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
       }
     }
   }
-  // If no note is selected, deselect any previously selected note
+  //If no note is selected, deselect any previously selected note
   selectedNoteIndex = null;
   renderSequencer();
 });
@@ -899,7 +876,7 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
     return; // Exit if not dragging
   const rect = sequencerCanvas.getBoundingClientRect();
 
-  // Adjust coordinates based on canvas scaling
+  //Adjust coordinates based on canvas scaling
   const scaleX = sequencerCanvas.width / rect.width;
   const scaleY = sequencerCanvas.height / rect.height;
 
@@ -938,7 +915,6 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
       draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); // Update frequency
     }
   }
-
   renderSequencer(); // Update the sequencer visualization
 });
 
@@ -1038,14 +1014,14 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
     if ( x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       lastSelectedNoteIndex = i;
       selectedNoteIndex = i;
-      dragOffsetX = x - xStart; // Calculate horizontal offset
-      dragOffsetY = y - yCenter; // Calculate vertical offset
-      isDragging = true; // Enter dragging mode
-      renderSequencer(); // Update the sequencer visualization
+      dragOffsetX = x - xStart; //Calculate horizontal offset
+      dragOffsetY = y - yCenter; //Calculate vertical offset
+      isDragging = true; //Enter dragging mode
+      renderSequencer(); //Update the sequencer visualization
       return;
     }
   }
-   // If no note is selected, deselect any previously selected note
+   //If no note is selected, deselect any previously selected note
    selectedNoteIndex = null;
    renderSequencer();
 });
@@ -1055,7 +1031,7 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
  * Allows for dragging and resizing of notes based on touch movement.
  */
 sequencerCanvas.addEventListener("touchmove", (event) => {
-  if (!isDragging || selectedNoteIndex === null) return; // Exit if not dragging
+  if (!isDragging || selectedNoteIndex === null) return; //Exit if not dragging
 
   const touch = event.touches[0];
   const rect = sequencerCanvas.getBoundingClientRect();
@@ -1071,10 +1047,10 @@ sequencerCanvas.addEventListener("touchmove", (event) => {
 
   // Prevent overlapping with other notes
   if (!isOverlapping(newStartTime, clampedMidiNumber, selectedNoteIndex)) {
-    draggedNote.startTime = Math.max(0, newStartTime); // Update start time
-    draggedNote.note = newNoteName;                   // Update note name
-    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); // Update frequency
-    renderSequencer(); // Update the sequencer visualization
+    draggedNote.startTime = Math.max(0, newStartTime); //Update start time
+    draggedNote.note = newNoteName;                   //Update note name
+    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); //Update frequency
+    renderSequencer(); //Update the sequencer visualization
   }
 });
 
@@ -1085,7 +1061,7 @@ sequencerCanvas.addEventListener("touchend", () => {
   if (isDragging) {
     isDragging = false;
     selectedNoteIndex = null;
-    renderSequencer(); // Finalize the sequencer visualization
+    renderSequencer(); //Finalize the sequencer visualization
   }
 });
 
@@ -1165,7 +1141,7 @@ function calculateTotalDuration(bpm, bars = TOTAL_BARS) {
   return (bars * BEATS_PER_BAR) / beatsPerSecond;
 }
 
-// Shared envelope
+//Shared envelope
 const envelope = new Tone.AmplitudeEnvelope({
   attack: 0.1,
   decay: 0.2,
@@ -1183,69 +1159,67 @@ const chorus = new Tone.Chorus({
 
 // Filter
 const filter = new Tone.Filter({
-  frequency: 500, // Default cutoff frequency
-  type: "lowpass", // Default filter type
-  rolloff: -12, // Slope of the filter
-  Q: 1, // Default resonance
+  frequency: 500, //Default cutoff frequency
+  type: "lowpass", //Default filter type
+  rolloff: -12, //Slope of the filter
+  Q: 1, //Default resonance
 });
 
 // Distortion
 const distortion = new Tone.Distortion({
-  distortion: 0.4, // Default amount of distortion
-  oversample: "4x", // Increases audio fidelity
+  distortion: 0.4, //Default amount of distortion
+  oversample: "4x", //Increases audio fidelity
 });
 
 filter.connect(distortion);
-distortion.connect(chorus); // Process audio through chorus
+distortion.connect(chorus); //Process audio through chorus
 chorus.connect(envelope);
 envelope.toDestination();  
 
 const lfo = new Tone.LFO({
-  type: "sine", // Default LFO waveform
-  frequency: 0.5, // Default frequency in Hz
-  min: 200, // Minimum modulation range
-  max: 1000, // Maximum modulation range
-}).start(); // Start the LFO
+  type: "sine", //Default LFO waveform
+  frequency: 0.5, //Default frequency in Hz
+  min: 200, //Minimum modulation range
+  max: 1000, //Maximum modulation range
+}).start(); //Start the LFO
 
-// Update the LFO waveform
+//Update the LFO waveform
 function setLfoWaveform(type) {
   lfo.type = type; // Update the LFO waveform type
 }
 
-// Attach event listener for the LFO waveform selection
+//Attach event listener for the LFO waveform selection
 document.getElementById("lfo-waveform").addEventListener("change", (event) => {
   setLfoWaveform(event.target.value);
 });
 let lfoEnabled = false; // Toggle for LFO effect on the filter
 
-// Function to toggle LFO
+//Function to toggle LFO
 function toggleLfo(enabled) {
   if (enabled) {
     lfo.connect(filter.frequency); // Connect LFO to filter frequency
   } else {
     lfo.disconnect(filter.frequency);
     filter.frequency.value = 500;
-    document.getElementById("filter-frequency-        value").textContent = "500 Hz";
+    document.getElementById("filter-frequency-value").textContent = "500 Hz";
   }
   lfoEnabled = enabled;
 }
 
-// Oscillators and gains
+//Oscillators and gains
 const osc1 = new Tone.Oscillator("C3", "sine").start();
 const osc1Gain = new Tone.Gain(0.5).connect(filter);
-
 const osc2 = new Tone.Oscillator("C3", "sine").start();
 const osc2Gain = new Tone.Gain(0.5).connect(filter);
-
 const osc3 = new Tone.Oscillator("C3", "sine").start();
 const osc3Gain = new Tone.Gain(0.5).connect(filter);
 
-// Connect oscillators to filter
+//Connect oscillators to filter
 osc1.connect(osc1Gain);
 osc2.connect(osc2Gain);
 osc3.connect(osc3Gain);
 
-// Update oscillator waveforms
+//Update oscillator waveforms
 function setOsc1WaveType(type) {
   osc1.type = type;
 }
@@ -1259,7 +1233,7 @@ function setOsc3WaveType(type) {
 }
 
 
-// Control oscillator volumes
+//Control oscillator volumes
 function setOsc1Volume(value) {
   osc1Gain.gain.value = value;
 }
@@ -1272,12 +1246,12 @@ function setOsc3Volume(value) {
   osc3Gain.gain.value = value;
 }
 
-// Update envelope dynamically
+//Update envelope dynamically
 function updateEnvelope(param, value) {
   envelope[param] = parseFloat(value);
 }
 
-// Update filter dynamically
+//Update filter dynamically
 function setFilterFrequency(value) {
   filter.frequency.value = value;
 }
@@ -1298,23 +1272,23 @@ function setChorusSpread(value) {
   chorus.spread = value;
 }
 
-// Update LFO dynamically
+//Update LFO dynamically
 function setLfoFrequency(value) {
   lfo.frequency.value = value; // Update LFO rate
 }
 
 function setLfoAmount(value) {
-  // Dynamically set the LFO modulation depth
+  //Dynamically set the LFO modulation depth
   lfo.min = filter.frequency.value - value; // Lower bound of modulation
   lfo.max = filter.frequency.value + value; // Upper bound of modulation
 }
 
-// Update distortion dynamically
+//Update distortion dynamically
 function setDistortionAmount(value) {
   distortion.distortion = value;
 }
 
-// Attach event listeners for waveform selection
+//Attach event listeners for waveform selection
 document.getElementById("waveform1-select").addEventListener("change", (event) => {
   setOsc1WaveType(event.target.value);
   updateMelodyPart();
@@ -1330,7 +1304,7 @@ document.getElementById("waveform3-select").addEventListener("change", (event) =
   updateMelodyPart();
 });
 
-// Attach event listeners for volume sliders
+//Attach event listeners for volume sliders
 document.getElementById("volume1-slider").addEventListener("input", (event) => {
   setOsc1Volume(parseFloat(event.target.value));
   updateMelodyPart();
@@ -1367,7 +1341,7 @@ document.getElementById("chorus-spread").addEventListener("input", (event) => {
   updateMelodyPart();
 });
 
-// Attach event listeners for ADSR sliders
+//Attach event listeners for ADSR sliders
 document.querySelectorAll(".adsr-slider").forEach((slider) => {
   slider.addEventListener("input", (event) => {
     const param = event.target.dataset.param;
@@ -1378,7 +1352,7 @@ document.querySelectorAll(".adsr-slider").forEach((slider) => {
   });
 });
 
-// Attach event listeners for filter controls
+//Attach event listeners for filter controls
 document.getElementById("filter-frequency").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setFilterFrequency(value);
@@ -1393,7 +1367,7 @@ document.getElementById("filter-resonance").addEventListener("input", (event) =>
   updateMelodyPart();
 });
 
-// Attach event listener for LFO
+//Attach event listener for LFO
 document.getElementById("lfo-frequency").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setLfoFrequency(value);
@@ -1413,12 +1387,13 @@ document.getElementById("lfo-toggle").addEventListener("change", (event) => {
   updateMelodyPart();
 });
 
-// Attach event listener for distortion
+//Attach event listener for distortion
 document.getElementById("distortion-slider").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setDistortionAmount(value);
   document.getElementById("distortion-value").textContent = value;
 });
+
 // ==========================
 // Stop Playback Button Event Listener
 // ==========================
@@ -1432,15 +1407,15 @@ stopPlaybackButton.addEventListener("click", () => {
     melodyPart = null;
   }
 
-  // Stop the Tone.Transport if no other parts are active
+  //Stop the Tone.Transport if no other parts are active
   if (Tone.Transport.state === 'started') {
     Tone.Transport.stop();
   }
-
-  // Re-enable the Play button and disable the Stop Playback button
   playMelodyButton.disabled = false;
   stopPlaybackButton.disabled = true;
 });
+
+//Metronome toggle during the rec
 metronomeToggle.addEventListener("change", () => {
   if (!isDetecting) {
     if (metronomeToggle.checked) {
