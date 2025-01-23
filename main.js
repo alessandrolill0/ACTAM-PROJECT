@@ -385,6 +385,11 @@ async function startPitchDetection() {
     recordedNotes = []; // Reset the recorded notes
     renderSequencer();
 
+    // Check if metronome toggle is enabled
+    if (metronomeToggle.checked) {
+      startMetronome(); // Start metronome in sync with recording
+    }
+
     // Create a container for the countdown display
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
@@ -399,14 +404,17 @@ async function startPitchDetection() {
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
 
-    // Countdown logic: show "3", "2", "1", then "It's time to record!"
-    for (let i = 3; i > 0; i--) {
-      countdownContainer.textContent = i; // Display the current countdown number
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
-    }
-    countdownContainer.textContent = "It's time to record!"; // Final message
-    countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
-    setTimeout(() => document.body.removeChild(countdownContainer), 1500); // Remove the message after 1.5 seconds
+    // Countdown logic linked to BPM
+const beatDuration = 60 / bpm; // Calculate beat duration based on BPM
+
+for (let i = 3; i > 0; i--) {
+  countdownContainer.textContent = i; // Display the current countdown number
+  await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Wait for one beat
+}
+
+countdownContainer.textContent = "It's time to record!"; // Final message
+countdownContainer.style.fontSize = "100px"; // Adjust font size for the message
+setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Remove the message after 1.5 beats
 
     // Access the microphone and initialize the audio
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -551,12 +559,7 @@ function stopPitchDetection() {
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
 
-  // Update the duration of the last note
- /* if (recordedNotes.length > 0) {
-    const lastNote = recordedNotes[recordedNotes.length - 1];
-    const endTime = audioContext.currentTime - startTime;
-    lastNote.duration = endTime - lastNote.startTime;
-  }*/
+  stopMetronome();
   renderSequencer();
 }
 
@@ -1432,4 +1435,13 @@ stopPlaybackButton.addEventListener("click", () => {
   // Re-enable the Play button and disable the Stop Playback button
   playMelodyButton.disabled = false;
   stopPlaybackButton.disabled = true;
+});
+metronomeToggle.addEventListener("change", () => {
+  if (!isDetecting) {
+    if (metronomeToggle.checked) {
+      startMetronome();
+    } else {
+      stopMetronome();
+    }
+  }
 });

@@ -17,7 +17,6 @@
       <button id="start">Start Recording</button>
       <button id="stop" disabled>Stop Recording</button>
       <button id="play-melody" disabled>Play Melody</button>
-      <button id="metronome-toggle">Metronome</button>
       <button id="shift-octave-up">Shift Octave Up</button>
       <button id="shift-octave-down">Shift Octave Down</button>
       <button id="reset-melody" disabled>Reset Melody</button>
@@ -37,7 +36,11 @@
     </div>
   </div>
 
-
+  <label>
+    <input type="checkbox" id="metronome-toggle" checked />
+    Enable Metronome
+  </label>
+  
     <!-- Actual State -->
     <div id="status">
       <div id="pitch">Pitch: N/A</div>
