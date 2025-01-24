@@ -717,8 +717,13 @@ function createAndStartMelodyPart() {
 function createMelody() {
   // Dispose of any existing melodyPart
   if (melodyPart) {
-    melodyPart.stop();
-    melodyPart.dispose();
+    try {
+      //envelope.dispose(); // Rilascia manualmente l'ADSR
+      melodyPart.stop();
+      melodyPart.dispose();
+    } catch (error) {
+      console.error("Errore durante melodyPart.stop() o dispose():", error);
+    }
     melodyPart = null;
   }
 
