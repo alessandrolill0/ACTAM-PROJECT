@@ -22,7 +22,7 @@
       <button id="reset-melody" disabled>Reset Melody</button>
       <button id="delete-note" disabled>Delete Note</button>
       <button id="stop-playback" disabled>Stop Playback</button> 
-      
+      <button id="save-melody" disabled>Save Melody</button>
 
     </div>
     <div id="recording-progress-container" style="display: none; margin-top: 10px;">
@@ -40,7 +40,10 @@
     <input type="checkbox" id="metronome-toggle" checked />
     Enable Metronome
   </label>
-
+  <div id="saved-melodies">
+    <h2>Saved Melodies</h2>
+    <ul id="melody-list"></ul>
+  </div>
 
 
   
@@ -165,10 +168,6 @@
       <span id="chorus-spread-value"></span>
     </div>
   </main>
-
-
-  <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-firestore.js"></script>
   <script src="http://unpkg.com/tone"></script>
   <script type="module" src="main.js"></script>
 </body>

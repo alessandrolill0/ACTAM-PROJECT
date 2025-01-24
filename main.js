@@ -1,10 +1,9 @@
 //DataBase Imports
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-// Your web app's Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyB7SWop84nuQls0y6Jya1gjUVzOW2kftRo",
   authDomain: "actam-project-42ae0.firebaseapp.com",
@@ -16,6 +15,95 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function saveMelodyToDatabase(melodyName) {
+  if (recordedNotes.length === 0) {
+    alert("No melody to save.");
+    return;
+  }
+
+  const melodyData = recordedNotes.map(note => ({
+    note: note.note,
+    frequency: note.frequency,
+    startTime: note.startTime,
+    duration: note.duration,
+  }));
+
+  try {
+    const docRef = await addDoc(collection(db, "melodies"), {
+      name: melodyName,
+      bpm: bpm,
+      notes: melodyData,
+      createdAt: new Date().toISOString(),
+    });
+    alert(`Melody "${melodyName}" saved successfully! ID: ${docRef.id}`);
+  } catch (error) {
+    console.error("Error saving melody:", error);
+    alert("Error saving melody. Please try again.");
+  }
+}
+
+document.getElementById("save-melody").addEventListener("click", () => {
+  if (recordedNotes.length === 0) {
+    alert("No melody recorded to save.");
+    return;
+  }
+
+  const melodyName = prompt("Enter a name for your melody:");
+  if (melodyName) {
+    saveMelodyToDatabase(melodyName);
+  }
+});
+
+function toggleSaveButtonState() {
+  const saveButton = document.getElementById("save-melody");
+  saveButton.disabled = recordedNotes.length === 0;
+}
+
+async function fetchMelodies() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "melodies"));
+    const melodies = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    console.log("Melodies:", melodies);
+    // Render melodies in the UI
+  } catch (error) {
+    console.error("Error fetching melodies:", error);
+  }
+}
+function renderMelodies(melodies) {
+  const melodyList = document.getElementById("melody-list");
+  melodyList.innerHTML = "";
+
+  melodies.forEach(melody => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${melody.name} (BPM: ${melody.bpm})`;
+    listItem.addEventListener("click", () => playSavedMelody(melody));
+    melodyList.appendChild(listItem);
+  });
+}
+
+function playSavedMelody(melody) {
+  if (melody.notes.length === 0) {
+    alert("No notes in this melody.");
+    return;
+  }
+
+  // Example of playing melody using Tone.js
+  melody.notes.forEach(note => {
+    const osc = new Tone.Oscillator(note.frequency, "sine").toDestination();
+    osc.start(note.startTime).stop(note.startTime + note.duration);
+  });
+
+  alert(`Playing melody: ${melody.name}`);
+}
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchMelodies();
+});
+
 
 
 // ==========================
@@ -515,6 +603,9 @@ async function startPitchDetection() {
     noteDisplay.textContent = "Detected Note: N/A";
     stopPitchDetection();
   }
+  toggleSaveButtonState();
+  document.getElementById("save-melody").disabled = true;
+
 }
 
 /**
@@ -552,6 +643,8 @@ function stopPitchDetection() {
   }
 
   renderSequencer();
+  document.getElementById("save-melody").disabled = recordedNotes.length === 0;
+
 }
 
 /**
