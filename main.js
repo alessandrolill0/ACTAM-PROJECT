@@ -618,14 +618,14 @@ melodyPart = new Tone.Part((time, note) => {
     delayTime: 3.5,
   }).start();
 
-  // Chain effects
+  //Chain effects
   osc.connect(filter);
   filter.connect(distortion);
   distortion.connect(chorus);
   chorus.connect(envelope);
   envelope.toDestination();
 
-  // Start and stop the oscillator with the envelope
+  //Start and stop the oscillator with the envelope
   envelope.triggerAttackRelease(note.duration * timeScale, time);
   osc.start(time).stop(time + note.duration * timeScale);
 }, recordedNotes.map(note => ({
