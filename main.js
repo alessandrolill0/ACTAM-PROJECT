@@ -1,3 +1,23 @@
+//DataBase Imports
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB7SWop84nuQls0y6Jya1gjUVzOW2kftRo",
+  authDomain: "actam-project-42ae0.firebaseapp.com",
+  projectId: "actam-project-42ae0",
+  storageBucket: "actam-project-42ae0.firebasestorage.app",
+  messagingSenderId: "1008439092855",
+  appId: "1:1008439092855:web:44f86152c587efe266c872"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
 // ==========================
 // Imports and Configurations
 // ==========================
