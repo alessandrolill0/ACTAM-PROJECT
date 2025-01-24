@@ -532,65 +532,30 @@ function stopPitchDetection() {
 // Play Melody Button Event Listener
 // ==========================
 
-playMelodyButton.addEventListener("click", async () => {
-  if (recordedNotes.length === 0) {
-    alert("No melody recorded to play.");
-    return;
-  }
-  //Devo mettere qui un update melody?
-  //Start the Tone.js context
-  await Tone.start();
 
-  //Calculate scaling factor based on BPM
+
+/**
+ * Creates and starts the melodyPart using current synth parameters.
+ */
+function createAndStartMelodyPart() {
+  // Stop and dispose of any existing melodyPart
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
+
+  // Calculate scaling factor based on BPM
   const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
   const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
   const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
 
-  //Stop any existing melodyPart before creating a new one
-  if (melodyPart) {
-    melodyPart.stop();
-    melodyPart.dispose();
-  }
-
-  //Create a new Tone.Part for the recorded melody
+  // Create a new Tone.Part with current synth parameters
   melodyPart = new Tone.Part((time, note) => {
-    const osc = new Tone.Oscillator(note.frequency, "sine").toDestination();
-    osc.start(time).stop(time + note.duration * timeScale); // Play the note with the scaled duration
-  }, recordedNotes.map(note => ({
-    time: note.startTime * timeScale,
-    frequency: note.frequency,
-    duration: note.duration * timeScale,
-  })));
-
-  melodyPart.loop = true; //Enable looping
-  melodyPart.loopStart = 0;
-  melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale; // Loop duration based on the melody length
-
-  melodyPart.start(0); //Start the melody at the beginning
-  Tone.Transport.start(); //Start the Tone.js Transport
-
-  //Enable the Stop Playback button and disable the Play Melody button
-  stopPlaybackButton.disabled = false;
-  playMelodyButton.disabled = true;
-});
-
-function updateMelodyPart() {
-  if (melodyPart) {
-    melodyPart.stop(); //Stop the current part
-    melodyPart.dispose(); //Dispose of the current part
-  }
-
-  // Calculate scaling factor based on BPM
-  const defaultQuarterNoteDuration = 60 / 120; //Reference BPM
-  const scaledQuarterNoteDuration = 60 / bpm; //Current BPM duration
-  const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
-
-  //Recreate melodyPart with updated recordedNotes
-  melodyPart = new Tone.Part((time, note) => {
-    //Create a new oscillator
+    // Create a new oscillator with the selected waveform
     const osc = new Tone.Oscillator(note.frequency, document.getElementById("waveform1-select").value);
 
-    //Create a new ADSR envelope
+    // Create a new ADSR envelope
     const envelope = new Tone.AmplitudeEnvelope({
       attack: parseFloat(document.getElementById("attack-slider").value),
       decay: parseFloat(document.getElementById("decay-slider").value),
@@ -598,20 +563,18 @@ function updateMelodyPart() {
       release: parseFloat(document.getElementById("release-slider").value),
     });
 
-    //Create a new filter
+    // Create and configure filter, distortion, chorus, etc., as per current settings
     const filter = new Tone.Filter({
       frequency: parseFloat(document.getElementById("filter-frequency").value),
       Q: parseFloat(document.getElementById("filter-resonance").value), // Resonance
       type: "lowpass",
     });
 
-    //Create a new distortion
     const distortion = new Tone.Distortion({
       distortion: parseFloat(document.getElementById("distortion-slider").value),
       oversample: "4x",
     });
 
-    //Create a new chorus
     const chorus = new Tone.Chorus({
       frequency: parseFloat(document.getElementById("chorus-frequency").value),
       depth: parseFloat(document.getElementById("chorus-depth").value),
@@ -620,14 +583,14 @@ function updateMelodyPart() {
       delayTime: 3.5,
     }).start();
 
-    //Chain effects
+    // Chain effects
     osc.connect(filter);
     filter.connect(distortion);
     distortion.connect(chorus);
     chorus.connect(envelope);
     envelope.toDestination();
 
-    //Start and stop the oscillator with the envelope
+    // Start and stop the oscillator with the envelope
     envelope.triggerAttackRelease(note.duration * timeScale, time);
     osc.start(time).stop(time + note.duration * timeScale);
   }, recordedNotes.map(note => ({
@@ -636,10 +599,106 @@ function updateMelodyPart() {
     duration: note.duration * timeScale,
   })));
 
-  melodyPart.loop = true; // Enable looping
+  // Configure looping
+  melodyPart.loop = true;
   melodyPart.loopStart = 0;
   melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale;
-  melodyPart.start(0); // Restart the melody
+
+  // Start the melodyPart
+  melodyPart.start(0);
+  if (Tone.Transport.state !== 'started') {
+    Tone.Transport.start();
+  }
+
+  // Update button states
+  stopPlaybackButton.disabled = false;
+  playMelodyButton.disabled = true;
+}
+function createMelody(){
+// Calculate scaling factor based on BPM
+const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
+const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
+const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
+
+// Create a new Tone.Part with current synth parameters
+melodyPart = new Tone.Part((time, note) => {
+  // Create a new oscillator with the selected waveform
+  const osc = new Tone.Oscillator(note.frequency, document.getElementById("waveform1-select").value);
+
+  // Create a new ADSR envelope
+  const envelope = new Tone.AmplitudeEnvelope({
+    attack: parseFloat(document.getElementById("attack-slider").value),
+    decay: parseFloat(document.getElementById("decay-slider").value),
+    sustain: parseFloat(document.getElementById("sustain-slider").value),
+    release: parseFloat(document.getElementById("release-slider").value),
+  });
+
+  // Create and configure filter, distortion, chorus, etc., as per current settings
+  const filter = new Tone.Filter({
+    frequency: parseFloat(document.getElementById("filter-frequency").value),
+    Q: parseFloat(document.getElementById("filter-resonance").value), // Resonance
+    type: "lowpass",
+  });
+
+  const distortion = new Tone.Distortion({
+    distortion: parseFloat(document.getElementById("distortion-slider").value),
+    oversample: "4x",
+  });
+
+  const chorus = new Tone.Chorus({
+    frequency: parseFloat(document.getElementById("chorus-frequency").value),
+    depth: parseFloat(document.getElementById("chorus-depth").value),
+    spread: parseFloat(document.getElementById("chorus-spread").value),
+    type: "sine",
+    delayTime: 3.5,
+  }).start();
+
+  // Chain effects
+  osc.connect(filter);
+  filter.connect(distortion);
+  distortion.connect(chorus);
+  chorus.connect(envelope);
+  envelope.toDestination();
+
+  // Start and stop the oscillator with the envelope
+  envelope.triggerAttackRelease(note.duration * timeScale, time);
+  osc.start(time).stop(time + note.duration * timeScale);
+}, recordedNotes.map(note => ({
+  time: note.startTime * timeScale,
+  frequency: note.frequency,
+  duration: note.duration * timeScale,
+})));
+
+// Configure looping
+melodyPart.loop = true;
+melodyPart.loopStart = 0;
+melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale;
+}
+// ==========================
+// Play Melody Button Event Listener
+// ==========================
+
+playMelodyButton.addEventListener("click", async () => {
+  if (recordedNotes.length === 0) {
+    alert("No melody recorded to play.");
+    return;
+  }
+
+  // Start the Tone.js context
+  await Tone.start();
+  // Create and start the melodyPart with current parameters
+  createAndStartMelodyPart();
+});
+
+// ==========================
+// Update Melody Part Function
+// ==========================
+
+function updateMelodyPart() {
+  if (!recordedNotes.length) return;
+
+  // Recreate and start the melodyPart with updated parameters
+  createAndStartMelodyPart();
 }
 
 // ==========================
@@ -757,7 +816,7 @@ function shiftOctave(direction) {
     note.frequency = A4 * Math.pow(2, (newMidiNumber - 69) / 12);
     
   });
-  updateMelodyPart()
+  //updateMelodyPart()
   renderSequencer(); // Re-render the sequencer to reflect changes
 }
 
@@ -802,7 +861,7 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         isResizingStart = true;
         dragOffsetX = x - xStart; // Calculate horizontal offset
         isDragging = true; // Enter dragging mode
-        updateMelodyPart()
+        createMelody()
         return;
       } else if (x >= xEnd - resizeThreshold && x <= xEnd + resizeThreshold) {
         // Clicked near the end of the note for resizing
@@ -811,7 +870,7 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         isResizingEnd = true;
         dragOffsetX = x - xEnd; // Calculate horizontal offset
         isDragging = true; // Enter dragging mode
-        updateMelodyPart()
+        createMelody()
         return;
       } else if (x >= xStart && x <= xEnd) {
         // Clicked inside the note for moving
@@ -822,7 +881,7 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         dragOffsetY = y - yCenter; // Calculate vertical offset
         isDragging = true; // Enter dragging mode
         document.getElementById("delete-note").disabled=false;
-        updateMelodyPart()
+        createMelody()
         return;
       }
     }
@@ -955,7 +1014,7 @@ window.addEventListener("mouseup", () => {
     isResizingStart = false;
     isResizingEnd = false;
     //selectedNoteIndex = null;
-    updateMelodyPart()
+    createMelody()
     renderSequencer(); // Finalize the sequencer visualization
   }
 });
@@ -1059,7 +1118,7 @@ document.getElementById("delete-note").addEventListener("click", () => {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
       lastSelectedNoteIndex = null;
-      updateMelodyPart()
+      createMelody()
       renderSequencer(); // Update the sequencer visualization
     }
   }
@@ -1075,7 +1134,7 @@ document.addEventListener("keydown", (event) => {
     if (confirmDelete) {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
-      updateMelodyPart()
+      createMelody()
       renderSequencer(); // Update the sequencer visualization
     }
   }
@@ -1265,54 +1324,54 @@ function setDistortionAmount(value) {
 //Attach event listeners for waveform selection
 document.getElementById("waveform1-select").addEventListener("change", (event) => {
   setOsc1WaveType(event.target.value);
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("waveform2-select").addEventListener("change", (event) => {
   setOsc2WaveType(event.target.value);
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("waveform3-select").addEventListener("change", (event) => {
   setOsc2WaveType(event.target.value);
-  updateMelodyPart();
+  createMelody();
 });
 
 //Attach event listeners for volume sliders
 document.getElementById("volume1-slider").addEventListener("input", (event) => {
   setOsc1Volume(parseFloat(event.target.value));
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("volume2-slider").addEventListener("input", (event) => {
   setOsc2Volume(parseFloat(event.target.value));
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("volume3-slider").addEventListener("input", (event) => {
   setOsc2Volume(parseFloat(event.target.value));
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("chorus-frequency").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setChorusFrequency(value);
   document.getElementById("chorus-frequency-value").textContent = `${value} Hz`;
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("chorus-depth").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setChorusDepth(value);
   document.getElementById("chorus-depth-value").textContent = `${value}`;
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("chorus-spread").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setChorusSpread(value);
   document.getElementById("chorus-spread-value").textContent = `${value}`;
-  updateMelodyPart();
+  createMelody();
 });
 
 //Attach event listeners for ADSR sliders
@@ -1322,7 +1381,7 @@ document.querySelectorAll(".adsr-slider").forEach((slider) => {
     const value = event.target.value;
     updateEnvelope(param, value);
     document.getElementById(`${param}-value`).textContent = value;
-    updateMelodyPart();
+    createMelody();
   });
 });
 
@@ -1331,14 +1390,14 @@ document.getElementById("filter-frequency").addEventListener("input", (event) =>
   const value = parseFloat(event.target.value);
   setFilterFrequency(value);
   document.getElementById("filter-frequency-value").textContent = `${value} Hz`;
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("filter-resonance").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setFilterResonance(value);
   document.getElementById("filter-resonance-value").textContent = value;
-  updateMelodyPart();
+  createMelody();
 });
 
 //Attach event listener for LFO
@@ -1346,19 +1405,19 @@ document.getElementById("lfo-frequency").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setLfoFrequency(value);
   document.getElementById("lfo-frequency-value").textContent = `${value} Hz`;
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("lfo-amount").addEventListener("input", (event) => {
   const value = parseFloat(event.target.value);
   setLfoAmount(value);
   document.getElementById("lfo-amount-value").textContent = `${value}`;
-  updateMelodyPart();
+  createMelody();
 });
 
 document.getElementById("lfo-toggle").addEventListener("change", (event) => {
   toggleLfo(event.target.checked);
-  updateMelodyPart();
+  createMelody();
 });
 
 //Attach event listener for distortion
