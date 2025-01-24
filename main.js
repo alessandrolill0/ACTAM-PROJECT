@@ -1425,7 +1425,7 @@ document.getElementById("waveform2-select").addEventListener("change", (event) =
 });
 
 document.getElementById("waveform3-select").addEventListener("change", (event) => {
-  setOsc2WaveType(event.target.value);
+  setOsc3WaveType(event.target.value);
   createMelody();
 });
 
@@ -1441,7 +1441,7 @@ document.getElementById("volume2-slider").addEventListener("input", (event) => {
 });
 
 document.getElementById("volume3-slider").addEventListener("input", (event) => {
-  setOsc2Volume(parseFloat(event.target.value));
+  setOsc3Volume(parseFloat(event.target.value));
   createMelody();
 });
 
