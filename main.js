@@ -187,17 +187,6 @@ function stopMetronome() {
 // Sequencer Functions
 // ==========================
 
-/**
- * Adjusts the canvas width based on the current time.
- * @param {number} time - Current time in seconds.
- */
-function adjustCanvasWidth(time) {
-  const desiredWidth = labelWidth + time * 100; // 100 pixels per second
-  if (desiredWidth > sequencerCanvas.width) {
-    sequencerCanvas.width = Math.max(desiredWidth, sequencerCanvas.width * 1.5);
-    renderSequencer(); // Redraw the sequencer
-  }
-}
 
 function isBlackKey(note) {
   const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
@@ -435,12 +424,9 @@ async function startPitchDetection() {
     // Funzione ricorsiva per il rilevamento del pitch
     function detectPitch() {
       if (!isDetecting) return;
-
       analyser.getFloatTimeDomainData(buffer);
-
       const maxAmplitude = Math.max(...buffer.map(Math.abs));
       const currentTime = audioContext.currentTime - startTime;
-
       const frequency = yin.detect(buffer, audioContext.sampleRate);
 
       if (maxAmplitude < silenceThreshold) {
@@ -455,7 +441,6 @@ async function startPitchDetection() {
         requestAnimationFrame(detectPitch);
         return;
       }
-
       silenceStartTime = null;
 
       if (!frequency || frequency < 40 || frequency > 5000) {
@@ -490,12 +475,9 @@ async function startPitchDetection() {
 
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
-
-      //adjustCanvasWidth(currentTime);
       renderSequencer();
       requestAnimationFrame(detectPitch);
     }
-
     detectPitch();
     stopButton.disabled = false; // Abilita il pulsante "Stop" dopo l'inizio della registrazione
   } catch (err) {
@@ -520,7 +502,6 @@ function stopPitchDetection() {
   deleteNoteButton.disabled = recordedNotes.length === 0;
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Detected Note: N/A";
-
   if (source) source.disconnect();
   if (audioContext) audioContext.close();
   if (stream) {
@@ -535,9 +516,9 @@ function stopPitchDetection() {
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
 
-  // Ferma il metronomo quando la registrazione si interrompe
+  //Stop the metronome when the rec stops
   if (metronomeActive) {
-    console.log("Arresto del metronomo perché la registrazione è terminata.");
+    console.log("Record completed");
     stopMetronome();
   }
 
