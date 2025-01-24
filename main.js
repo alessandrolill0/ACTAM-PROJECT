@@ -130,9 +130,11 @@ function getSemitoneDifference(note1, note2) {
  * Riproduce un file audio per il clic del metronomo.
  * @param {boolean} isLastBeat - Indica se è l'ultimo beat della misura.
  */
+
+
 function playMetronomeClick(isLastBeat = false) {
   const audio = new Audio("./audio/metronome-85688.mp3");
-  audio.volume = isLastBeat ? 1.0 : 0.7; // Regola il volume per il beat finale
+  audio.volume = isLastBeat ? 0.0146 : 0.012; // Regola il volume per il beat finale
   audio.play().catch((err) => {
     console.error("Errore durante la riproduzione dell'audio del metronomo:", err);
   });
