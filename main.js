@@ -335,6 +335,13 @@ async function startPitchDetection() {
       melodyPart.dispose();
       melodyPart = null;
     }
+    recordedNotes.forEach(() => {
+      osc.dispose();
+      envelope.dispose();
+      filter.dispose();
+      distortion.dispose();
+      chorus.dispose();
+    });
 
     // Preparazione iniziale
     isDetecting = true;
@@ -540,83 +547,39 @@ function stopPitchDetection() {
  * Creates and starts the melodyPart using current synth parameters.
  */
 function createAndStartMelodyPart() {
-  // Stop and dispose of any existing melodyPart
+  createMelody();
+  if (Tone.Transport.state !== 'started') {
+    Tone.Transport.start();
+  }
+  melodyPart.start(0);
+  // Update button states
+  stopPlaybackButton.disabled = false;
+  playMelodyButton.disabled = true;
+}
+
+function createMelody(){
   if (melodyPart) {
     melodyPart.stop();
     melodyPart.dispose();
     melodyPart = null;
   }
-
-  // Calculate scaling factor based on BPM
-  const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
-  const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
-  const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
-
-  // Create a new Tone.Part with current synth parameters
-  melodyPart = new Tone.Part((time, note) => {
-    // Create a new oscillator with the selected waveform
-    const osc = new Tone.Oscillator(note.frequency, document.getElementById("waveform1-select").value);
-
-    // Create a new ADSR envelope
-    const envelope = new Tone.AmplitudeEnvelope({
-      attack: parseFloat(document.getElementById("attack-slider").value),
-      decay: parseFloat(document.getElementById("decay-slider").value),
-      sustain: parseFloat(document.getElementById("sustain-slider").value),
-      release: parseFloat(document.getElementById("release-slider").value),
-    });
-
-    // Create and configure filter, distortion, chorus, etc., as per current settings
-    const filter = new Tone.Filter({
-      frequency: parseFloat(document.getElementById("filter-frequency").value),
-      Q: parseFloat(document.getElementById("filter-resonance").value), // Resonance
-      type: "lowpass",
-    });
-
-    const distortion = new Tone.Distortion({
-      distortion: parseFloat(document.getElementById("distortion-slider").value),
-      oversample: "4x",
-    });
-
-    const chorus = new Tone.Chorus({
-      frequency: parseFloat(document.getElementById("chorus-frequency").value),
-      depth: parseFloat(document.getElementById("chorus-depth").value),
-      spread: parseFloat(document.getElementById("chorus-spread").value),
-      type: "sine",
-      delayTime: 3.5,
-    }).start();
-
-    // Chain effects
-    osc.connect(filter);
-    filter.connect(distortion);
-    distortion.connect(chorus);
-    chorus.connect(envelope);
-    envelope.toDestination();
-
-    // Start and stop the oscillator with the envelope
-    envelope.triggerAttackRelease(note.duration * timeScale, time);
-    osc.start(time).stop(time + note.duration * timeScale);
-  }, recordedNotes.map(note => ({
-    time: note.startTime * timeScale,
-    frequency: note.frequency,
-    duration: note.duration * timeScale,
-  })));
-
-  // Configure looping
-  melodyPart.loop = true;
-  melodyPart.loopStart = 0;
-  melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale;
-
-  // Start the melodyPart
-  melodyPart.start(0);
-  if (Tone.Transport.state !== 'started') {
-    Tone.Transport.start();
-  }
-
-  // Update button states
-  stopPlaybackButton.disabled = false;
-  playMelodyButton.disabled = true;
-}
-function createMelody(){
+  recordedNotes.forEach((note, index) => {
+    if (note.osc) {
+      note.osc.dispose();
+    }
+    if (note.envelope) {
+      note.envelope.dispose();
+    }
+    if (note.filter) {
+      note.filter.dispose();
+    }
+    if (note.distortion) {
+      note.distortion.dispose();
+    }
+    if (note.chorus) {
+      note.chorus.dispose();
+    }
+  });
 // Calculate scaling factor based on BPM
 const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
 const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
@@ -685,7 +648,11 @@ playMelodyButton.addEventListener("click", async () => {
     alert("No melody recorded to play.");
     return;
   }
-
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
   // Start the Tone.js context
   await Tone.start();
   // Create and start the melodyPart with current parameters
@@ -728,6 +695,7 @@ resetMelodyButton.addEventListener("click", () => {
   if (isDetecting) {
     stopPitchDetection();
   }
+ 
    //Reset variables
    recordedNotes = [];
    selectedNoteIndex = null; // Deselect any selected note
@@ -818,7 +786,7 @@ function shiftOctave(direction) {
     note.frequency = A4 * Math.pow(2, (newMidiNumber - 69) / 12);
     
   });
-  //updateMelodyPart()
+  createMelody();
   renderSequencer(); // Re-render the sequencer to reflect changes
 }
 
@@ -1257,28 +1225,40 @@ osc3.connect(osc3Gain);
 //Update oscillator waveforms
 function setOsc1WaveType(type) {
   osc1.type = type;
+  console.log(type);
+  createMelody();
 }
 
 function setOsc2WaveType(type) {
   osc2.type = type;
+  console.log(type);
+  createMelody();
 }
 
 function setOsc3WaveType(type) {
   osc3.type = type;
+  console.log(type);
+  createMelody();
 }
 
 
 //Control oscillator volumes
 function setOsc1Volume(value) {
   osc1Gain.gain.value = value;
+  console.log(value);
+  createMelody();
 }
 
 function setOsc2Volume(value) {
   osc2Gain.gain.value = value;
+  console.log(value);
+  createMelody();
 }
 
 function setOsc3Volume(value) {
   osc3Gain.gain.value = value;
+  console.log(value);
+  createMelody();
 }
 
 //Update envelope dynamically
@@ -1427,6 +1407,7 @@ document.getElementById("distortion-slider").addEventListener("input", (event) =
   const value = parseFloat(event.target.value);
   setDistortionAmount(value);
   document.getElementById("distortion-value").textContent = value;
+  createMelody();
 });
 
 // ==========================
