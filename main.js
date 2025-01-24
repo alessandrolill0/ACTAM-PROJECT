@@ -69,22 +69,49 @@ async function fetchMelodies() {
       ...doc.data(),
     }));
     console.log("Melodies:", melodies);
-    // Render melodies in the UI
+    renderMelodies(melodies);
   } catch (error) {
     console.error("Error fetching melodies:", error);
   }
 }
 function renderMelodies(melodies) {
-  const melodyList = document.getElementById("melody-list");
-  melodyList.innerHTML = "";
+  const melodyDropdown = document.getElementById("melody-dropdown");
+  melodyDropdown.innerHTML = '<option value="" disabled selected>Choose a melody</option>'; // Reset options
 
   melodies.forEach(melody => {
-    const listItem = document.createElement("li");
-    listItem.textContent = `${melody.name} (BPM: ${melody.bpm})`;
-    listItem.addEventListener("click", () => playSavedMelody(melody));
-    melodyList.appendChild(listItem);
+    const option = document.createElement("option");
+    option.value = melody.id; // Store the melody ID
+    option.textContent = `${melody.name} (BPM: ${melody.bpm})`;
+    option.dataset.melody = JSON.stringify(melody); // Save the melody data in a data attribute
+    melodyDropdown.appendChild(option);
   });
+
+  // Enable the load button if melodies are available
+  const loadButton = document.getElementById("load-melody-button");
+  loadButton.disabled = melodies.length === 0;
 }
+function loadMelodyToSequencer(melody) {
+  if (!melody.notes || melody.notes.length === 0) {
+    alert("This melody has no notes to load.");
+    return;
+  }
+
+  recordedNotes = melody.notes.map(note => ({
+    note: note.note,
+    frequency: note.frequency,
+    startTime: note.startTime,
+    duration: note.duration,
+  }));
+
+  bpm = melody.bpm; // Set the sequencer's BPM to the melody's BPM
+  document.getElementById("bpm-input").value = bpm; // Update the BPM input field if it exists
+
+  alert(`Melody "${melody.name}" loaded successfully!`);
+
+  renderSequencer(); // Re-render the sequencer with the loaded notes
+  toggleSaveButtonState(); // Update the Save button state
+}
+
 
 function playSavedMelody(melody) {
   if (melody.notes.length === 0) {
@@ -104,6 +131,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   await fetchMelodies();
 });
 
+document.getElementById("melody-dropdown").addEventListener("change", () => {
+  const loadButton = document.getElementById("load-melody-button");
+  loadButton.disabled = false; // Enable the button when a melody is selected
+});
+document.getElementById("load-melody-button").addEventListener("click", () => {
+  const melodyDropdown = document.getElementById("melody-dropdown");
+  const selectedOption = melodyDropdown.options[melodyDropdown.selectedIndex];
+
+  if (!selectedOption || !selectedOption.dataset.melody) {
+    alert("Please select a valid melody.");
+    return;
+  }
+
+  const melody = JSON.parse(selectedOption.dataset.melody); // Parse melody data
+  loadMelodyToSequencer(melody); // Load the melody into the sequencer
+  playMelodyButton.disabled=false;
+});
 
 
 // ==========================
@@ -444,7 +488,9 @@ async function startPitchDetection() {
       melodyPart = null;
     }
     recordedNotes.forEach(() => {
-      osc.dispose();
+      osc1.dispose();
+      osc2.dispose();
+      osc3.dipose();
       envelope.dispose();
       filter.dispose();
       distortion.dispose();
@@ -654,8 +700,6 @@ function stopPitchDetection() {
 // Play Melody Button Event Listener
 // ==========================
 
-
-
 /**
  * Creates and starts the melodyPart using current synth parameters.
  */
@@ -676,7 +720,7 @@ function createMelody(){
     melodyPart.dispose();
     melodyPart = null;
   }
-  recordedNotes.forEach((note, index) => {
+  recordedNotes.forEach((note) => {
     if (note.osc) {
       note.osc.dispose();
     }
@@ -1097,7 +1141,7 @@ window.addEventListener("mouseup", () => {
     isResizingStart = false;
     isResizingEnd = false;
     //selectedNoteIndex = null;
-    createMelody()
+    createAndStartMelodyPart()
     renderSequencer(); // Finalize the sequencer visualization
   }
 });
@@ -1201,7 +1245,7 @@ document.getElementById("delete-note").addEventListener("click", () => {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
       lastSelectedNoteIndex = null;
-      createMelody()
+      createAndStartMelodyPart();
       renderSequencer(); // Update the sequencer visualization
     }
   }
