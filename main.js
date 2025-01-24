@@ -332,7 +332,6 @@ noteRange.forEach((note, index) => {
   });
 }
 
-
 // ==========================
 // Pitch Detection Functions
 // ==========================
