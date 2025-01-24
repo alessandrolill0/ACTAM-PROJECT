@@ -714,88 +714,41 @@ function createAndStartMelodyPart() {
   playMelodyButton.disabled = true;
 }
 
-function createMelody(){
+function createMelody() {
+  // Dispose of any existing melodyPart
   if (melodyPart) {
     melodyPart.stop();
     melodyPart.dispose();
     melodyPart = null;
   }
-  recordedNotes.forEach((note) => {
-    if (note.osc) {
-      note.osc.dispose();
-    }
-    if (note.envelope) {
-      note.envelope.dispose();
-    }
-    if (note.filter) {
-      note.filter.dispose();
-    }
-    if (note.distortion) {
-      note.distortion.dispose();
-    }
-    if (note.chorus) {
-      note.chorus.dispose();
-    }
-  });
-// Calculate scaling factor based on BPM
-const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
-const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
-const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
 
-// Create a new Tone.Part with current synth parameters
-melodyPart = new Tone.Part((time, note) => {
-  // Create a new oscillator with the selected waveform
-  const osc = new Tone.Oscillator(note.frequency, document.getElementById("waveform1-select").value);
+  // Calculate scaling factor based on BPM
+  const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
+  const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
+  const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
 
-  // Create a new ADSR envelope
-  const envelope = new Tone.AmplitudeEnvelope({
-    attack: parseFloat(document.getElementById("attack-slider").value),
-    decay: parseFloat(document.getElementById("decay-slider").value),
-    sustain: parseFloat(document.getElementById("sustain-slider").value),
-    release: parseFloat(document.getElementById("release-slider").value),
-  });
+  // Validate recorded notes and prepare the melodyPart
+  melodyPart = new Tone.Part((time, note) => {
+    // Use global synth components for efficiency
+    osc1.frequency.setValueAtTime(note.frequency, time);
+    osc2.frequency.setValueAtTime(note.frequency, time);
+    osc3.frequency.setValueAtTime(note.frequency, time);
 
-  // Create and configure filter, distortion, chorus, etc., as per current settings
-  const filter = new Tone.Filter({
-    frequency: parseFloat(document.getElementById("filter-frequency").value),
-    Q: parseFloat(document.getElementById("filter-resonance").value), // Resonance
-    type: "lowpass",
-  });
+    // Trigger global envelope
+    envelope.triggerAttackRelease(note.duration * timeScale, time);
+  }, recordedNotes.map(note => ({
+    time: note.startTime * timeScale,
+    frequency: note.frequency,
+    duration: note.duration * timeScale,
+  })));
 
-  const distortion = new Tone.Distortion({
-    distortion: parseFloat(document.getElementById("distortion-slider").value),
-    oversample: "4x",
-  });
-
-  const chorus = new Tone.Chorus({
-    frequency: parseFloat(document.getElementById("chorus-frequency").value),
-    depth: parseFloat(document.getElementById("chorus-depth").value),
-    spread: parseFloat(document.getElementById("chorus-spread").value),
-    type: "sine",
-    delayTime: 3.5,
-  }).start();
-
-  //Chain effects
-  osc.connect(filter);
-  filter.connect(distortion);
-  distortion.connect(chorus);
-  chorus.connect(envelope);
-  envelope.toDestination();
-
-  //Start and stop the oscillator with the envelope
-  envelope.triggerAttackRelease(note.duration * timeScale, time);
-  osc.start(time).stop(time + note.duration * timeScale);
-}, recordedNotes.map(note => ({
-  time: note.startTime * timeScale,
-  frequency: note.frequency,
-  duration: note.duration * timeScale,
-})));
-
-// Configure looping
-melodyPart.loop = true;
-melodyPart.loopStart = 0;
-melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS) * timeScale;
+  // Configure looping
+  melodyPart.loop = true;
+  melodyPart.loopStart = 0;
+  melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS); // Avoid double-scaling
 }
+
+
 // ==========================
 // Play Melody Button Event Listener
 // ==========================
