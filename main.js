@@ -63,6 +63,14 @@ const rowHeight = 20; // Height of each row in the sequencer
 const BEATS_PER_BAR = 1; // 4/4 time signature
 const TOTAL_BARS = 16;
 let melodyPart = null;
+
+
+// Define fixed pixels per bar
+const PIXELS_PER_BAR = 100; // Fixed width per bar in pixels
+
+
+
+
 // ==========================
 // Utility Functions
 // ==========================
@@ -200,15 +208,16 @@ function isBlackKey(note) {
 /**
  * Renders the sequencer on the canvas.
  */
+
+
 function renderSequencer() {
   //Calculating 16 bars
-  const totalDuration = calculateTotalDuration(bpm, TOTAL_BARS);
-  const pixelsPerSecond = 100; //Horizontal zoom
-  const desiredWidth = labelWidth + totalDuration * pixelsPerSecond;
-  sequencerCanvas.width = desiredWidth;
-  sequencerCanvas.height = (108 - 36 + 1) * rowHeight; // 36 = C2, 108 = C8
-  ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
+  const totalWidth = labelWidth + TOTAL_BARS * PIXELS_PER_BAR;
+  const totalHeight = (108 - 36 + 1) * rowHeight; // From C2 to C8
+  sequencerCanvas.width = totalWidth;
+  sequencerCanvas.height = totalHeight;
 
+  ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
   //From c2 to c6
   const noteRange = [];
   for (let octave = 2; octave <= 8; octave++) {
@@ -275,13 +284,8 @@ noteRange.forEach((note, index) => {
   }
 });
 
-  //Draw the guidance lines for each bar
-  const totalBeats = TOTAL_BARS * BEATS_PER_BAR;
-  const secondsPerBeat = 60 / bpm;
-  const secondsPerBar = BEATS_PER_BAR * secondsPerBeat;
-
   for (let bar = 0; bar <= TOTAL_BARS; bar++) {
-    const x = labelWidth + bar * secondsPerBar * pixelsPerSecond;
+    const x = labelWidth + bar * PIXELS_PER_BAR;
     ctx.strokeStyle = "#aaa";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -304,8 +308,9 @@ noteRange.forEach((note, index) => {
     const noteIndex = midiNumber - 36; // Offset C2=36
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
     //Calc X position
-    const xStart = labelWidth + note.startTime * 100;
-    const xEnd = labelWidth + (note.startTime + note.duration) * 100;
+    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
     const noteWidth = xEnd - xStart;
     if (i === selectedNoteIndex) {
       ctx.strokeStyle = "red"; //red margin
@@ -351,10 +356,10 @@ async function startPitchDetection() {
     noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
 
-    recordedNotes = []; // Resetta le note registrate
+    recordedNotes = []; //Record notes
     renderSequencer();
 
-    // Creazione del contenitore per il conto alla rovescia
+    //Container for countdown
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
     countdownContainer.style.top = "50%";
@@ -368,36 +373,27 @@ async function startPitchDetection() {
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
 
-    // Countdown basato sul BPM
+    // Countdown based on bpm
     const beatDuration = 60 / bpm; // Calcola la durata di un battito
     for (let i = 3; i > 0; i--) {
       countdownContainer.textContent = i; // Mostra il numero corrente
       await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Attende il tempo di un battito
     }
-
     countdownContainer.textContent = "It's time to record!"; // Messaggio finale
     countdownContainer.style.fontSize = "100px"; // Adatta la dimensione del font
     setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Rimuove il messaggio dopo 1.5 battiti
 
-    
-
-
-    // Avvia il metronomo insieme alla registrazione
+    //Start metronome with the rec
     if (metronomeToggle.checked) {
       console.log("Avvio del metronomo con la registrazione.");
       startMetronome(); // Il metronomo inizia con la registrazione
     }
-
-     // Ritardo configurabile per l'inizio della registrazione
+     //Delay before recording
      const recordingDelay = 350; // Ritardo in millisecondi
      console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
- 
      await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
-     
-
-
-     
-    // Accesso al microfono e inizializzazione dell'audio
+ 
+    //Access to microphone
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -496,7 +492,7 @@ async function startPitchDetection() {
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
 
-      adjustCanvasWidth(currentTime);
+      //adjustCanvasWidth(currentTime);
       renderSequencer();
       requestAnimationFrame(detectPitch);
     }
@@ -811,8 +807,9 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
     const noteIndex = midiNumber - 36; // MIDI 36 = C2
     const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
 
-    const xStart = labelWidth + note.startTime * 100;
-    const xEnd = xStart + note.duration * 100;
+    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
 
     const resizeThreshold = 5; //Pixels near the edge to trigger resizing
 
@@ -868,11 +865,11 @@ function snapToGrid(time) {
 }
 
 sequencerCanvas.addEventListener("mousemove", (event) => {
-  if (!isDragging || selectedNoteIndex === null) 
+  if (!isDragging || selectedNoteIndex === null)
     return; // Exit if not dragging
   const rect = sequencerCanvas.getBoundingClientRect();
 
-  //Adjust coordinates based on canvas scaling
+  // Adjust coordinates based on canvas scaling
   const scaleX = sequencerCanvas.width / rect.width;
   const scaleY = sequencerCanvas.height / rect.height;
 
@@ -883,7 +880,7 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
 
   if (isResizingStart) {
     // Handle resizing the start of the note
-    const newStartTime = Math.max(0, (x - labelWidth) / 100); // Prevent negative start times
+    const newStartTime = Math.max(0, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
     const newDuration = draggedNote.startTime + draggedNote.duration - newStartTime;
 
     if (newDuration > 0.1) { // Ensure a minimum duration
@@ -892,11 +889,11 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
     }
   } else if (isResizingEnd) {
     // Handle resizing the end of the note
-    const newEndTime = Math.max(draggedNote.startTime + 0.1, (x - labelWidth) / 100); // Ensure minimum duration
+    const newEndTime = Math.max(draggedNote.startTime + 0.1, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
     draggedNote.duration = newEndTime - draggedNote.startTime;
   } else {
     // Handle moving the note horizontally (time) and vertically (pitch)
-    const unsnappedStartTime = (x - labelWidth - dragOffsetX) / 100;
+    const unsnappedStartTime = (x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm);
     const snappedStartTime = snapToGrid(Math.max(0, unsnappedStartTime));
 
     const midiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight); // Calculate new MIDI number based on Y position
@@ -907,12 +904,13 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
     // Prevent overlapping with other notes
     if (!isOverlapping(snappedStartTime, clampedMidiNumber, selectedNoteIndex)) {
       draggedNote.startTime = snappedStartTime; // Update start time
-      draggedNote.note = newNoteName;          // Update note name
+      draggedNote.note = newNoteName; // Update note name
       draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); // Update frequency
     }
   }
   renderSequencer(); // Update the sequencer visualization
-});
+}
+);
 
 
 /**
@@ -995,7 +993,6 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
   const rect = sequencerCanvas.getBoundingClientRect();
   const x = touch.clientX - rect.left;
   const y = touch.clientY - rect.top;
-
   // Iterate through all recorded notes to check for interaction
   for (let i = 0; i < recordedNotes.length; i++) {
     const note = recordedNotes[i];
@@ -1003,23 +1000,25 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
     const noteIndex = midiNumber - 36; // MIDI 36 = C2
     const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
 
-    const xStart = labelWidth + note.startTime * 100;
-    const xEnd = xStart + note.duration * 100;
+    // Calculate X position based on beats
+    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
 
     // Check if the touch is within the bounds of the note
-    if ( x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
+    if (x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       lastSelectedNoteIndex = i;
       selectedNoteIndex = i;
-      dragOffsetX = x - xStart; //Calculate horizontal offset
-      dragOffsetY = y - yCenter; //Calculate vertical offset
-      isDragging = true; //Enter dragging mode
-      renderSequencer(); //Update the sequencer visualization
+      dragOffsetX = x - xStart; // Calculate horizontal offset
+      dragOffsetY = y - yCenter; // Calculate vertical offset
+      isDragging = true; // Enter dragging mode
+      renderSequencer(); // Update the sequencer visualization
       return;
     }
   }
-   //If no note is selected, deselect any previously selected note
-   selectedNoteIndex = null;
-   renderSequencer();
+  // If no note is selected, deselect any previously selected note
+  selectedNoteIndex = null;
+  renderSequencer();
 });
 
 /**
@@ -1035,10 +1034,9 @@ sequencerCanvas.addEventListener("touchmove", (event) => {
   const y = touch.clientY - rect.top;
 
   const draggedNote = recordedNotes[selectedNoteIndex];
-  const newStartTime = snapToGrid((x - labelWidth - dragOffsetX) / 100);
+  const newStartTime = snapToGrid((x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
   const newMidiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight);
   const clampedMidiNumber = Math.min(108, Math.max(36, newMidiNumber));
-
   const newNoteName = noteNames[clampedMidiNumber % 12] + Math.floor(clampedMidiNumber / 12 - 1);
 
   // Prevent overlapping with other notes
