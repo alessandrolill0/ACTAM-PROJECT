@@ -490,7 +490,7 @@ async function startPitchDetection() {
     recordedNotes.forEach(() => {
       osc1.dispose();
       osc2.dispose();
-      osc3.dipose();
+      osc3.dispose();
       envelope.dispose();
       filter.dispose();
       distortion.dispose();
@@ -633,7 +633,7 @@ async function startPitchDetection() {
         }
       } else {
         activeNote = { frequency, note, startTime: currentTime, duration: 0 };
-        recordedNotes.push(activeNote);
+        //recordedNotes.push(activeNote);
       }
 
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
@@ -817,16 +817,6 @@ playMelodyButton.addEventListener("click", async () => {
   createAndStartMelodyPart();
 });
 
-// ==========================
-// Update Melody Part Function
-// ==========================
-
-function updateMelodyPart() {
-  if (!recordedNotes.length) return;
-
-  // Recreate and start the melodyPart with updated parameters
-  createAndStartMelodyPart();
-}
 
 // ==========================
 // Melody Reset Function
@@ -1318,7 +1308,6 @@ document.getElementById("delete-note").addEventListener("click", () => {
     if (confirmDelete) {
       // Remove the note from the recordedNotes array
       console.log("Deleting a note...");
-      recordedNotes.splice(selectedNoteIndex, 1);
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
       lastSelectedNoteIndex = null;
