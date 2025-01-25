@@ -715,43 +715,86 @@ function createAndStartMelodyPart() {
 }
 
 function createMelody() {
-  // Dispose of any existing melodyPart
-  if (melodyPart) {
-    try {
-      //envelope.dispose(); // Rilascia manualmente l'ADSR
-      melodyPart.stop();
-      melodyPart.dispose();
-    } catch (error) {
-      console.error("Errore durante melodyPart.stop() o dispose():", error);
-    }
-    melodyPart = null;
+  if (!melodyPart) {
+    // If melodyPart doesn't exist, create it
+    melodyPart = new Tone.Part((time, note) => {
+      // Set oscillator frequencies dynamically
+      osc1.frequency.setValueAtTime(note.frequency, time);
+      osc2.frequency.setValueAtTime(note.frequency, time);
+      osc3.frequency.setValueAtTime(note.frequency, time);
+
+      // Trigger the global envelope for the note's duration
+      envelope.triggerAttackRelease(note.duration, time);
+    }, recordedNotes.map(note => ({
+      time: note.startTime, // Note start time
+      frequency: note.frequency, // Note frequency
+      duration: note.duration, // Note duration
+    })));
+
+    // Configure melody looping
+    melodyPart.loop = true;
+    melodyPart.loopStart = 0;
+    melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS);
+
+    // Start the melodyPart
+    melodyPart.start(0);
+  } else {
+    // If melodyPart already exists, update its notes and parameters
+    melodyPart.events = recordedNotes.map(note => ({
+      time: note.startTime,
+      frequency: note.frequency,
+      duration: note.duration,
+    }));
   }
 
-  // Calculate scaling factor based on BPM
-  const defaultQuarterNoteDuration = 60 / 120; // Reference BPM
-  const scaledQuarterNoteDuration = 60 / bpm; // Current BPM duration
-  const timeScale = scaledQuarterNoteDuration / defaultQuarterNoteDuration;
-
-  // Validate recorded notes and prepare the melodyPart
-  melodyPart = new Tone.Part((time, note) => {
-    // Use global synth components for efficiency
-    osc1.frequency.setValueAtTime(note.frequency, time);
-    osc2.frequency.setValueAtTime(note.frequency, time);
-    osc3.frequency.setValueAtTime(note.frequency, time);
-
-    // Trigger global envelope
-    envelope.triggerAttackRelease(note.duration * timeScale, time);
-  }, recordedNotes.map(note => ({
-    time: note.startTime * timeScale,
-    frequency: note.frequency,
-    duration: note.duration * timeScale,
-  })));
-
-  // Configure looping
-  melodyPart.loop = true;
-  melodyPart.loopStart = 0;
-  melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS); // Avoid double-scaling
+  // Update global synth parameters in real time
+  try {
+    updateSynthParameters();
+  } catch (error) {
+    console.error("Error updating synth parameters:", error);
+  }
 }
+
+/**
+ * Updates global synth parameters dynamically.
+ */
+function updateSynthParameters() {
+  // Update filter parameters
+  filter.frequency.rampTo(parseFloat(document.getElementById("filter-frequency").value), 0.1);
+  filter.Q.value = parseFloat(document.getElementById("filter-resonance").value);
+
+  // Update envelope parameters
+  envelope.attack = parseFloat(document.getElementById("attack-slider").value);
+  envelope.decay = parseFloat(document.getElementById("decay-slider").value);
+  envelope.sustain = parseFloat(document.getElementById("sustain-slider").value);
+  envelope.release = parseFloat(document.getElementById("release-slider").value);
+
+  // Update oscillator waveforms
+  osc1.type = document.getElementById("waveform1-select").value;
+  osc2.type = document.getElementById("waveform2-select").value;
+  osc3.type = document.getElementById("waveform3-select").value;
+}
+
+
+// Filter frequency slider
+document.getElementById("filter-frequency").addEventListener("input", (event) => {
+  setFilterFrequency(parseFloat(event.target.value));
+});
+
+// Envelope sliders
+document.querySelectorAll(".adsr-slider").forEach(slider => {
+  slider.addEventListener("input", (event) => {
+    const param = event.target.dataset.param;
+    const value = event.target.value;
+    updateEnvelope(param, value);
+  });
+});
+
+// Oscillator waveform dropdown
+document.getElementById("waveform1-select").addEventListener("change", (event) => {
+  setOscillatorWaveform(osc1, event.target.value);
+});
+
 
 
 // ==========================
