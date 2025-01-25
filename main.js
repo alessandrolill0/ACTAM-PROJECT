@@ -687,7 +687,7 @@ function stopPitchDetection() {
     console.log("Record completed");
     stopMetronome();
   }
-
+  quantizeNotes();
   renderSequencer();
   document.getElementById("save-melody").disabled = recordedNotes.length === 0;
 
@@ -984,9 +984,24 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
  * @returns {number} - Snapped time value.
  */
 function snapToGrid(time) {
-  const gridSize = 0.25; // Grid size in seconds (e.g., quarter seconds)
+  const gridSize = (60/bpm)/4; // Grid size in seconds (e.g., quarter seconds)
   return Math.round(time / gridSize) * gridSize;
 }
+
+function quantizeNotes() {
+  const gridSize = (60 / bpm) / 4; // Sixteenth note duration
+  recordedNotes = recordedNotes.map(note => {
+    const snappedStartTime = Math.round(note.startTime / gridSize) * gridSize;
+    const snappedDuration = Math.round(note.duration / gridSize) * gridSize;
+    return {
+      ...note,
+      startTime: snappedStartTime,
+      duration: snappedDuration,
+    };
+  });
+  renderSequencer(); // Update the sequencer visualization
+}
+
 
 sequencerCanvas.addEventListener("mousemove", (event) => {
   if (!isDragging || selectedNoteIndex === null)
