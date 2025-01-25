@@ -880,20 +880,81 @@ metronomeToggle.addEventListener("click", () => {
   }
 });
 
+function updateNoteTimingsForBpmChange(oldBpm, newBpm) {
+  const timeScale = oldBpm / newBpm; // Calculate scaling factor
+  recordedNotes = recordedNotes.map(note => ({
+    ...note,
+    startTime: note.startTime * timeScale, // Scale start time
+    duration: note.duration * timeScale,  // Scale duration
+  }));
+}
+
 bpmInput.addEventListener("input", (event) => {
+  const oldBpm = bpm; // Store the previous BPM
   bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
+
+  // If BPM has changed, update recorded notes and melodyPart
+  if (oldBpm !== bpm) {
+    const timeScale = oldBpm / bpm; // Calculate scaling factor for time adjustments
+
+    // Update recorded notes' timings
+    recordedNotes = recordedNotes.map(note => ({
+      ...note,
+      startTime: note.startTime * timeScale,
+      duration: note.duration * timeScale,
+    }));
+
+    // Update Tone.Transport BPM and recreate melodyPart
+    Tone.Transport.bpm.value = bpm;
+    if (melodyPart) {
+      recreateMelodyPart();
+    }
+  }
+
+  // Restart metronome if active
   if (metronomeActive) {
     stopMetronome(); // Stop current metronome
     startMetronome(); // Restart metronome with new BPM
   }
-  //Disable BPM input during recording to maintain consistent recording duration
-  if (isDetecting) {
-    bpmInput.disabled = true;
-  } else {
-    bpmInput.disabled = false;
-  }
+
+  // Disable BPM input during recording to maintain consistent recording duration
+  bpmInput.disabled = isDetecting;
+
+  // Re-render sequencer to reflect changes
   renderSequencer();
 });
+
+/**
+ * Recreates the melodyPart with updated timings and parameters.
+ */
+function recreateMelodyPart() {
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
+
+  // Create a new Tone.Part with updated note timings
+  melodyPart = new Tone.Part((time, note) => {
+    osc1.frequency.setValueAtTime(note.frequency, time);
+    osc2.frequency.setValueAtTime(note.frequency, time);
+    osc3.frequency.setValueAtTime(note.frequency, time);
+
+    envelope.triggerAttackRelease(note.duration, time);
+  }, recordedNotes.map(note => ({
+    time: note.startTime,
+    frequency: note.frequency,
+    duration: note.duration,
+  })));
+
+  // Configure looping
+  melodyPart.loop = true;
+  melodyPart.loopStart = 0;
+  melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS);
+
+  melodyPart.start(0); // Restart playback
+}
+
 
 //Add event listeners to pitch control buttons
 startButton.addEventListener("click", startPitchDetection);
