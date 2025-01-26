@@ -642,6 +642,7 @@ function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   return false; // No overlap
 }
 
+
 ///////////////////////////// SYNTH PARAMETERS ///////////////////////////// 
 
 //Shared envelope
@@ -881,6 +882,7 @@ document.getElementById("distortion-slider").addEventListener("input", (event) =
   document.getElementById("distortion-value").textContent = value;
   createMelody();
 });
+
 
 ///////////////////////////// ADD EVENT LISTENER ///////////////////////////// 
 
@@ -1380,3 +1382,117 @@ function loadMelodyToSequencer(melody) {
   toggleSaveButtonState(); // Update the Save button state
 }
 
+///////////////////////////// PRESET-SAVING FUNCTIONS ///////////////////////////// 
+/*
+// Fetch existing presets and populate the dropdown
+async function fetchPresets() {
+  try {
+    const response = await fetch(API_BASE_URL);
+    const presets = await response.json();
+
+    const presetDropdown = document.getElementById('preset-dropdown');
+    presetDropdown.innerHTML = '<option value="" disabled selected>Select a preset</option>';
+
+    presets.forEach(preset => {
+      const option = document.createElement('option');
+      option.value = preset.id; // Assuming each preset has a unique `id` field
+      option.textContent = preset.name;
+      presetDropdown.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching presets:', error);
+  }
+}
+
+// Save the current preset to the database
+async function savePreset() {
+  const presetName = prompt('Enter a name for the preset:');
+  if (!presetName) return;
+
+  const preset = {
+    name: presetName,
+    waveform1: document.getElementById('waveform1-select').value,
+    volume1: document.getElementById('volume1-slider').value,
+    waveform2: document.getElementById('waveform2-select').value,
+    volume2: document.getElementById('volume2-slider').value,
+    waveform3: document.getElementById('waveform3-select').value,
+    volume3: document.getElementById('volume3-slider').value,
+    attack: document.getElementById('attack-slider').value,
+    decay: document.getElementById('decay-slider').value,
+    sustain: document.getElementById('sustain-slider').value,
+    release: document.getElementById('release-slider').value,
+    lfoWaveform: document.getElementById('lfo-waveform').value,
+    lfoFrequency: document.getElementById('lfo-frequency').value,
+    filterFrequency: document.getElementById('filter-frequency').value,
+    filterResonance: document.getElementById('filter-resonance').value,
+    distortion: document.getElementById('distortion-slider').value,
+    chorusFrequency: document.getElementById('chorus-frequency').value,
+    chorusDepth: document.getElementById('chorus-depth').value,
+    chorusSpread: document.getElementById('chorus-spread').value,
+  };
+
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(preset),
+    });
+
+    if (response.ok) {
+      alert('Preset saved successfully!');
+      fetchPresets(); // Refresh presets list
+    } else {
+      console.error('Error saving preset:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error saving preset:', error);
+  }
+}
+
+// Load a selected preset
+async function loadPreset() {
+  const selectedId = document.getElementById('preset-dropdown').value;
+  if (!selectedId) {
+    alert('Please select a preset to load.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/${selectedId}`);
+    if (!response.ok) throw new Error('Failed to load preset.');
+
+    const preset = await response.json();
+
+    // Apply preset settings
+    document.getElementById('waveform1-select').value = preset.waveform1;
+    document.getElementById('volume1-slider').value = preset.volume1;
+    document.getElementById('waveform2-select').value = preset.waveform2;
+    document.getElementById('volume2-slider').value = preset.volume2;
+    document.getElementById('waveform3-select').value = preset.waveform3;
+    document.getElementById('volume3-slider').value = preset.volume3;
+    document.getElementById('attack-slider').value = preset.attack;
+    document.getElementById('decay-slider').value = preset.decay;
+    document.getElementById('sustain-slider').value = preset.sustain;
+    document.getElementById('release-slider').value = preset.release;
+    document.getElementById('lfo-waveform').value = preset.lfoWaveform;
+    document.getElementById('lfo-frequency').value = preset.lfoFrequency;
+    document.getElementById('filter-frequency').value = preset.filterFrequency;
+    document.getElementById('filter-resonance').value = preset.filterResonance;
+    document.getElementById('distortion-slider').value = preset.distortion;
+    document.getElementById('chorus-frequency').value = preset.chorusFrequency;
+    document.getElementById('chorus-depth').value = preset.chorusDepth;
+    document.getElementById('chorus-spread').value = preset.chorusSpread;
+
+    alert('Preset loaded successfully!');
+  } catch (error) {
+    console.error('Error loading preset:', error);
+  }
+}
+
+// Attach event listeners
+document.getElementById('save-preset').addEventListener('click', savePreset);
+document.getElementById('load-preset').addEventListener('click', loadPreset);
+
+// Fetch presets on page load
+fetchPresets();
+*/

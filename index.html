@@ -23,7 +23,6 @@
       <button id="delete-note" disabled>Delete Note</button>
       <button id="stop-playback" disabled>Stop Playback</button> 
       <button id="save-melody" disabled>Save Melody</button>
-
     </div>
     <div id="recording-progress-container" style="display: none; margin-top: 10px;">
       <label for="recording-progress">Recording Progress:</label>
@@ -68,6 +67,11 @@
 
     <div class="container">
       <h2>Vox2Seq</h2>
+      <select id="preset-dropdown">
+        <option value="" disabled selected>Select a preset</option>
+      </select>
+      <button id="load-preset">Load Preset</button>
+      <button id="save-preset">Save Preset</button>
     
       <h3>Waveform 1</h3>
       <label for="waveform1-select">Wave Type:</label>
