@@ -70,6 +70,7 @@ const BEATS_PER_BAR = 1; // 4/4 time signature
 const TOTAL_BARS = 16;
 let melodyPart = null;
 const PIXELS_PER_BAR = 100; // Fixed width per bar in pixels
+let progressTimer= null;
 
 ///////////////////////////// RECORDING/PITCH DETECTION FUNCTIONS ///////////////////////////// 
 
@@ -231,7 +232,13 @@ noteRange.forEach((note, index) => {
 //Start pitche detection
 async function startPitchDetection() {
   try {
-    recordedNotes = []; //Record notes
+    recordedNotes = []; //the previous array is deleted
+    clearTimeout(recordingTimeout);
+    if (progressTimer !== null) { //Clear existing progressTimer if any
+      clearInterval(progressTimer);
+      progressTimer = null;
+      progressBar.value = 0; // Reset the progress bar
+    }
     if (isDetecting) return;
     if (melodyPart) {
       melodyPart.stop();
@@ -307,12 +314,13 @@ async function startPitchDetection() {
     const updateInterval = 100; // Aggiorna ogni 100ms
     const totalIntervals = (totalDuration * 1000) / updateInterval;
     let currentInterval = 0;
-    const progressTimer = setInterval(() => {
+    progressTimer  = setInterval(() => {
       currentInterval++;
       const progress = (currentInterval / totalIntervals) * 100;
       progressBar.value = progress;
       if (currentInterval >= totalIntervals) {
         clearInterval(progressTimer);
+        progressTimer = null;
       }
     }, updateInterval);
     // Interrompi la registrazione automaticamente dopo la durata totale
@@ -395,16 +403,23 @@ function stopPitchDetection() {
   deleteNoteButton.disabled = recordedNotes.length === 0;
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Detected Note: N/A";
-  if (source) source.disconnect();
+  if (source) source.disconnect(); //Disconnect audio context and stop stream
   if (audioContext) audioContext.close();
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-  if (recordingTimeout) {
+  if (recordingTimeout) {   //Clear and reset the recording timeout
     clearTimeout(recordingTimeout);
     recordingTimeout = null;
   }
+  if (progressTimer !== null) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
   const progressContainer = document.getElementById("recording-progress-container");
+  const progressBar = document.getElementById("recording-progress");
+  progressContainer.style.display = "none";
+  progressBar.value = 0; // Reset the progress bar to 0
   progressContainer.style.display = "none";
   //Stop the metronome when the rec stops
   if (metronomeActive) {
