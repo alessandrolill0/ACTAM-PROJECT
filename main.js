@@ -1383,116 +1383,132 @@ function loadMelodyToSequencer(melody) {
 }
 
 ///////////////////////////// PRESET-SAVING FUNCTIONS ///////////////////////////// 
-/*
-// Fetch existing presets and populate the dropdown
+// Preset-related functions
 async function fetchPresets() {
   try {
-    const response = await fetch(API_BASE_URL);
-    const presets = await response.json();
-
-    const presetDropdown = document.getElementById('preset-dropdown');
-    presetDropdown.innerHTML = '<option value="" disabled selected>Select a preset</option>';
-
-    presets.forEach(preset => {
-      const option = document.createElement('option');
-      option.value = preset.id; // Assuming each preset has a unique `id` field
-      option.textContent = preset.name;
-      presetDropdown.appendChild(option);
-    });
+    const querySnapshot = await getDocs(collection(db, "presets"));
+    const presets = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    renderPresets(presets);
   } catch (error) {
-    console.error('Error fetching presets:', error);
+    console.error("Error fetching presets:", error);
   }
 }
 
-// Save the current preset to the database
+function renderPresets(presets) {
+  const presetDropdown = document.getElementById("preset-dropdown");
+  presetDropdown.innerHTML = '<option value="" disabled selected>Select a preset</option>';
+  presets.forEach(preset => {
+    const option = document.createElement("option");
+    option.value = preset.id; // Use Firestore document ID
+    option.textContent = preset.name; // Display preset name
+    presetDropdown.appendChild(option);
+  });
+}
+
 async function savePreset() {
-  const presetName = prompt('Enter a name for the preset:');
+  const presetName = prompt("Enter a name for the preset:");
   if (!presetName) return;
 
-  const preset = {
+  const presetData = {
     name: presetName,
-    waveform1: document.getElementById('waveform1-select').value,
-    volume1: document.getElementById('volume1-slider').value,
-    waveform2: document.getElementById('waveform2-select').value,
-    volume2: document.getElementById('volume2-slider').value,
-    waveform3: document.getElementById('waveform3-select').value,
-    volume3: document.getElementById('volume3-slider').value,
-    attack: document.getElementById('attack-slider').value,
-    decay: document.getElementById('decay-slider').value,
-    sustain: document.getElementById('sustain-slider').value,
-    release: document.getElementById('release-slider').value,
-    lfoWaveform: document.getElementById('lfo-waveform').value,
-    lfoFrequency: document.getElementById('lfo-frequency').value,
-    filterFrequency: document.getElementById('filter-frequency').value,
-    filterResonance: document.getElementById('filter-resonance').value,
-    distortion: document.getElementById('distortion-slider').value,
-    chorusFrequency: document.getElementById('chorus-frequency').value,
-    chorusDepth: document.getElementById('chorus-depth').value,
-    chorusSpread: document.getElementById('chorus-spread').value,
+    waveform1: document.getElementById("waveform1-select").value,
+    volume1: document.getElementById("volume1-slider").value,
+    waveform2: document.getElementById("waveform2-select").value,
+    volume2: document.getElementById("volume2-slider").value,
+    waveform3: document.getElementById("waveform3-select").value,
+    volume3: document.getElementById("volume3-slider").value,
+    attack: document.getElementById("attack-slider").value,
+    decay: document.getElementById("decay-slider").value,
+    sustain: document.getElementById("sustain-slider").value,
+    release: document.getElementById("release-slider").value,
+    lfoWaveform: document.getElementById("lfo-waveform").value,
+    lfoFrequency: document.getElementById("lfo-frequency").value,
+    filterFrequency: document.getElementById("filter-frequency").value,
+    filterResonance: document.getElementById("filter-resonance").value,
+    distortion: document.getElementById("distortion-slider").value,
+    chorusFrequency: document.getElementById("chorus-frequency").value,
+    chorusDepth: document.getElementById("chorus-depth").value,
+    chorusSpread: document.getElementById("chorus-spread").value,
   };
 
   try {
-    const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(preset),
-    });
-
-    if (response.ok) {
-      alert('Preset saved successfully!');
-      fetchPresets(); // Refresh presets list
-    } else {
-      console.error('Error saving preset:', response.statusText);
-    }
+    await addDoc(collection(db, "presets"), presetData);
+    alert("Preset saved successfully!");
+    fetchPresets(); // Refresh presets
   } catch (error) {
-    console.error('Error saving preset:', error);
+    console.error("Error saving preset:", error);
+    alert("Error saving preset. Please try again.");
   }
 }
 
-// Load a selected preset
+function setSliderValue(sliderId, value) {
+  const slider = document.getElementById(sliderId);
+  if (slider) {
+    slider.value = value;
+    slider.dispatchEvent(new Event("input")); // Trigger input event
+  }
+}
+
 async function loadPreset() {
-  const selectedId = document.getElementById('preset-dropdown').value;
+  const presetDropdown = document.getElementById("preset-dropdown");
+  const selectedId = presetDropdown.value;
+
   if (!selectedId) {
-    alert('Please select a preset to load.');
+    alert("Please select a preset to load.");
     return;
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/${selectedId}`);
-    if (!response.ok) throw new Error('Failed to load preset.');
+    const docRef = doc(db, "presets", selectedId);
+    const docSnap = await getDoc(docRef);
 
-    const preset = await response.json();
+    if (docSnap.exists()) {
+      const preset = docSnap.data();
 
-    // Apply preset settings
-    document.getElementById('waveform1-select').value = preset.waveform1;
-    document.getElementById('volume1-slider').value = preset.volume1;
-    document.getElementById('waveform2-select').value = preset.waveform2;
-    document.getElementById('volume2-slider').value = preset.volume2;
-    document.getElementById('waveform3-select').value = preset.waveform3;
-    document.getElementById('volume3-slider').value = preset.volume3;
-    document.getElementById('attack-slider').value = preset.attack;
-    document.getElementById('decay-slider').value = preset.decay;
-    document.getElementById('sustain-slider').value = preset.sustain;
-    document.getElementById('release-slider').value = preset.release;
-    document.getElementById('lfo-waveform').value = preset.lfoWaveform;
-    document.getElementById('lfo-frequency').value = preset.lfoFrequency;
-    document.getElementById('filter-frequency').value = preset.filterFrequency;
-    document.getElementById('filter-resonance').value = preset.filterResonance;
-    document.getElementById('distortion-slider').value = preset.distortion;
-    document.getElementById('chorus-frequency').value = preset.chorusFrequency;
-    document.getElementById('chorus-depth').value = preset.chorusDepth;
-    document.getElementById('chorus-spread').value = preset.chorusSpread;
+      // Apply preset settings
+      document.getElementById("waveform1-select").value = preset.waveform1;
+      setSliderValue("volume1-slider", preset.volume1);
 
-    alert('Preset loaded successfully!');
+      document.getElementById("waveform2-select").value = preset.waveform2;
+      setSliderValue("volume2-slider", preset.volume2);
+
+      document.getElementById("waveform3-select").value = preset.waveform3;
+      setSliderValue("volume3-slider", preset.volume3);
+
+      setSliderValue("attack-slider", preset.attack);
+      setSliderValue("decay-slider", preset.decay);
+      setSliderValue("sustain-slider", preset.sustain);
+      setSliderValue("release-slider", preset.release);
+
+      document.getElementById("lfo-waveform").value = preset.lfoWaveform;
+      setSliderValue("lfo-frequency", preset.lfoFrequency);
+
+      setSliderValue("filter-frequency", preset.filterFrequency);
+      setSliderValue("filter-resonance", preset.filterResonance);
+
+      setSliderValue("distortion-slider", preset.distortion);
+
+      setSliderValue("chorus-frequency", preset.chorusFrequency);
+      setSliderValue("chorus-depth", preset.chorusDepth);
+      setSliderValue("chorus-spread", preset.chorusSpread);
+
+      alert(`Preset "${preset.name}" loaded successfully!`);
+    } else {
+      alert("Preset not found.");
+    }
   } catch (error) {
-    console.error('Error loading preset:', error);
+    console.error("Error loading preset:", error);
+    alert("An error occurred while loading the preset. Check the console for details.");
   }
 }
 
+
 // Attach event listeners
-document.getElementById('save-preset').addEventListener('click', savePreset);
-document.getElementById('load-preset').addEventListener('click', loadPreset);
+document.getElementById("save-preset").addEventListener("click", savePreset);
+document.getElementById("load-preset").addEventListener("click", loadPreset);
 
 // Fetch presets on page load
 fetchPresets();
-*/
