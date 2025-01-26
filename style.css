@@ -82,7 +82,8 @@ body {
     display: block;
     justify-content: center;
     align-items: center;
-    overflow: auto; /* Allows both horizontal and vertical scrolling */
+    overflow-y: auto; /* Allows vertical scrolling */
+    overflow-x: hidden; /* Disables horizontal scrolling */
     background-color: white;
     padding: 0;
     margin: 0;
@@ -97,7 +98,7 @@ body {
   
   #sequencer {
     border: 1px solid #ccc;
-    width: 2000px; /* Adjusted to accommodate 16 bars */
+    width: 100%; /* Adjusted to accommodate 16 bars */
     height: 1200px;
     background-color: #fafafa;
     position: relative;

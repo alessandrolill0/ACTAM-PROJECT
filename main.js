@@ -231,6 +231,7 @@ noteRange.forEach((note, index) => {
 //Start pitche detection
 async function startPitchDetection() {
   try {
+    recordedNotes = []; //Record notes
     if (isDetecting) return;
     if (melodyPart) {
       melodyPart.stop();
@@ -255,7 +256,6 @@ async function startPitchDetection() {
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
-    recordedNotes = []; //Record notes
     renderSequencer();
     //Container for countdown
     const countdownContainer = document.createElement("div");
@@ -1252,6 +1252,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 //Event listeners for the octave shift buttons
 document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
+
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
 
 //Filter frequency slider
