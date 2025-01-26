@@ -1,9 +1,11 @@
-//DataBase Imports
-// Import the functions you need from the SDKs you need
+
+///////////////////////////// Imports and Configurations ///////////////////////////// 
+
+import { Yin } from "https://cdn.jsdelivr.net/npm/@dipscope/pitch-detector/+esm";  // Import Yin for pitch detection and its configuration
+const yinOptions = { bufferSize: 2048, threshold: 0.15 };
+const yin = new Yin(yinOptions);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
-
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"; //Import the functions you need from the SDKs you need
 const firebaseConfig = {
   apiKey: "AIzaSyB7SWop84nuQls0y6Jya1gjUVzOW2kftRo",
   authDomain: "actam-project-42ae0.firebaseapp.com",
@@ -12,157 +14,11 @@ const firebaseConfig = {
   messagingSenderId: "1008439092855",
   appId: "1:1008439092855:web:44f86152c587efe266c872"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig); //Initialize Firebase
 const db = getFirestore(app);
 
-async function saveMelodyToDatabase(melodyName) {
-  if (recordedNotes.length === 0) {
-    alert("No melody to save.");
-    return;
-  }
 
-  const melodyData = recordedNotes.map(note => ({
-    note: note.note,
-    frequency: note.frequency,
-    startTime: note.startTime,
-    duration: note.duration,
-  }));
-
-  try {
-    const docRef = await addDoc(collection(db, "melodies"), {
-      name: melodyName,
-      bpm: bpm,
-      notes: melodyData,
-      createdAt: new Date().toISOString(),
-    });
-    alert(`Melody "${melodyName}" saved successfully! ID: ${docRef.id}`);
-  } catch (error) {
-    console.error("Error saving melody:", error);
-    alert("Error saving melody. Please try again.");
-  }
-}
-
-document.getElementById("save-melody").addEventListener("click", () => {
-  if (recordedNotes.length === 0) {
-    alert("No melody recorded to save.");
-    return;
-  }
-
-  const melodyName = prompt("Enter a name for your melody:");
-  if (melodyName) {
-    saveMelodyToDatabase(melodyName);
-  }
-});
-
-function toggleSaveButtonState() {
-  const saveButton = document.getElementById("save-melody");
-  saveButton.disabled = recordedNotes.length === 0;
-}
-
-async function fetchMelodies() {
-  try {
-    const querySnapshot = await getDocs(collection(db, "melodies"));
-    const melodies = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    console.log("Melodies:", melodies);
-    renderMelodies(melodies);
-  } catch (error) {
-    console.error("Error fetching melodies:", error);
-  }
-}
-function renderMelodies(melodies) {
-  const melodyDropdown = document.getElementById("melody-dropdown");
-  melodyDropdown.innerHTML = '<option value="" disabled selected>Choose a melody</option>'; // Reset options
-
-  melodies.forEach(melody => {
-    const option = document.createElement("option");
-    option.value = melody.id; // Store the melody ID
-    option.textContent = `${melody.name} (BPM: ${melody.bpm})`;
-    option.dataset.melody = JSON.stringify(melody); // Save the melody data in a data attribute
-    melodyDropdown.appendChild(option);
-  });
-
-  // Enable the load button if melodies are available
-  const loadButton = document.getElementById("load-melody-button");
-  loadButton.disabled = melodies.length === 0;
-}
-function loadMelodyToSequencer(melody) {
-  if (!melody.notes || melody.notes.length === 0) {
-    alert("This melody has no notes to load.");
-    return;
-  }
-
-  recordedNotes = melody.notes.map(note => ({
-    note: note.note,
-    frequency: note.frequency,
-    startTime: note.startTime,
-    duration: note.duration,
-  }));
-
-  bpm = melody.bpm; // Set the sequencer's BPM to the melody's BPM
-  document.getElementById("bpm-input").value = bpm; // Update the BPM input field if it exists
-
-  alert(`Melody "${melody.name}" loaded successfully!`);
-
-  renderSequencer(); // Re-render the sequencer with the loaded notes
-  toggleSaveButtonState(); // Update the Save button state
-}
-
-
-function playSavedMelody(melody) {
-  if (melody.notes.length === 0) {
-    alert("No notes in this melody.");
-    return;
-  }
-
-  // Example of playing melody using Tone.js
-  melody.notes.forEach(note => {
-    const osc = new Tone.Oscillator(note.frequency, "sine").toDestination();
-    osc.start(note.startTime).stop(note.startTime + note.duration);
-  });
-
-  alert(`Playing melody: ${melody.name}`);
-}
-document.addEventListener("DOMContentLoaded", async () => {
-  await fetchMelodies();
-});
-
-document.getElementById("melody-dropdown").addEventListener("change", () => {
-  const loadButton = document.getElementById("load-melody-button");
-  loadButton.disabled = false; // Enable the button when a melody is selected
-});
-document.getElementById("load-melody-button").addEventListener("click", () => {
-  const melodyDropdown = document.getElementById("melody-dropdown");
-  const selectedOption = melodyDropdown.options[melodyDropdown.selectedIndex];
-
-  if (!selectedOption || !selectedOption.dataset.melody) {
-    alert("Please select a valid melody.");
-    return;
-  }
-
-  const melody = JSON.parse(selectedOption.dataset.melody); // Parse melody data
-  loadMelodyToSequencer(melody); // Load the melody into the sequencer
-  playMelodyButton.disabled=false;
-});
-
-
-// ==========================
-// Imports and Configurations
-// ==========================
-
-// Import Yin for pitch detection and its configuration
-import { Yin } from "https://cdn.jsdelivr.net/npm/@dipscope/pitch-detector/+esm";
-const yinOptions = { bufferSize: 2048, threshold: 0.15 };
-const yin = new Yin(yinOptions);
-
-// ==========================
-// DOM Elements Selection
-// ==========================
-
+//DOM Elements Selection
 const pitchDisplay = document.getElementById("pitch");
 const noteDisplay = document.getElementById("note");
 const startButton = document.getElementById("start");
@@ -174,11 +30,9 @@ const sequencerCanvas = document.getElementById("sequencer");
 const ctx = sequencerCanvas.getContext("2d");
 const bpmInput = document.getElementById("bpm-input");
 const metronomeToggle = document.getElementById("metronome-toggle");
+const stopPlaybackButton = document.getElementById("stop-playback"); // Get the button element
 
-// ==========================
-// Global Variables
-// ==========================
-
+//Global Variables
 const A4 = 440;
 let bpm = 120; // Default BPM
 let recordedNotes = []; // Array to store recorded notes
@@ -215,24 +69,11 @@ const rowHeight = 20; // Height of each row in the sequencer
 const BEATS_PER_BAR = 1; // 4/4 time signature
 const TOTAL_BARS = 16;
 let melodyPart = null;
-
-
-// Define fixed pixels per bar
 const PIXELS_PER_BAR = 100; // Fixed width per bar in pixels
 
+///////////////////////////// RECORDING/PITCH DETECTION FUNCTIONS ///////////////////////////// 
 
-
-
-// ==========================
-// Utility Functions
-// ==========================
-
-/**
- * Converts a frequency to a musical note.
- * @param {number} frequency - Frequency in Hz.
- * @returns {string|null} - Note name or null if out of range.
- */
-
+//Converts a frequency to a musical note.
 function frequencyToNote(frequency) {
   if (frequency <= 0) {return null;}
   const semitoneOffset = 12 * Math.log2(frequency / A4);
@@ -244,29 +85,19 @@ function frequencyToNote(frequency) {
   return `${noteName}${octave}`;
 }
 
-/**
- * Converts a note name to its corresponding MIDI number.
- * @param {string} note - Note name
- * @returns {number|null} - MIDI number or null if invalid format.
- */
-
+//Converts a note name to its corresponding MIDI number.
 function midiFromNoteName(note) {
-  const regex = /^([A-G]#?)(\d)$/;   // Regular expression to validate and capture the note name and octave.
-  const match = note.match(regex);  // Attempt to match the input string against the regex
+  const regex = /^([A-G]#?)(\d)$/;   //Regular expression to validate and capture the note name and octave.
+  const match = note.match(regex);  //Attempt to match the input string against the regex
   if (!match) 
     return null;
   const name = match[1];
-  const octave = parseInt(match[2], 10); // Convert octave string to an integer.
+  const octave = parseInt(match[2], 10); //Convert octave string to an integer.
   const index = noteNames.indexOf(name);
   return index + (octave + 1) * 12;
 }
 
-/**
- * Calculates the absolute semitone difference between two notes.
- * @param {string} note1 - First note.
- * @param {string} note2 - Second note.
- * @returns {number} - Absolute semitone difference.
- */
+//Calculates the absolute semitone difference between two notes.
 function getSemitoneDifference(note1, note2) {
   const midi1 = midiFromNoteName(note1);
   const midi2 = midiFromNoteName(note2);
@@ -274,95 +105,22 @@ function getSemitoneDifference(note1, note2) {
   return Math.abs(midi2 - midi1);
 }
 
-// ==========================
-// Metronome Functions
-// ==========================
-
-/**
- * Riproduce un file audio per il clic del metronomo.
- * @param {boolean} isLastBeat - Indica se è l'ultimo beat della misura.
- */
-
-
-function playMetronomeClick(isLastBeat = false) {
-  const audio = new Audio("./audio/metronome-85688.mp3");
-  audio.volume = isLastBeat ? 0.0146 : 0.012; // Regola il volume per il beat finale
-  audio.play().catch((err) => {
-    console.error("Errore durante la riproduzione dell'audio del metronomo:", err);
-  });
-}
-
-/**
- * Calcola l'intervallo tra i clic del metronomo in millisecondi.
- * @param {number} bpm - Battiti al minuto.
- * @returns {number} - Intervallo in millisecondi.
- */
-function getMetronomeInterval(bpm) {
-  return 60 / bpm;
-}
-
-/**
- * Avvia il metronomo.
- */
-function startMetronome() {
-  if (metronomeActive) return;
-
-  metronomeActive = true;
-  metronomeToggle.textContent = "Stop Metronome";
-
-  const beatsPerBar = 4; // Numero di battiti per misura
-  let currentBeat = 0;
-  const interval = getMetronomeInterval(bpm) * 1000; // Intervallo in millisecondi
-
-  metronomeInterval = setInterval(() => {
-    currentBeat++;
-    const isLastBeat = currentBeat === beatsPerBar;
-    playMetronomeClick(isLastBeat);
-
-    if (isLastBeat) {
-      currentBeat = 0; // Resetta il conteggio
-    }
-  }, interval);
-}
-
-/**
- * Ferma il metronomo.
- */
-function stopMetronome() {
-  if (!metronomeActive) return;
-
-  metronomeActive = false;
-  metronomeToggle.textContent = "Start Metronome";
-  clearInterval(metronomeInterval);
-  metronomeInterval = null;
-}
-
-// ==========================
-// Sequencer Functions
-// ==========================
-
-
+//Function that finds if a note is a diesis or not
 function isBlackKey(note) {
   const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
   const name = note.slice(0, -1); //Get the note name without the octave
   return blackKeys.includes(name);
 }
  
-/**
- * Renders the sequencer on the canvas.
- */
-
-
+//Rendering the piano roll and drawing the rcorded notes on the screen
 function renderSequencer() {
   //Calculating 16 bars
   const totalWidth = labelWidth + TOTAL_BARS * PIXELS_PER_BAR;
   const totalHeight = (108 - 36 + 1) * rowHeight; // From C2 to C8
   sequencerCanvas.width = totalWidth;
   sequencerCanvas.height = totalHeight;
-
   ctx.clearRect(0, 0, sequencerCanvas.width, sequencerCanvas.height);
-  //From c2 to c6
-  const noteRange = [];
+  const noteRange = [];//From c2 to c6
   for (let octave = 2; octave <= 8; octave++) {
     for (let name of noteNames) {
       noteRange.push(`${name}${octave}`);
@@ -371,7 +129,6 @@ function renderSequencer() {
   //Draw the horizontal lines
 ctx.strokeStyle = "rgba(200, 200, 200, 0.5)"; //Light color for the grid
 ctx.lineWidth = 1;
-
 noteRange.forEach((_, index) => {
   const y = index * rowHeight;
   ctx.beginPath();
@@ -426,7 +183,6 @@ noteRange.forEach((note, index) => {
     }
   }
 });
-
   for (let bar = 0; bar <= TOTAL_BARS; bar++) {
     const x = labelWidth + bar * PIXELS_PER_BAR;
     ctx.strokeStyle = "#aaa";
@@ -435,14 +191,11 @@ noteRange.forEach((note, index) => {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
-
-    //Each bar has an associated number
-    ctx.fillStyle = "#333";
+    ctx.fillStyle = "#333";    //Each bar has an associated number
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(`Bar ${bar}`, x, 10);
   }
-  
   //Draw the recorded notes
   recordedNotes.forEach((note, i) => {
     const midiNumber = midiFromNoteName(note.note);
@@ -475,13 +228,10 @@ noteRange.forEach((note, index) => {
   });
 }
 
-// ==========================
-// Pitch Detection Functions
-// ==========================
+//Start pitche detection
 async function startPitchDetection() {
   try {
     if (isDetecting) return;
-
     if (melodyPart) {
       melodyPart.stop();
       melodyPart.dispose();
@@ -496,7 +246,6 @@ async function startPitchDetection() {
       distortion.dispose();
       chorus.dispose();
     });
-
     // Preparazione iniziale
     isDetecting = true;
     startButton.disabled = true; // Disabilita il pulsante "Start"
@@ -506,10 +255,8 @@ async function startPitchDetection() {
     pitchDisplay.textContent = "Pitch: N/A";
     noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
-
     recordedNotes = []; //Record notes
     renderSequencer();
-
     //Container for countdown
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
@@ -523,7 +270,6 @@ async function startPitchDetection() {
     countdownContainer.style.textShadow = "2px 2px 8px rgba(0, 0, 0, 0.5)";
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
-
     // Countdown based on bpm
     const beatDuration = 60 / bpm; // Calcola la durata di un battito
     for (let i = 3; i > 0; i--) {
@@ -533,7 +279,6 @@ async function startPitchDetection() {
     countdownContainer.textContent = "It's time to record!"; // Messaggio finale
     countdownContainer.style.fontSize = "100px"; // Adatta la dimensione del font
     setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Rimuove il messaggio dopo 1.5 battiti
-
     //Start metronome with the rec
     if (metronomeToggle.checked) {
       console.log("Avvio del metronomo con la registrazione.");
@@ -543,32 +288,25 @@ async function startPitchDetection() {
      const recordingDelay = 350; // Ritardo in millisecondi
      console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
      await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
- 
     //Access to microphone
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
-
     analyser = audioContext.createAnalyser();
     analyser.fftSize = yinOptions.bufferSize;
     const buffer = new Float32Array(analyser.fftSize);
-
     source.connect(analyser);
     startTime = audioContext.currentTime;
-
-
     // Configurazione della barra di avanzamento della registrazione
     const totalDuration = calculateTotalDuration(bpm, 16); // Durata totale per 16 misure
     const progressContainer = document.getElementById("recording-progress-container");
     const progressBar = document.getElementById("recording-progress");
     progressContainer.style.display = "block";
     progressBar.value = 0;
-
     // Aggiorna la barra di avanzamento periodicamente
     const updateInterval = 100; // Aggiorna ogni 100ms
     const totalIntervals = (totalDuration * 1000) / updateInterval;
     let currentInterval = 0;
-
     const progressTimer = setInterval(() => {
       currentInterval++;
       const progress = (currentInterval / totalIntervals) * 100;
@@ -577,13 +315,11 @@ async function startPitchDetection() {
         clearInterval(progressTimer);
       }
     }, updateInterval);
-
     // Interrompi la registrazione automaticamente dopo la durata totale
     recordingTimeout = setTimeout(() => {
       stopPitchDetection(); // Interrompi la registrazione
       alert("Recording stopped after 16 bars.");
     }, totalDuration * 1000);
-
     // Funzione ricorsiva per il rilevamento del pitch
     function detectPitch() {
       if (!isDetecting) return;
@@ -591,7 +327,6 @@ async function startPitchDetection() {
       const maxAmplitude = Math.max(...buffer.map(Math.abs));
       const currentTime = audioContext.currentTime - startTime;
       const frequency = yin.detect(buffer, audioContext.sampleRate);
-
       if (maxAmplitude < silenceThreshold) {
         if (silenceStartTime === null) {
           silenceStartTime = currentTime;
@@ -605,18 +340,15 @@ async function startPitchDetection() {
         return;
       }
       silenceStartTime = null;
-
       if (!frequency || frequency < 40 || frequency > 5000) {
         requestAnimationFrame(detectPitch);
         return;
       }
-
       const note = frequencyToNote(frequency);
       if (!note) {
         requestAnimationFrame(detectPitch);
         return;
       }
-
       if (activeNote) {
         const elapsedTime = currentTime - activeNote.startTime;
         const semitoneDifference = getSemitoneDifference(note, activeNote.note);
@@ -635,7 +367,6 @@ async function startPitchDetection() {
         activeNote = { frequency, note, startTime: currentTime, duration: 0 };
         //recordedNotes.push(activeNote);
       }
-
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
       renderSequencer();
@@ -651,15 +382,11 @@ async function startPitchDetection() {
   }
   toggleSaveButtonState();
   document.getElementById("save-melody").disabled = true;
-
 }
 
-/**
- * Stops pitch detection and the metronome.
- */
+//Stop pitch detection
 function stopPitchDetection() {
   if (!isDetecting) return;
-
   isDetecting = false;
   startButton.disabled = false;
   stopButton.disabled = true;
@@ -673,15 +400,12 @@ function stopPitchDetection() {
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-
   if (recordingTimeout) {
     clearTimeout(recordingTimeout);
     recordingTimeout = null;
   }
-
   const progressContainer = document.getElementById("recording-progress-container");
   progressContainer.style.display = "none";
-
   //Stop the metronome when the rec stops
   if (metronomeActive) {
     console.log("Record completed");
@@ -690,19 +414,56 @@ function stopPitchDetection() {
   quantizeNotes();
   renderSequencer();
   document.getElementById("save-melody").disabled = recordedNotes.length === 0;
-
 }
 
-/**
- * Plays back the recorded melody using sine waves with ADSR envelope.
- */
-// ==========================
-// Play Melody Button Event Listener
-// ==========================
+function calculateTotalDuration(bpm, bars = TOTAL_BARS) {
+  const beatsPerSecond = bpm / 60;
+  return (bars * BEATS_PER_BAR) / beatsPerSecond;
+}
 
-/**
- * Creates and starts the melodyPart using current synth parameters.
- */
+///////////////////////////// METRONOME FUNCTIONS ///////////////////////////// 
+
+//Play Metronome
+function playMetronomeClick(isLastBeat = false) {
+  const audio = new Audio("./audio/metronome-85688.mp3");
+  audio.volume = isLastBeat ? 0.0146 : 0.012; //Leveling the volume
+  audio.play().catch((err) => {
+    console.error("Error during metronome reproduction:", err);
+  });
+}
+
+//Start Metronome
+function startMetronome() {
+  if (metronomeActive) return;
+  metronomeActive = true;
+  metronomeToggle.textContent = "Stop Metronome";
+  const beatsPerBar = 4; // Numero di battiti per misura
+  let currentBeat = 0;
+  const interval = getMetronomeInterval(bpm) * 1000; // Intervallo in millisecondi
+  metronomeInterval = setInterval(() => {
+    currentBeat++;
+    const isLastBeat = currentBeat === beatsPerBar;
+    playMetronomeClick(isLastBeat);
+    if (isLastBeat) {
+      currentBeat = 0; // Resetta il conteggio
+    }
+  }, interval);
+}
+//Stop the metronome
+function stopMetronome() {
+  if (!metronomeActive) return;
+  metronomeActive = false;
+  metronomeToggle.textContent = "Start Metronome";
+  clearInterval(metronomeInterval);
+  metronomeInterval = null;
+}
+function getMetronomeInterval(bpm) {
+  return 60 / bpm;
+}
+
+///////////////////////////// CREATING MELODY FROM SYNTH FUNCTIONS ///////////////////////////// 
+
+//Creates and starts the melodyPart using current synth parameters.
 function createAndStartMelodyPart() {
   createMelody();
   if (Tone.Transport.state !== 'started') {
@@ -716,14 +477,13 @@ function createAndStartMelodyPart() {
 
 function createMelody() {
   if (!melodyPart) {
-    // If melodyPart doesn't exist, create it
+    //If melodyPart doesn't exist, create it
     melodyPart = new Tone.Part((time, note) => {
-      // Set oscillator frequencies dynamically
+      //Set oscillator frequencies dynamically
       osc1.frequency.setValueAtTime(note.frequency, time);
       osc2.frequency.setValueAtTime(note.frequency, time);
       osc3.frequency.setValueAtTime(note.frequency, time);
-
-      // Trigger the global envelope for the note's duration
+      //Trigger the global envelope for the note's duration
       envelope.triggerAttackRelease(note.duration, time);
     }, recordedNotes.map(note => ({
       time: note.startTime, // Note start time
@@ -731,23 +491,22 @@ function createMelody() {
       duration: note.duration, // Note duration
     })));
 
-    // Configure melody looping
+    //Configure melody looping
     melodyPart.loop = true;
     melodyPart.loopStart = 0;
     melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS);
 
-    // Start the melodyPart
+    //Start the melodyPart
     melodyPart.start(0);
   } else {
-    // If melodyPart already exists, update its notes and parameters
+    //If melodyPart already exists, update its notes and parameters
     melodyPart.events = recordedNotes.map(note => ({
       time: note.startTime,
       frequency: note.frequency,
       duration: note.duration,
     }));
   }
-
-  // Update global synth parameters in real time
+  //Update global synth parameters in real time
   try {
     updateSynthParameters();
   } catch (error) {
@@ -755,120 +514,21 @@ function createMelody() {
   }
 }
 
-/**
- * Updates global synth parameters dynamically.
- */
+//Updates global synth parameters dynamically.
 function updateSynthParameters() {
-  // Update filter parameters
+  //Update filter parameters
   filter.frequency.rampTo(parseFloat(document.getElementById("filter-frequency").value), 0.1);
   filter.Q.value = parseFloat(document.getElementById("filter-resonance").value);
-
-  // Update envelope parameters
+  //Update envelope parameters
   envelope.attack = parseFloat(document.getElementById("attack-slider").value);
   envelope.decay = parseFloat(document.getElementById("decay-slider").value);
   envelope.sustain = parseFloat(document.getElementById("sustain-slider").value);
   envelope.release = parseFloat(document.getElementById("release-slider").value);
-
-  // Update oscillator waveforms
+  //Update oscillator waveforms
   osc1.type = document.getElementById("waveform1-select").value;
   osc2.type = document.getElementById("waveform2-select").value;
   osc3.type = document.getElementById("waveform3-select").value;
 }
-
-
-// Filter frequency slider
-document.getElementById("filter-frequency").addEventListener("input", (event) => {
-  setFilterFrequency(parseFloat(event.target.value));
-});
-
-// Envelope sliders
-document.querySelectorAll(".adsr-slider").forEach(slider => {
-  slider.addEventListener("input", (event) => {
-    const param = event.target.dataset.param;
-    const value = event.target.value;
-    updateEnvelope(param, value);
-  });
-});
-
-// Oscillator waveform dropdown
-document.getElementById("waveform1-select").addEventListener("change", (event) => {
-  setOscillatorWaveform(osc1, event.target.value);
-});
-
-
-
-// ==========================
-// Play Melody Button Event Listener
-// ==========================
-
-playMelodyButton.addEventListener("click", async () => {
-  if (recordedNotes.length === 0) {
-    alert("No melody recorded to play.");
-    return;
-  }
-  if (melodyPart) {
-    melodyPart.stop();
-    melodyPart.dispose();
-    melodyPart = null;
-  }
-  // Start the Tone.js context
-  await Tone.start();
-  // Create and start the melodyPart with current parameters
-  createAndStartMelodyPart();
-});
-
-
-// ==========================
-// Melody Reset Function
-// ==========================
-
-/**
- * Resets the recorded melody.
- */
-resetMelodyButton.addEventListener("click", () => {
-  if (recordedNotes.length === 0) {
-    alert("No melody to reset.");
-    return;
-  }
-
-  //Confirm the action
-  const confirmReset = confirm("Are you sure you want to reset the melody?");
-  if (!confirmReset) return;
-  if (melodyPart) {
-    melodyPart.stop();
-    melodyPart.dispose();
-    melodyPart = null;
-  }
-  //Stop pitch detection if active
-  if (isDetecting) {
-    stopPitchDetection();
-  }
- 
-   //Reset variables
-   recordedNotes = [];
-   selectedNoteIndex = null; // Deselect any selected note
-   renderSequencer();
-  //Update button states
-  playMelodyButton.disabled = true;
-  resetMelodyButton.disabled = true;
-  stopPlaybackButton.disabled = true;
-  //Reset visual displays
-  pitchDisplay.textContent = "Pitch: N/A";
-  noteDisplay.textContent = "Note: N/A";
-});
-
-// ==========================
-// Event Listeners
-// ==========================
-
-//Handle metronome toggle button
-metronomeToggle.addEventListener("click", () => {
-  if (metronomeActive) {
-    stopMetronome();
-  } else {
-    startMetronome();
-  }
-});
 
 function updateNoteTimingsForBpmChange(oldBpm, newBpm) {
   const timeScale = oldBpm / newBpm; // Calculate scaling factor
@@ -879,96 +539,55 @@ function updateNoteTimingsForBpmChange(oldBpm, newBpm) {
   }));
 }
 
-bpmInput.addEventListener("input", (event) => {
-  const oldBpm = bpm; // Store the previous BPM
-  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
-
-  // If BPM has changed, update recorded notes and melodyPart
-  if (oldBpm !== bpm) {
-    const timeScale = oldBpm / bpm; // Calculate scaling factor for time adjustments
-
-    // Update recorded notes' timings
-    recordedNotes = recordedNotes.map(note => ({
-      ...note,
-      startTime: note.startTime * timeScale,
-      duration: note.duration * timeScale,
-    }));
-
-    // Update Tone.Transport BPM and recreate melodyPart
-    Tone.Transport.bpm.value = bpm;
-    if (melodyPart) {
-      recreateMelodyPart();
-    }
-  }
-
-  // Restart metronome if active
-  if (metronomeActive) {
-    stopMetronome(); // Stop current metronome
-    startMetronome(); // Restart metronome with new BPM
-  }
-
-  // Disable BPM input during recording to maintain consistent recording duration
-  bpmInput.disabled = isDetecting;
-
-  // Re-render sequencer to reflect changes
-  renderSequencer();
-});
-
-/**
- * Recreates the melodyPart with updated timings and parameters.
- */
+//Recreates the melodyPart with updated timings and parameters.
 function recreateMelodyPart() {
   if (melodyPart) {
     melodyPart.stop();
     melodyPart.dispose();
     melodyPart = null;
   }
-
   // Create a new Tone.Part with updated note timings
   melodyPart = new Tone.Part((time, note) => {
     osc1.frequency.setValueAtTime(note.frequency, time);
     osc2.frequency.setValueAtTime(note.frequency, time);
     osc3.frequency.setValueAtTime(note.frequency, time);
-
     envelope.triggerAttackRelease(note.duration, time);
   }, recordedNotes.map(note => ({
     time: note.startTime,
     frequency: note.frequency,
     duration: note.duration,
   })));
-
-  // Configure looping
+  //Configure looping
   melodyPart.loop = true;
   melodyPart.loopStart = 0;
   melodyPart.loopEnd = calculateTotalDuration(bpm, TOTAL_BARS);
-
   melodyPart.start(0); // Restart playback
 }
 
+//Snaps a time value to the nearest grid interval.
+function snapToGrid(time) {
+  const gridSize = (60/bpm)/4; // Grid size in seconds (e.g., quarter seconds)
+  return Math.round(time / gridSize) * gridSize;
+}
 
-//Add event listeners to pitch control buttons
-startButton.addEventListener("click", startPitchDetection);
-stopButton.addEventListener("click", stopPitchDetection);
+//Directly quantizes recorded notes
+function quantizeNotes() {
+  const gridSize = (60 / bpm) / 4; // Sixteenth note duration
+  recordedNotes = recordedNotes.map(note => {
+    const snappedStartTime = Math.round(note.startTime / gridSize) * gridSize;
+    const snappedDuration = Math.round(note.duration / gridSize) * gridSize;
+    return {
+      ...note,
+      startTime: snappedStartTime,
+      duration: snappedDuration,
+    };
+  });
+  renderSequencer(); // Update the sequencer visualization
+}
 
-// ==========================
-// Initialization on Page Load
-// ==========================
+///////////////////////////// NOTE INTERATION FUNCTIONS //////////////////////////////////
 
-document.addEventListener("DOMContentLoaded", () => {
-  stopButton.disabled = true;
-  playMelodyButton.disabled = true;
-  resetMelodyButton.disabled = true; // Initialize reset button as disabled
-  stopPlaybackButton.disabled = true; // Initialize the Stop Playback button as disabled
-  renderSequencer();
-});
-/**
- * Shifts all recorded notes up or down by an octave.
- * @param {number} direction - 1 for up, -1 for down.
- */
-/**
- * Shifts all recorded notes up or down by an octave.
- * @param {number} direction - 1 for up, -1 for down.
- */
+//Shifts all recorded notes up or down by an octave.
 function shiftOctave(direction) {
   if (recordedNotes.length === 0) {
     alert("No notes to shift.");
@@ -986,200 +605,17 @@ function shiftOctave(direction) {
       alert("Shifting exceeds the valid range of C2 to C8. Adjustment canceled.");
       return;
     }
-
     const newNoteName = noteNames[newMidiNumber % 12] + Math.floor(newMidiNumber / 12 - 1);
     note.note = newNoteName; // Update note name
-
     //Update frequency based on the new MIDI number
     const A4 = 440;
     note.frequency = A4 * Math.pow(2, (newMidiNumber - 69) / 12);
-    
   });
   createMelody();
   renderSequencer(); // Re-render the sequencer to reflect changes
 }
 
-
-//Event listeners for the octave shift buttons
-document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
-document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
-
-/**
- * Handles the mousedown event on the sequencer canvas.
- * Determines if a note is being selected for dragging or resizing.
- */
-sequencerCanvas.addEventListener("mousedown", (event) => {
-  const rect = sequencerCanvas.getBoundingClientRect();
-  const lastNote=null;
-  //Adjust coordinates based on canvas scaling
-  const scaleX = sequencerCanvas.width / rect.width;
-  const scaleY = sequencerCanvas.height / rect.height;
-
-  const x = (event.clientX - rect.left) * scaleX;
-  const y = (event.clientY - rect.top) * scaleY;
-  //Iterate through all recorded notes to check for interaction
-  for (let i = 0; i < recordedNotes.length; i++) {
-    lastSelectedNoteIndex = i;
-    const note = recordedNotes[i];
-    const midiNumber = midiFromNoteName(note.note);
-    const noteIndex = midiNumber - 36; // MIDI 36 = C2
-    const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
-
-    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
-    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
-    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
-
-    const resizeThreshold = 5; //Pixels near the edge to trigger resizing
-
-    //Check if the click is within the vertical bounds of the note
-    if ( y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
-      if (x >= xStart - resizeThreshold && x <= xStart + resizeThreshold) {
-        // Clicked near the start of the note for resizing
-        console.log("near the start clicked");
-        selectedNoteIndex = i;
-        isResizingStart = true;
-        dragOffsetX = x - xStart; // Calculate horizontal offset
-        isDragging = true; // Enter dragging mode
-        createMelody()
-        return;
-      } else if (x >= xEnd - resizeThreshold && x <= xEnd + resizeThreshold) {
-        // Clicked near the end of the note for resizing
-        console.log("near the end clicked");
-        selectedNoteIndex = i;
-        isResizingEnd = true;
-        dragOffsetX = x - xEnd; // Calculate horizontal offset
-        isDragging = true; // Enter dragging mode
-        createMelody()
-        return;
-      } else if (x >= xStart && x <= xEnd) {
-        // Clicked inside the note for moving
-        console.log("inside clicked");
-        selectedNoteIndex = i;
-        lastSelectedNoteIndex= i;
-        dragOffsetX = x - xStart; // Calculate horizontal offset
-        dragOffsetY = y - yCenter; // Calculate vertical offset
-        isDragging = true; // Enter dragging mode
-        document.getElementById("delete-note").disabled=false;
-        createMelody()
-        return;
-      }
-    }
-  }
-  //If no note is selected, deselect any previously selected note
-  selectedNoteIndex = null;
-  renderSequencer();
-});
-
-
-/**
- * Snaps a time value to the nearest grid interval.
- * Useful for aligning notes to a temporal grid.
- * @param {number} time - Time value in seconds.
- * @returns {number} - Snapped time value.
- */
-function snapToGrid(time) {
-  const gridSize = (60/bpm)/4; // Grid size in seconds (e.g., quarter seconds)
-  return Math.round(time / gridSize) * gridSize;
-}
-
-function quantizeNotes() {
-  const gridSize = (60 / bpm) / 4; // Sixteenth note duration
-  recordedNotes = recordedNotes.map(note => {
-    const snappedStartTime = Math.round(note.startTime / gridSize) * gridSize;
-    const snappedDuration = Math.round(note.duration / gridSize) * gridSize;
-    return {
-      ...note,
-      startTime: snappedStartTime,
-      duration: snappedDuration,
-    };
-  });
-  renderSequencer(); // Update the sequencer visualization
-}
-
-
-sequencerCanvas.addEventListener("mousemove", (event) => {
-  if (!isDragging || selectedNoteIndex === null)
-    return; // Exit if not dragging
-  const rect = sequencerCanvas.getBoundingClientRect();
-
-  // Adjust coordinates based on canvas scaling
-  const scaleX = sequencerCanvas.width / rect.width;
-  const scaleY = sequencerCanvas.height / rect.height;
-
-  const x = (event.clientX - rect.left) * scaleX;
-  const y = (event.clientY - rect.top) * scaleY;
-
-  const draggedNote = recordedNotes[selectedNoteIndex];
-
-  if (isResizingStart) {
-    // Handle resizing the start of the note
-    const newStartTime = Math.max(0, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
-    const newDuration = draggedNote.startTime + draggedNote.duration - newStartTime;
-
-    if (newDuration > 0.1) { // Ensure a minimum duration
-      draggedNote.startTime = newStartTime;
-      draggedNote.duration = newDuration;
-    }
-  } else if (isResizingEnd) {
-    // Handle resizing the end of the note
-    const newEndTime = Math.max(draggedNote.startTime + 0.1, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
-    draggedNote.duration = newEndTime - draggedNote.startTime;
-  } else {
-    // Handle moving the note horizontally (time) and vertically (pitch)
-    const unsnappedStartTime = (x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm);
-    const snappedStartTime = snapToGrid(Math.max(0, unsnappedStartTime));
-
-    const midiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight); // Calculate new MIDI number based on Y position
-    const clampedMidiNumber = Math.min(108, Math.max(36, midiNumber)); // Clamp within C2 to C8
-
-    const newNoteName = noteNames[clampedMidiNumber % 12] + Math.floor(clampedMidiNumber / 12 - 1);
-
-    // Prevent overlapping with other notes
-    if (!isOverlapping(snappedStartTime, clampedMidiNumber, selectedNoteIndex)) {
-      draggedNote.startTime = snappedStartTime; // Update start time
-      draggedNote.note = newNoteName; // Update note name
-      draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); // Update frequency
-    }
-  }
-  renderSequencer(); // Update the sequencer visualization
-}
-);
-
-
-/**
- * Updates the Exponential Moving Average (EMA) with the new frequency.
- * @param {number} frequency - New frequency value in Hz.
- * @returns {number} - Updated EMA frequency.
- */
-function updateEMA(frequency) {
-  emaFrequency = EMA_ALPHA * frequency + (1 - EMA_ALPHA) * emaFrequency;
-  return emaFrequency;
-}
-
-/**
- * Snaps a detected frequency to the nearest musical note frequency.
- * @param {number} frequency - Detected frequency in Hz.
- * @returns {number} - Snapped frequency in Hz.
- */
-function snapFrequencyToNearestNoteFrequency(frequency) {
-  const midiNumber = Math.round(69 + 12 * Math.log2(frequency / A4)); // Calculate closest MIDI number
-  const snappedFrequency = A4 * Math.pow(2, (midiNumber - 69) / 12); // Convert back to frequency
-  return snappedFrequency;
-}
-
-// ==========================
-// Note Interaction Functions
-// ==========================
-
-
-/**
- * Checks if a new note position overlaps with existing notes.
- * Prevents multiple notes from occupying the same pitch and time range.
- * @param {number} newStartTime - The new start time of the note in seconds.
- * @param {number} newMidiNumber - The MIDI number of the new note.
- * @param {number} excludeIndex - The index of the note being moved (to exclude from overlap check).
- * @returns {boolean} - True if overlapping, else false.
- */
+//Checks if a new note position overlaps with existing notes.
 function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   for (let i = 0; i < recordedNotes.length; i++) {
     if (i === excludeIndex) continue; // Skip the note being moved
@@ -1199,173 +635,7 @@ function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   return false; // No overlap
 }
 
-/**
- * Handles the mouseup event to stop dragging or resizing.
- */
-window.addEventListener("mouseup", () => {
-  if (isDragging) {
-    isDragging = false;
-    isResizingStart = false;
-    isResizingEnd = false;
-    //selectedNoteIndex = null;
-    createAndStartMelodyPart()
-    renderSequencer(); // Finalize the sequencer visualization
-  }
-});
-
-// ==========================
-// Touch Event Handling for Mobile Devices
-// ==========================
-
-/**
- * Handles the touchstart event on the sequencer canvas.
- * Similar to mousedown but for touch interactions.
- */
-sequencerCanvas.addEventListener("touchstart", (event) => {
-  const touch = event.touches[0];
-  const rect = sequencerCanvas.getBoundingClientRect();
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
-  // Iterate through all recorded notes to check for interaction
-  for (let i = 0; i < recordedNotes.length; i++) {
-    const note = recordedNotes[i];
-    const midiNumber = midiFromNoteName(note.note);
-    const noteIndex = midiNumber - 36; // MIDI 36 = C2
-    const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
-
-    // Calculate X position based on beats
-    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
-    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
-    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
-
-    // Check if the touch is within the bounds of the note
-    if (x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
-      lastSelectedNoteIndex = i;
-      selectedNoteIndex = i;
-      dragOffsetX = x - xStart; // Calculate horizontal offset
-      dragOffsetY = y - yCenter; // Calculate vertical offset
-      isDragging = true; // Enter dragging mode
-      renderSequencer(); // Update the sequencer visualization
-      return;
-    }
-  }
-  // If no note is selected, deselect any previously selected note
-  selectedNoteIndex = null;
-  renderSequencer();
-});
-
-/**
- * Handles the touchmove event on the sequencer canvas.
- * Allows for dragging and resizing of notes based on touch movement.
- */
-sequencerCanvas.addEventListener("touchmove", (event) => {
-  if (!isDragging || selectedNoteIndex === null) return; //Exit if not dragging
-
-  const touch = event.touches[0];
-  const rect = sequencerCanvas.getBoundingClientRect();
-  const x = touch.clientX - rect.left;
-  const y = touch.clientY - rect.top;
-
-  const draggedNote = recordedNotes[selectedNoteIndex];
-  const newStartTime = snapToGrid((x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
-  const newMidiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight);
-  const clampedMidiNumber = Math.min(108, Math.max(36, newMidiNumber));
-  const newNoteName = noteNames[clampedMidiNumber % 12] + Math.floor(clampedMidiNumber / 12 - 1);
-
-  // Prevent overlapping with other notes
-  if (!isOverlapping(newStartTime, clampedMidiNumber, selectedNoteIndex)) {
-    draggedNote.startTime = Math.max(0, newStartTime); //Update start time
-    draggedNote.note = newNoteName;                   //Update note name
-    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); //Update frequency
-    renderSequencer(); //Update the sequencer visualization
-  }
-});
-
-/**
- * Handles the touchend event to stop dragging or resizing.
- */
-sequencerCanvas.addEventListener("touchend", () => {
-  if (isDragging) {
-    isDragging = false;
-    selectedNoteIndex = null;
-    renderSequencer(); //Finalize the sequencer visualization
-  }
-});
-
-
-// ==========================
-// Deletion Functions
-// ==========================
-
-/**
- * Handles deletion of the selected note via the Delete button.
- * Prompts the user for confirmation before deletion.
- */
-document.getElementById("delete-note").addEventListener("click", () => {
-  if (selectedNoteIndex !== null) {
-    // Confirm deletion with the user
-    const confirmDelete = confirm("Are you sure you want to delete the selected note?");
-    if (confirmDelete) {
-      // Remove the note from the recordedNotes array
-      console.log("Deleting a note...");
-      recordedNotes.splice(selectedNoteIndex, 1);
-      selectedNoteIndex = null;
-      lastSelectedNoteIndex = null;
-      createAndStartMelodyPart();
-      renderSequencer(); // Update the sequencer visualization
-    }
-  }
-});
-
-/**
- * Handles deletion of the selected note via the Delete key on the keyboard.
- * Prompts the user for confirmation before deletion.
- */
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Delete" && selectedNoteIndex !== null) {
-    const confirmDelete = confirm("Are you sure you want to delete the selected note?");
-    if (confirmDelete) {
-      recordedNotes.splice(selectedNoteIndex, 1);
-      selectedNoteIndex = null;
-      createMelody()
-      renderSequencer(); // Update the sequencer visualization
-    }
-  }
-});
-
-// ==========================
-// Additional BPM Input Handling
-// ==========================
-
-/**
- * Updates the BPM based on user input.
- * Also restarts the metronome if it's active and disables BPM changes during recording.
- */
-bpmInput.addEventListener("input", (event) => {
-  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
-  if (metronomeActive) {
-    stopMetronome(); // Stop current metronome
-    startMetronome(); // Restart metronome with new BPM
-  }
-  // Disable BPM input during recording to maintain consistent recording duration
-  if (isDetecting) {
-    bpmInput.disabled = true;
-  } else {
-    bpmInput.disabled = false;
-  }
-});
-
-
-/**
- * Calculates the total duration based on BPM and number of bars.
- * @param {number} bpm - Beats per minute.
- * @param {number} bars - Number of bars.
- * @returns {number} - Total duration in seconds.
- */
-function calculateTotalDuration(bpm, bars = TOTAL_BARS) {
-  const beatsPerSecond = bpm / 60;
-  return (bars * BEATS_PER_BAR) / beatsPerSecond;
-}
+///////////////////////////// SYNTH PARAMETERS ///////////////////////////// 
 
 //Shared envelope
 const envelope = new Tone.AmplitudeEnvelope({
@@ -1383,7 +653,7 @@ const chorus = new Tone.Chorus({
   spread: 180,    // Stereo spread in degrees
 }).start();
 
-// Filter
+//Filter
 const filter = new Tone.Filter({
   frequency: 500, //Default cutoff frequency
   type: "lowpass", //Default filter type
@@ -1391,7 +661,7 @@ const filter = new Tone.Filter({
   Q: 1, //Default resonance
 });
 
-// Distortion
+//Distortion
 const distortion = new Tone.Distortion({
   distortion: 0.4, //Default amount of distortion
   oversample: "4x", //Increases audio fidelity
@@ -1463,7 +733,6 @@ function setOsc3WaveType(type) {
   console.log(type);
   createMelody();
 }
-
 
 //Control oscillator volumes
 function setOsc1Volume(value) {
@@ -1633,11 +902,321 @@ document.getElementById("distortion-slider").addEventListener("input", (event) =
   createMelody();
 });
 
-// ==========================
-// Stop Playback Button Event Listener
-// ==========================
+///////////////////////////// ADD EVENT LISTENER ///////////////////////////// 
 
-const stopPlaybackButton = document.getElementById("stop-playback"); // Get the button element
+//Initialization on Page Load
+document.addEventListener("DOMContentLoaded", () => {
+  stopButton.disabled = true;
+  playMelodyButton.disabled = true;
+  resetMelodyButton.disabled = true; // Initialize reset button as disabled
+  stopPlaybackButton.disabled = true; // Initialize the Stop Playback button as disabled
+  renderSequencer();
+});
+
+//Play Melody Button Event Listener
+playMelodyButton.addEventListener("click", async () => {
+  if (recordedNotes.length === 0) {
+    alert("No melody recorded to play.");
+    return;
+  }
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
+  //Start the Tone.js context
+  await Tone.start();
+  //Create and start the melodyPart with current parameters
+  createAndStartMelodyPart();
+});
+
+//Reset Melody Button Event Listener
+resetMelodyButton.addEventListener("click", () => {
+  if (recordedNotes.length === 0) {
+    alert("No melody to reset.");
+    return;
+  }
+  //Confirm the action
+  const confirmReset = confirm("Are you sure you want to reset the melody?");
+  if (!confirmReset) return;
+  if (melodyPart) {
+    melodyPart.stop();
+    melodyPart.dispose();
+    melodyPart = null;
+  }
+  //Stop pitch detection if active
+  if (isDetecting) {
+    stopPitchDetection();
+  }
+   //Reset variables
+   recordedNotes = [];
+   selectedNoteIndex = null; // Deselect any selected note
+   renderSequencer();
+  //Update button states
+  playMelodyButton.disabled = true;
+  resetMelodyButton.disabled = true;
+  stopPlaybackButton.disabled = true;
+  //Reset visual displays
+  pitchDisplay.textContent = "Pitch: N/A";
+  noteDisplay.textContent = "Note: N/A";
+});
+
+//Bpm input Button Event Listener
+bpmInput.addEventListener("input", (event) => {
+  const oldBpm = bpm; // Store the previous BPM
+  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
+  // If BPM has changed, update recorded notes and melodyPart
+  if (oldBpm !== bpm) {
+    const timeScale = oldBpm / bpm; // Calculate scaling factor for time adjustments
+    // Update recorded notes' timings
+    recordedNotes = recordedNotes.map(note => ({
+      ...note,
+      startTime: note.startTime * timeScale,
+      duration: note.duration * timeScale,
+    }));
+    // Update Tone.Transport BPM and recreate melodyPart
+    Tone.Transport.bpm.value = bpm;
+    if (melodyPart) {
+      recreateMelodyPart();
+    }
+  }
+  if (metronomeActive) {
+    stopMetronome(); // Stop current metronome
+    startMetronome(); // Restart metronome with new BPM
+  }
+  //Disable BPM input during recording to maintain consistent recording duration
+  bpmInput.disabled = isDetecting;
+  //Re-render sequencer to reflect changes
+  renderSequencer();
+});
+
+//Metronome Button Event Listener
+metronomeToggle.addEventListener("click", () => {
+  if (metronomeActive) {
+    stopMetronome();
+  } else {
+    startMetronome();
+  }
+});
+
+startButton.addEventListener("click", startPitchDetection);//Add event listeners to pitch control buttons
+stopButton.addEventListener("click", stopPitchDetection);
+
+//Handles the mouseup event to stop dragging or resizing.
+window.addEventListener("mouseup", () => {
+  if (isDragging) {
+    isDragging = false;
+    isResizingStart = false;
+    isResizingEnd = false;
+    //selectedNoteIndex = null;
+    createAndStartMelodyPart()
+    renderSequencer(); // Finalize the sequencer visualization
+  }
+});
+
+sequencerCanvas.addEventListener("mousemove", (event) => {
+  if (!isDragging || selectedNoteIndex === null)
+    return; // Exit if not dragging
+  const rect = sequencerCanvas.getBoundingClientRect();
+  // Adjust coordinates based on canvas scaling
+  const scaleX = sequencerCanvas.width / rect.width;
+  const scaleY = sequencerCanvas.height / rect.height;
+
+  const x = (event.clientX - rect.left) * scaleX;
+  const y = (event.clientY - rect.top) * scaleY;
+
+  const draggedNote = recordedNotes[selectedNoteIndex];
+
+  if (isResizingStart) {
+    // Handle resizing the start of the note
+    const newStartTime = Math.max(0, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
+    const newDuration = draggedNote.startTime + draggedNote.duration - newStartTime;
+
+    if (newDuration > 0.1) { // Ensure a minimum duration
+      draggedNote.startTime = newStartTime;
+      draggedNote.duration = newDuration;
+    }
+  } else if (isResizingEnd) {
+    // Handle resizing the end of the note
+    const newEndTime = Math.max(draggedNote.startTime + 0.1, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
+    draggedNote.duration = newEndTime - draggedNote.startTime;
+  } else {
+    // Handle moving the note horizontally (time) and vertically (pitch)
+    const unsnappedStartTime = (x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm);
+    const snappedStartTime = snapToGrid(Math.max(0, unsnappedStartTime));
+
+    const midiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight); // Calculate new MIDI number based on Y position
+    const clampedMidiNumber = Math.min(108, Math.max(36, midiNumber)); // Clamp within C2 to C8
+
+    const newNoteName = noteNames[clampedMidiNumber % 12] + Math.floor(clampedMidiNumber / 12 - 1);
+
+    // Prevent overlapping with other notes
+    if (!isOverlapping(snappedStartTime, clampedMidiNumber, selectedNoteIndex)) {
+      draggedNote.startTime = snappedStartTime; // Update start time
+      draggedNote.note = newNoteName; // Update note name
+      draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); // Update frequency
+    }
+  }
+  renderSequencer(); // Update the sequencer visualization
+}
+);
+
+//Handles the mousedown event on the sequencer canvas.
+//Determines if a note is being selected for dragging or resizing
+sequencerCanvas.addEventListener("mousedown", (event) => {
+  const rect = sequencerCanvas.getBoundingClientRect();
+  const lastNote=null;
+  //Adjust coordinates based on canvas scaling
+  const scaleX = sequencerCanvas.width / rect.width;
+  const scaleY = sequencerCanvas.height / rect.height;
+  const x = (event.clientX - rect.left) * scaleX;
+  const y = (event.clientY - rect.top) * scaleY;
+  //Iterate through all recorded notes to check for interaction
+  for (let i = 0; i < recordedNotes.length; i++) {
+    lastSelectedNoteIndex = i;
+    const note = recordedNotes[i];
+    const midiNumber = midiFromNoteName(note.note);
+    const noteIndex = midiNumber - 36; // MIDI 36 = C2
+    const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
+    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const resizeThreshold = 5; //Pixels near the edge to trigger resizing
+    //Check if the click is within the vertical bounds of the note
+    if ( y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
+      if (x >= xStart - resizeThreshold && x <= xStart + resizeThreshold) {
+        // Clicked near the start of the note for resizing
+        console.log("near the start clicked");
+        selectedNoteIndex = i;
+        isResizingStart = true;
+        dragOffsetX = x - xStart; // Calculate horizontal offset
+        isDragging = true; // Enter dragging mode
+        createMelody()
+        return;
+      } else if (x >= xEnd - resizeThreshold && x <= xEnd + resizeThreshold) {
+        // Clicked near the end of the note for resizing
+        console.log("near the end clicked");
+        selectedNoteIndex = i;
+        isResizingEnd = true;
+        dragOffsetX = x - xEnd; // Calculate horizontal offset
+        isDragging = true; // Enter dragging mode
+        createMelody()
+        return;
+      } else if (x >= xStart && x <= xEnd) {
+        // Clicked inside the note for moving
+        console.log("inside clicked");
+        selectedNoteIndex = i;
+        lastSelectedNoteIndex= i;
+        dragOffsetX = x - xStart; // Calculate horizontal offset
+        dragOffsetY = y - yCenter; // Calculate vertical offset
+        isDragging = true; // Enter dragging mode
+        document.getElementById("delete-note").disabled=false;
+        createMelody()
+        return;
+      }
+    }
+  }
+  //If no note is selected, deselect any previously selected note
+  selectedNoteIndex = null;
+  renderSequencer();
+});
+
+//Handles the touchstart event on the sequencer canvas.
+// //Similar to mousedown but for touch interactions.
+sequencerCanvas.addEventListener("touchstart", (event) => {
+  const touch = event.touches[0];
+  const rect = sequencerCanvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  // Iterate through all recorded notes to check for interaction
+  for (let i = 0; i < recordedNotes.length; i++) {
+    const note = recordedNotes[i];
+    const midiNumber = midiFromNoteName(note.note);
+    const noteIndex = midiNumber - 36; // MIDI 36 = C2
+    const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
+
+    // Calculate X position based on beats
+    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
+    const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
+
+    // Check if the touch is within the bounds of the note
+    if (x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
+      lastSelectedNoteIndex = i;
+      selectedNoteIndex = i;
+      dragOffsetX = x - xStart; // Calculate horizontal offset
+      dragOffsetY = y - yCenter; // Calculate vertical offset
+      isDragging = true; // Enter dragging mode
+      renderSequencer(); // Update the sequencer visualization
+      return;
+    }
+  }
+  // If no note is selected, deselect any previously selected note
+  selectedNoteIndex = null;
+  renderSequencer();
+});
+
+//Handles the touchmove event on the sequencer canvas.
+//Allows for dragging and resizing of notes based on touch movement.
+sequencerCanvas.addEventListener("touchmove", (event) => {
+  if (!isDragging || selectedNoteIndex === null) return; //Exit if not dragging
+
+  const touch = event.touches[0];
+  const rect = sequencerCanvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+
+  const draggedNote = recordedNotes[selectedNoteIndex];
+  const newStartTime = snapToGrid((x - labelWidth - dragOffsetX) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
+  const newMidiNumber = 108 - Math.floor((y - dragOffsetY) / rowHeight);
+  const clampedMidiNumber = Math.min(108, Math.max(36, newMidiNumber));
+  const newNoteName = noteNames[clampedMidiNumber % 12] + Math.floor(clampedMidiNumber / 12 - 1);
+
+  // Prevent overlapping with other notes
+  if (!isOverlapping(newStartTime, clampedMidiNumber, selectedNoteIndex)) {
+    draggedNote.startTime = Math.max(0, newStartTime); //Update start time
+    draggedNote.note = newNoteName;                   //Update note name
+    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); //Update frequency
+    renderSequencer(); //Update the sequencer visualization
+  }
+});
+
+//Handles the touchend event to stop dragging or resizing.
+sequencerCanvas.addEventListener("touchend", () => {
+  if (isDragging) {
+    isDragging = false;
+    selectedNoteIndex = null;
+    renderSequencer(); //Finalize the sequencer visualization
+  }
+});
+
+//Handles deletion of the selected note via the Delete key on the keyboard.
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Delete" && selectedNoteIndex !== null) {
+    const confirmDelete = confirm("Are you sure you want to delete the selected note?");
+    if (confirmDelete) {
+      recordedNotes.splice(selectedNoteIndex, 1);
+      selectedNoteIndex = null;
+      createMelody()
+      renderSequencer(); // Update the sequencer visualization
+    }
+  }
+});
+
+//Updates the BPM based on user input.
+bpmInput.addEventListener("input", (event) => {
+  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
+  if (metronomeActive) {
+    stopMetronome(); // Stop current metronome
+    startMetronome(); // Restart metronome with new BPM
+  }
+  // Disable BPM input during recording to maintain consistent recording duration
+  if (isDetecting) {
+    bpmInput.disabled = true;
+  } else {
+    bpmInput.disabled = false;
+  }
+});
 
 stopPlaybackButton.addEventListener("click", () => {
   if (melodyPart) {
@@ -1664,3 +1243,159 @@ metronomeToggle.addEventListener("change", () => {
     }
   }
 });
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchMelodies();
+});
+
+///////////////////////////// DOCUMENT GET ELEMENT BY ID ///////////////////////////// 
+
+//Event listeners for the octave shift buttons
+document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
+document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
+
+//Filter frequency slider
+document.getElementById("filter-frequency").addEventListener("input", (event) => {
+  setFilterFrequency(parseFloat(event.target.value));
+});
+
+//Envelope sliders
+document.querySelectorAll(".adsr-slider").forEach(slider => {
+  slider.addEventListener("input", (event) => {
+    const param = event.target.dataset.param;
+    const value = event.target.value;
+    updateEnvelope(param, value);
+  });
+});
+
+//Oscillator waveform dropdown
+document.getElementById("waveform1-select").addEventListener("change", (event) => {
+  setOscillatorWaveform(osc1, event.target.value);
+});
+
+document.getElementById("melody-dropdown").addEventListener("change", () => {
+  const loadButton = document.getElementById("load-melody-button");
+  loadButton.disabled = false; // Enable the button when a melody is selected
+});
+document.getElementById("load-melody-button").addEventListener("click", () => {
+  const melodyDropdown = document.getElementById("melody-dropdown");
+  const selectedOption = melodyDropdown.options[melodyDropdown.selectedIndex];
+
+  if (!selectedOption || !selectedOption.dataset.melody) {
+    alert("Please select a valid melody.");
+    return;
+  }
+
+  const melody = JSON.parse(selectedOption.dataset.melody); // Parse melody data
+  loadMelodyToSequencer(melody); // Load the melody into the sequencer
+  playMelodyButton.disabled=false;
+});
+
+//Handles deletion of the selected note via the Delete button.
+//Prompts the user for confirmation before deletion.
+document.getElementById("delete-note").addEventListener("click", () => {
+  if (selectedNoteIndex !== null) {
+    // Confirm deletion with the user
+    const confirmDelete = confirm("Are you sure you want to delete the selected note?");
+    if (confirmDelete) {
+      // Remove the note from the recordedNotes array
+      console.log("Deleting a note...");
+      recordedNotes.splice(selectedNoteIndex, 1);
+      selectedNoteIndex = null;
+      lastSelectedNoteIndex = null;
+      createAndStartMelodyPart();
+      renderSequencer(); // Update the sequencer visualization
+    }
+  }
+});
+
+///////////////////////////// DATABASE FUNCTIONS ///////////////////////////// 
+
+async function saveMelodyToDatabase(melodyName) {
+  if (recordedNotes.length === 0) {
+    alert("No melody to save.");
+    return;
+  }
+  const melodyData = recordedNotes.map(note => ({
+    note: note.note,
+    frequency: note.frequency,
+    startTime: note.startTime,
+    duration: note.duration,
+  }));
+
+  try {
+    const docRef = await addDoc(collection(db, "melodies"), {
+      name: melodyName,
+      bpm: bpm,
+      notes: melodyData,
+      createdAt: new Date().toISOString(),
+    });
+    alert(`Melody "${melodyName}" saved successfully! ID: ${docRef.id}`);
+  } catch (error) {
+    console.error("Error saving melody:", error);
+    alert("Error saving melody. Please try again.");
+  }
+}
+
+document.getElementById("save-melody").addEventListener("click", () => {
+  if (recordedNotes.length === 0) {
+    alert("No melody recorded to save.");
+    return;
+  }
+  const melodyName = prompt("Enter a name for your melody:");
+  if (melodyName) {
+    saveMelodyToDatabase(melodyName);
+  }
+});
+
+function toggleSaveButtonState() {
+  const saveButton = document.getElementById("save-melody");
+  saveButton.disabled = recordedNotes.length === 0;
+}
+
+async function fetchMelodies() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "melodies"));
+    const melodies = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    console.log("Melodies:", melodies);
+    renderMelodies(melodies);
+  } catch (error) {
+    console.error("Error fetching melodies:", error);
+  }
+}
+function renderMelodies(melodies) {
+  const melodyDropdown = document.getElementById("melody-dropdown");
+  melodyDropdown.innerHTML = '<option value="" disabled selected>Choose a melody</option>'; // Reset options
+  melodies.forEach(melody => {
+    const option = document.createElement("option");
+    option.value = melody.id; // Store the melody ID
+    option.textContent = `${melody.name} (BPM: ${melody.bpm})`;
+    option.dataset.melody = JSON.stringify(melody); // Save the melody data in a data attribute
+    melodyDropdown.appendChild(option);
+  });
+
+  // Enable the load button if melodies are available
+  const loadButton = document.getElementById("load-melody-button");
+  loadButton.disabled = melodies.length === 0;
+}
+function loadMelodyToSequencer(melody) {
+  if (!melody.notes || melody.notes.length === 0) {
+    alert("This melody has no notes to load.");
+    return;
+  }
+  recordedNotes = melody.notes.map(note => ({
+    note: note.note,
+    frequency: note.frequency,
+    startTime: note.startTime,
+    duration: note.duration,
+  }));
+  bpm = melody.bpm; // Set the sequencer's BPM to the melody's BPM
+  document.getElementById("bpm-input").value = bpm; // Update the BPM input field if it exists
+  alert(`Melody "${melody.name}" loaded successfully!`);
+  renderSequencer(); // Re-render the sequencer with the loaded notes
+  toggleSaveButtonState(); // Update the Save button state
+}
+
