@@ -104,7 +104,7 @@
     
       <h3>ADSR Envelope</h3>
       <label for="attack-slider">Attack:</label>
-      <input type="range" class="adsr-slider" id="attack-slider" data-param="attack" min="0" max="5" step="0.01" value="0.1">
+      <input type="range" class="adsr-slider" id="attack-slider" data-param="attack" min="0.1" max="5" step="0.01" value="0.1">
       <span id="attack-value">0.1</span>
       <br>
     
@@ -123,7 +123,7 @@
       <span id="release-value">1.5</span>
       <br>
      
-        <h3>LFO</h3>
+      <h3>LFO</h3>
       <label for="lfo-waveform">Waveform:</label>
       <select id="lfo-waveform">
         <option value="sine">Sine</option>
@@ -133,19 +133,13 @@
       </select>
       <br>
       <label for="lfo-frequency">Frequency:</label>
-      <input type="range" id="lfo-frequency" min="0.1" max="10" step="0.1"     value="0.5">
-      <span id="lfo-frequency-value">0.5 Hz</span>
+      <input type="range" id="lfo-frequency" min="0" max="10" step="0.1"     value="0.5">
+      <span id="lfo-frequency-value">0 Hz</span>
       <br>
-      <label for="lfo-amount">Amount:</label>
-      <input type="range" id="lfo-amount" min="0" max="500" step="10"           value="100">
-      <span id="lfo-amount-value">100</span>
-      <br>
-      <label for="lfo-toggle">Enable LFO:</label>
-      <input type="checkbox" id="lfo-toggle" checked>
-     
+
       <h3>Filter</h3>
       <label for="filter-frequency">Frequency:</label>
-      <input type="range" id="filter-frequency" min="50" max="10000"           step="5" value="500">
+      <input type="range" id="filter-frequency" min="50" max="10000"           step="1" value="500">
       <span id="filter-frequency-value">500 Hz</span>
       <br>
       <label for="filter-resonance">Resonance (Q):</label>

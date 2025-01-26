@@ -530,14 +530,6 @@ function updateSynthParameters() {
   osc3.type = document.getElementById("waveform3-select").value;
 }
 
-function updateNoteTimingsForBpmChange(oldBpm, newBpm) {
-  const timeScale = oldBpm / newBpm; // Calculate scaling factor
-  recordedNotes = recordedNotes.map(note => ({
-    ...note,
-    startTime: note.startTime * timeScale, // Scale start time
-    duration: note.duration * timeScale,  // Scale duration
-  }));
-}
 
 //Recreates the melodyPart with updated timings and parameters.
 function recreateMelodyPart() {
@@ -585,7 +577,7 @@ function quantizeNotes() {
   renderSequencer(); // Update the sequencer visualization
 }
 
-///////////////////////////// NOTE INTERATION FUNCTIONS //////////////////////////////////
+///////////////////////////// NOTE INTERACTION FUNCTIONS //////////////////////////////////
 
 //Shifts all recorded notes up or down by an octave.
 function shiftOctave(direction) {
@@ -688,19 +680,8 @@ function setLfoWaveform(type) {
 document.getElementById("lfo-waveform").addEventListener("change", (event) => {
   setLfoWaveform(event.target.value);
 });
-let lfoEnabled = false; // Toggle for LFO effect on the filter
 
-//Function to toggle LFO
-function toggleLfo(enabled) {
-  if (enabled) {
-    lfo.connect(filter.frequency); // Connect LFO to filter frequency
-  } else {
-    lfo.disconnect(filter.frequency);
-    filter.frequency.value = 500;
-    document.getElementById("filter-frequency-value").textContent = "500 Hz";
-  }
-  lfoEnabled = enabled;
-}
+lfo.connect(filter.frequency);
 
 //Oscillators and gains
 const osc1 = new Tone.Oscillator("C3", "sine").start();
@@ -784,11 +765,6 @@ function setLfoFrequency(value) {
   lfo.frequency.value = value; // Update LFO rate
 }
 
-function setLfoAmount(value) {
-  //Dynamically set the LFO modulation depth
-  lfo.min = filter.frequency.value - value; // Lower bound of modulation
-  lfo.max = filter.frequency.value + value; // Upper bound of modulation
-}
 
 //Update distortion dynamically
 function setDistortionAmount(value) {
@@ -882,17 +858,6 @@ document.getElementById("lfo-frequency").addEventListener("input", (event) => {
   createMelody();
 });
 
-document.getElementById("lfo-amount").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setLfoAmount(value);
-  document.getElementById("lfo-amount-value").textContent = `${value}`;
-  createMelody();
-});
-
-document.getElementById("lfo-toggle").addEventListener("change", (event) => {
-  toggleLfo(event.target.checked);
-  createMelody();
-});
 
 //Attach event listener for distortion
 document.getElementById("distortion-slider").addEventListener("input", (event) => {
