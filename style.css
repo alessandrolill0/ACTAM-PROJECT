@@ -1,7 +1,7 @@
 /*/////////CONTAINERS///////////*/
 
 .container {
-  max-width: 1400px;
+  max-width: 2000px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -41,7 +41,7 @@ body {
   text-align: center;
   min-width: 1400px; 
   min-height: 900px; 
-  overflow: hidden; 
+  overflow: auto; 
 }
 
 /*TITLE*/
@@ -267,7 +267,7 @@ select {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   background-color: white;
   padding: 0;
   margin: 0;
