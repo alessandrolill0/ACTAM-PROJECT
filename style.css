@@ -165,7 +165,7 @@ body {
   height: 2px;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
+  gap: 1px;
 }
 
 .knob-wrapper {
@@ -196,8 +196,8 @@ label {
 }
 
 select, input[type="range"], button {
-  margin: 10px 0;
-  font-size: 14px;
+  margin: 50px 40px;
+  font-size: 10px;
   color: #000;
   background-color: #f39c12;
   border: none;
@@ -212,7 +212,7 @@ select {
 }
 
 input[type="range"] {
-  width: 200px;
+  width: 50px;
   background-color: #666;
   appearance: none;
 }
