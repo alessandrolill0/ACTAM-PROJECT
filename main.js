@@ -1,11 +1,10 @@
-
 ///////////////////////////// Imports and Configurations ///////////////////////////// 
 
 import { Yin } from "https://cdn.jsdelivr.net/npm/@dipscope/pitch-detector/+esm";  // Import Yin for pitch detection and its configuration
 const yinOptions = { bufferSize: 2048, threshold: 0.15 };
 const yin = new Yin(yinOptions);
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"; //Import the functions you need from the SDKs you need
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"; //Import the functions you need from the SDKs you need
 const firebaseConfig = {
   apiKey: "AIzaSyB7SWop84nuQls0y6Jya1gjUVzOW2kftRo",
   authDomain: "actam-project-42ae0.firebaseapp.com",
@@ -16,7 +15,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig); //Initialize Firebase
 const db = getFirestore(app);
-
 
 //DOM Elements Selection
 const pitchDisplay = document.getElementById("pitch");
@@ -1464,7 +1462,6 @@ async function loadPreset() {
   try {
     const docRef = doc(db, "presets", selectedId);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
       const preset = docSnap.data();
 
@@ -1482,15 +1479,11 @@ async function loadPreset() {
       setSliderValue("decay-slider", preset.decay);
       setSliderValue("sustain-slider", preset.sustain);
       setSliderValue("release-slider", preset.release);
-
       document.getElementById("lfo-waveform").value = preset.lfoWaveform;
       setSliderValue("lfo-frequency", preset.lfoFrequency);
-
       setSliderValue("filter-frequency", preset.filterFrequency);
       setSliderValue("filter-resonance", preset.filterResonance);
-
       setSliderValue("distortion-slider", preset.distortion);
-
       setSliderValue("chorus-frequency", preset.chorusFrequency);
       setSliderValue("chorus-depth", preset.chorusDepth);
       setSliderValue("chorus-spread", preset.chorusSpread);
