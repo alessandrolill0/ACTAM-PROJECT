@@ -229,6 +229,29 @@ body {
   text-align: center;
 }
 
+.oscillator-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.oscillator-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between items in a row */
+}
+
+.oscillator-row label {
+  font-weight: bold;
+  margin-right: 5px; /* Space between label and select/knob */
+}
+
+.oscillator-row select {
+  width: 100px; /* Dropdown width */
+  height: 30px; /* Dropdown height */
+}
+
 
 h2, h3 {
   color: #f39c12;
@@ -326,23 +349,39 @@ canvas {
 }
 
 
+.preset-container {
+  display: flex; /* Use Flexbox to align items */
+  align-items: center; /* Vertically center items */
+  justify-content: center; /* Center items horizontally */
+  gap: 20px; /* Space between dropdown and buttons */
+  margin: 20px 0; /* Add vertical spacing */
+}
+
+#preset-dropdown {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  background-color: #f39c12;
+  color: #000;
+  border: none;
+  width: 200px; /* Adjust width of dropdown */
+  text-align: center;
+}
 
 #load-preset,
 #save-preset {
-  display: inline-block;
-  margin: 40px;
-  padding: 12px 12px; /* Identico ai pulsanti sopra */
+  padding: 10px 20px;
   font-size: 14px;
   font-weight: bold;
+  background-color: #444;
   color: #fff;
-  background-color: #444; /* Stesso colore di sfondo */
-  border: 1px solid #888; /* Bordo simile */
-  border-radius: 5px; /* Bordo arrotondato */
-  transition: background-color 0.2s; /* Transizione uniforme */
+  border: 1px solid #888;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
 }
 
 #load-preset:hover,
 #save-preset:hover {
-  background-color: #f39c12; /* Colore hover simile */
-  color: #000; /* Colore del testo in hover */
+  background-color: #f39c12;
+  color: #000;
 }
