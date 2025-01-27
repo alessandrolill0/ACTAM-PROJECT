@@ -6,7 +6,7 @@ body {
   
   h1 {
     text-align: center;
-    color: #333;
+    color: #f0f0f0;
   }
   
   #controls {
@@ -160,26 +160,21 @@ body {
 }
 
 .knob-container {
-  display: flex;
-  width: 1px;
-  height: 2px;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 20px;
 }
 
 .knob-wrapper {
   display: flex;
-  width: 2px;
-  height: 2px;
   flex-direction: column;
   align-items: center;
-  width: 20px;
-  margin: 5px;
+  justify-content: center;
 }
 
 .knob-wrapper label {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-weight: bold;
   text-align: center;
 }
