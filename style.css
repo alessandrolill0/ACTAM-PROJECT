@@ -158,6 +158,8 @@ body {
 
 .knob-container {
   display: flex;
+  width: 2px;
+  height: 2px;
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
@@ -165,14 +167,16 @@ body {
 
 .knob-wrapper {
   display: flex;
+  width: 2px;
+  height: 2px;
   flex-direction: column;
   align-items: center;
-  width: 80px;
+  width: 20px;
   margin: 5px;
 }
 
 .knob-wrapper label {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-weight: bold;
   text-align: center;
 }

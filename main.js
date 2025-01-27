@@ -753,6 +753,7 @@ $('#volume1-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     setOscVolume(osc1Gain, args.value);
+    console.log("WaveFrom 1 loudness level: " + args.value);
   }
 });
 
@@ -766,6 +767,7 @@ $('#volume2-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     setOscVolume(osc2Gain, args.value);
+    console.log("WaveFrom 2 loudness level: " + args.value);
   }
 });
 
@@ -779,6 +781,7 @@ $('#volume3-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     setOscVolume(osc3Gain, args.value);
+    console.log("WaveFrom 3 loudness level: " + args.value);
   }
 });
 
@@ -793,6 +796,7 @@ $('#attack-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     envelope.attack = args.value;
+    console.log("attack: " + args.value);
   }
 });
 
@@ -806,6 +810,7 @@ $('#decay-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     envelope.decay = args.value;
+    console.log("decay: " + args.value);
   }
 });
 
@@ -819,6 +824,7 @@ $('#sustain-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     envelope.sustain = args.value;
+    console.log("sustain: " + args.value);
   }
 });
 
@@ -832,6 +838,7 @@ $('#release-knob').roundSlider({
   step: 0.01,
   change: function (args) {
     envelope.release = args.value;
+    console.log("release: " + args.value);
   }
 });
 
@@ -846,6 +853,7 @@ $('#filter-frequency-knob').roundSlider({
   step: 1,
   change: function (args) {
     filter.frequency.value = args.value;
+    console.log("filter frequency: " + args.value);
   }
 });
 
@@ -859,6 +867,7 @@ $('#filter-resonance-knob').roundSlider({
   step: 0.1,
   change: function (args) {
     filter.Q.value = args.value;
+    console.log("filter resonance: " + args.value);
   }
 });
 
