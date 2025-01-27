@@ -531,13 +531,13 @@ function createMelody() {
 function updateSynthParameters() {
   try {
     // Validate and update filter parameters
-    const frequency = parseFloat(document.getElementById("filter-frequency-knob").value);
+    const frequency = parseFloat($("#filter-frequency-knob").roundSlider("option", "value"));
     if (isNaN(frequency) || frequency <= 0) {
       throw new RangeError(`Invalid filter frequency: ${frequency}`);
     }
     filter.frequency.rampTo(frequency, 0.1);
 
-    const resonance = parseFloat(document.getElementById("filter-resonance-knob").value);
+    const resonance = parseFloat($("#filter-resonance-knob").roundSlider("option", "value"));
     if (isNaN(resonance) || resonance < 0) {
       throw new RangeError(`Invalid filter resonance (Q): ${resonance}`);
     }
@@ -545,7 +545,7 @@ function updateSynthParameters() {
 
     // Validate and update envelope parameters
     ["attack", "decay", "sustain", "release"].forEach(param => {
-      const value = parseFloat(document.getElementById(`${param}-knob`).value);
+      const value = parseFloat($(`#${param}-knob`).roundSlider("option", "value"));
       if (isNaN(value) || value < 0) {
         throw new RangeError(`Invalid envelope parameter (${param}): ${value}`);
       }
@@ -565,9 +565,10 @@ function updateSynthParameters() {
 
     console.log("Synth parameters updated successfully.");
   } catch (error) {
-    console.error("Error updating synth parameters:", error);
+    console.error("Error updating synth parameters:", error.message);
   }
 }
+
 
 
 //Recreates the melodyPart with updated timings and parameters.
