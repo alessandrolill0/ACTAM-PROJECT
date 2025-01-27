@@ -11,9 +11,10 @@ body {
   
   #controls {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 400px;
   }
   
+  /*
   button {
     padding: 10px 20px;
     margin: 5px;
@@ -23,6 +24,7 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
   }
+  */
   
   button:disabled {
     background-color: #ccc;
@@ -100,7 +102,7 @@ body {
   #stop:hover:not(:disabled) {
     background-color: #da190b;
   }
-
+  
   #play-melody:hover:not(:disabled) {
     background-color: #d6d6d6;
   }
@@ -112,7 +114,7 @@ body {
     position: absolute;
     left: 50%; /* Posiziona Pause vicino a Start */
   }
-  
+
   #reset-melody:hover:not(:disabled) {
     background-color: #e68900;
   }
