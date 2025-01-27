@@ -32,7 +32,11 @@ body {
   #start {
     background-color: #4CAF50;
     color: white;
+    position: absolute;
+    top: 20%;
+    left: 40%; /* Posiziona Start */
   }
+
   #start img {
     width: 24px; /* Adjust the size as needed */
     height: 24px; /* Adjust the size as needed */
@@ -45,6 +49,9 @@ body {
   #stop {
     background-color: #f44336;
     color: white;
+    position: absolute;
+    top: 20%;
+    left: 50%; /* Posiziona Pause vicino a Start */
   }
   
   #stop:hover:not(:disabled) {
@@ -54,8 +61,46 @@ body {
   #play-melody {
     background-color: #e7e7e7;
     color: black;
+    top: 20%;
+    position: absolute;
+    left: 60%; /* Posiziona Pause vicino a Start */
   }
+  #stop-playback {
+    background-color: #f44336; /* Red color */
+    color: white;
+    top: 25%;
+    position: absolute;
+    left: 40%; /* Posiziona Pause vicino a Start */
+  }
+  #shift-octave-up{
+    top: 25%;
+    position: absolute;
+    left: 50%; /* Posiziona Pause vicino a Start */
+  }
+  #shift-octave-down{
+    top: 25%;
+    position: absolute;
+    left: 60%; /* Posiziona Pause vicino a Start */
+  }
+
+  #delete-note{
+    top: 30%;
+    position: absolute;
+    left: 40%; /* Posiziona Pause vicino a Start */
+  }
+  #save-melody{
+    background-color: #ff9800;
+    color: white;
+    top: 30%;
+    position: absolute;
+    left: 60%; /* Posiziona Pause vicino a Start */
+  }
+
   
+  #stop:hover:not(:disabled) {
+    background-color: #da190b;
+  }
+
   #play-melody:hover:not(:disabled) {
     background-color: #d6d6d6;
   }
@@ -63,6 +108,9 @@ body {
   #reset-melody { /* New Button Styling */
     background-color: #ff9800;
     color: white;
+    top: 30%;
+    position: absolute;
+    left: 50%; /* Posiziona Pause vicino a Start */
   }
   
   #reset-melody:hover:not(:disabled) {
@@ -203,7 +251,6 @@ body {
 }
 
 
-
 h2, h3 {
   color: #f39c12;
   font-weight: bold;
@@ -293,10 +340,7 @@ canvas {
   border: 2px solid #f39c12;
   border-radius: 5px;
 }
-#stop-playback {
-  background-color: #f44336; /* Red color */
-  color: white;
-}
+
 
 #stop-playback:hover:not(:disabled) {
   background-color: #da190b;
