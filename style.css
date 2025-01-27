@@ -138,7 +138,7 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -183,6 +183,8 @@ body {
   font-weight: bold;
   text-align: center;
 }
+
+
 
 h2, h3 {
   color: #f39c12;

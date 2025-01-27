@@ -10,12 +10,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Chord2Vox</h1>
-  </header>
-
   <main>
     <div class="container">
+      <header>
+        <h1>Chord2Vox</h1>
+      </header>    
       <!-- Controllers -->
       <h2>Controllers</h2>
       <div id="controls">
@@ -54,22 +53,6 @@
           <option value="" disabled selected>Choose a melody</option>
         </select>
         <button id="load-melody-button" disabled>Load Melody</button>
-      </div>
-      
-      <!-- Actual State -->
-      <div id="status">
-        <div id="pitch">Pitch: N/A</div>
-        <div id="note">Nota Rilevata: N/A</div>
-      </div>
-
-      <!-- Confidence Meter -->
-      <div id="confidence-meter">
-        <div id="confidence-level" style="width: 0%;"></div>
-      </div>
-
-      <!-- Sequencer -->
-      <div id="sequencer-container">
-        <canvas id="sequencer" width="1500" height="800"></canvas>
       </div>
 
       <!-- Synth Controls -->
@@ -148,6 +131,23 @@
       <div id="chorus-depth-knob"></div>
       <label>Spread:</label>
       <div id="chorus-spread-knob"></div>
+
+
+      <!-- Actual State -->
+      <div id="status">
+        <div id="pitch">Pitch: N/A</div>
+        <div id="note">Nota Rilevata: N/A</div>
+      </div>
+
+      <!-- Confidence Meter -->
+      <div id="confidence-meter">
+        <div id="confidence-level" style="width: 0%;"></div>
+      </div>
+
+      <!-- Sequencer -->
+      <div id="sequencer-container">
+        <canvas id="sequencer" width="1500" height="800"></canvas>
+      </div>
     </div>
   </main>
   
