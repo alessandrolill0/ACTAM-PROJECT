@@ -29,18 +29,8 @@ body {
     cursor: not-allowed;
   }
   
-  #start {
-    background-color: #4CAF50;
-    color: white;
-  }
-  #start img {
-    width: 24px; /* Adjust the size as needed */
-    height: 24px; /* Adjust the size as needed */
-  }
-  
-  #start:hover:not(:disabled) {
-    background-color: #45a049;
-  }
+
+ 
   
   #stop {
     background-color: #f44336;
