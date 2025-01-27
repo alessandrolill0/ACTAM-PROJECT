@@ -44,10 +44,19 @@ body {
   overflow: hidden; 
 }
 
-h1, h2, h3 {
+h1{
+  position: relative;
+  color: #f39c12;
+  text-align: center;
+  margin: 0 auto;
+  left: 300%;
+}
+
+h2, h3 {
   color: #f39c12;
   font-weight: bold;
   margin: 20px 0;
+
 }
 
 label {
@@ -55,6 +64,7 @@ label {
 }
 
 /*/////////BUTTONS///////////*/
+
 button {
   display: inline-block;
   padding: 10px 20px;
@@ -83,7 +93,7 @@ button:hover:not(:disabled) {
   background-color: #4CAF50;
   color: white;
   position: relative;
-  top: 20%;
+  top: 220%;
   left: 40%;
 }
 
@@ -95,7 +105,7 @@ button:hover:not(:disabled) {
   background-color: #f44336;
   color: white;
   position: relative;
-  top: 20%;
+  top: 220%;
   left: 50%;
 }
 
@@ -107,7 +117,7 @@ button:hover:not(:disabled) {
   background-color: #e7e7e7;
   color: black;
   position: relative;
-  top: 20%;
+  top: 220%;
   left: 60%;
 }
 
@@ -115,50 +125,50 @@ button:hover:not(:disabled) {
   background-color: #d6d6d6;
 }
 
+#stop-playback {
+  background-color: #f44336;
+  color: white;
+  position: relative;
+  top: 380%;
+  left: -37.9%;
+}
+
+#shift-octave-up {
+  position: relative;
+  top: 380%;
+  left: 27.5%;
+}
+
+#shift-octave-down {
+  position: relative;
+  top: 380%;
+  left: 37.5%;
+}
+
 #reset-melody {
   background-color: #ff9800;
   color: white;
   position: relative;
-  top: 30%;
-  left: 50%;
+  top: 540%;
+  left: 5.4%;
 }
 
 #reset-melody:hover:not(:disabled) {
   background-color: #e68900;
 }
 
-#stop-playback {
-  background-color: #f44336;
-  color: white;
-  position: relative;
-  top: 25%;
-  left: 40%;
-}
-
-#shift-octave-up {
-  position: relative;
-  top: 25%;
-  left: 50%;
-}
-
-#shift-octave-down {
-  position: relative;
-  top: 25%;
-  left: 60%;
-}
-
 #delete-note {
   position: relative;
-  top: 30%;
-  left: 40%;
+  top: 540%;
+  left: -27%;
 }
 
 #save-melody {
   background-color: #ff9800;
   color: white;
   position: relative;
-  top: 30%;
-  left: 60%;
+  top: 540%;
+  left: -7%;
 }
 
 #save-melody:hover:not(:disabled) {
@@ -202,8 +212,6 @@ select {
   background-color: #7B1FA2;
 }
 
-
-
 /*/////////KNOB AND OSCILLATORS///////////*/
 .knob-container {
   display: grid;
@@ -246,8 +254,8 @@ select {
   height: auto;
 }
 
-
 /*/////////SEQUENCER///////////*/
+
 #sequencer-container {
   display: block;
   justify-content: center;
