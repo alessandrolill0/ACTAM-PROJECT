@@ -527,20 +527,46 @@ function createMelody() {
   }
 }
 
-//Updates global synth parameters dynamically.
+// Updates global synth parameters dynamically
 function updateSynthParameters() {
-  //Update filter parameters
-  filter.frequency.rampTo(parseFloat(document.getElementById("filter-frequency").value), 0.1);
-  filter.Q.value = parseFloat(document.getElementById("filter-resonance").value);
-  //Update envelope parameters
-  envelope.attack = parseFloat(document.getElementById("attack-slider").value);
-  envelope.decay = parseFloat(document.getElementById("decay-slider").value);
-  envelope.sustain = parseFloat(document.getElementById("sustain-slider").value);
-  envelope.release = parseFloat(document.getElementById("release-slider").value);
-  //Update oscillator waveforms
-  osc1.type = document.getElementById("waveform1-select").value;
-  osc2.type = document.getElementById("waveform2-select").value;
-  osc3.type = document.getElementById("waveform3-select").value;
+  try {
+    // Validate and update filter parameters
+    const frequency = parseFloat(document.getElementById("filter-frequency-knob").value);
+    if (isNaN(frequency) || frequency <= 0) {
+      throw new RangeError(`Invalid filter frequency: ${frequency}`);
+    }
+    filter.frequency.rampTo(frequency, 0.1);
+
+    const resonance = parseFloat(document.getElementById("filter-resonance-knob").value);
+    if (isNaN(resonance) || resonance < 0) {
+      throw new RangeError(`Invalid filter resonance (Q): ${resonance}`);
+    }
+    filter.Q.value = resonance;
+
+    // Validate and update envelope parameters
+    ["attack", "decay", "sustain", "release"].forEach(param => {
+      const value = parseFloat(document.getElementById(`${param}-knob`).value);
+      if (isNaN(value) || value < 0) {
+        throw new RangeError(`Invalid envelope parameter (${param}): ${value}`);
+      }
+      envelope[param] = value; // Update envelope parameter
+    });
+
+    // Validate and update oscillator waveforms
+    const waveforms = ["waveform1-select", "waveform2-select", "waveform3-select"];
+    waveforms.forEach((id, i) => {
+      const osc = [osc1, osc2, osc3][i];
+      const waveform = document.getElementById(id).value;
+      if (!["sine", "square", "triangle", "sawtooth"].includes(waveform)) {
+        throw new Error(`Invalid waveform for oscillator ${i + 1}: ${waveform}`);
+      }
+      osc.type = waveform; // Update oscillator type
+    });
+
+    console.log("Synth parameters updated successfully.");
+  } catch (error) {
+    console.error("Error updating synth parameters:", error);
+  }
 }
 
 
@@ -642,7 +668,6 @@ function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
 
 
 ///////////////////////////// SYNTH PARAMETERS ///////////////////////////// 
-
 //Shared envelope
 const envelope = new Tone.AmplitudeEnvelope({
   attack: 0.1,
@@ -652,234 +677,264 @@ const envelope = new Tone.AmplitudeEnvelope({
 }).toDestination();
 
 const chorus = new Tone.Chorus({
-  frequency: 1.5, // Frequency of the modulation
-  delayTime: 3.5, // Delay time of the chorus
-  depth: 0,     // Depth of the modulation
-  type: "sine",   // Type of LFO waveform
-  spread: 180,    // Stereo spread in degrees
+  frequency: 1.5,
+  delayTime: 3.5,
+  depth: 0,
+  type: "sine",
+  spread: 180,
 }).start();
 
-//Filter
 const filter = new Tone.Filter({
-  frequency: 500, //Default cutoff frequency
-  type: "lowpass", //Default filter type
-  rolloff: -12, //Slope of the filter
-  Q: 1, //Default resonance
+  frequency: 500,
+  type: "lowpass",
+  rolloff: -12,
+  Q: 1,
 });
 
-//Distortion
 const distortion = new Tone.Distortion({
-  distortion: 0.4, //Default amount of distortion
-  oversample: "4x", //Increases audio fidelity
+  distortion: 0.4,
+  oversample: "4x",
 });
 
+// Chain effects
 filter.connect(distortion);
-distortion.connect(chorus); //Process audio through chorus
+distortion.connect(chorus);
 chorus.connect(envelope);
-envelope.toDestination();  
+envelope.toDestination();
 
 const lfo = new Tone.LFO({
-  type: "sine", //Default LFO waveform
-  frequency: 0.5, //Default frequency in Hz
-  min: 200, //Minimum modulation range
-  max: 1000, //Maximum modulation range
-}).start(); //Start the LFO
+  type: "sine",
+  frequency: 0.5,
+  min: 200,
+  max: 1000,
+}).start();
 
-//Update the LFO waveform
+// Update the LFO waveform
 function setLfoWaveform(type) {
-  lfo.type = type; // Update the LFO waveform type
+  lfo.type = type;
 }
 
-//Attach event listener for the LFO waveform selection
 document.getElementById("lfo-waveform").addEventListener("change", (event) => {
   setLfoWaveform(event.target.value);
 });
 
-lfo.connect(filter.frequency);
-
-//Oscillators and gains
+// Oscillators and gains
 const osc1 = new Tone.Oscillator("C3", "sine").start();
-const osc1Gain = new Tone.Gain(0.5).connect(filter);
+const osc1Gain = new Tone.Gain(0.5);
 const osc2 = new Tone.Oscillator("C3", "sine").start();
-const osc2Gain = new Tone.Gain(0.5).connect(filter);
+const osc2Gain = new Tone.Gain(0.5);
 const osc3 = new Tone.Oscillator("C3", "sine").start();
-const osc3Gain = new Tone.Gain(0.5).connect(filter);
+const osc3Gain = new Tone.Gain(0.5);
 
-//Connect oscillators to filter
 osc1.connect(osc1Gain);
 osc2.connect(osc2Gain);
 osc3.connect(osc3Gain);
 
-//Update oscillator waveforms
-function setOsc1WaveType(type) {
-  osc1.type = type;
-  console.log(type);
-  createMelody();
+osc1Gain.connect(filter);
+osc2Gain.connect(filter);
+osc3Gain.connect(filter);
+
+function setOscWaveType(osc, type) {
+  osc.type = type;
 }
 
-function setOsc2WaveType(type) {
-  osc2.type = type;
-  console.log(type);
-  createMelody();
+function setOscVolume(gain, value) {
+  gain.gain.value = value;
 }
 
-function setOsc3WaveType(type) {
-  osc3.type = type;
-  console.log(type);
-  createMelody();
-}
-
-//Control oscillator volumes
-function setOsc1Volume(value) {
-  osc1Gain.gain.value = value;
-  console.log(value);
-  createMelody();
-}
-
-function setOsc2Volume(value) {
-  osc2Gain.gain.value = value;
-  console.log(value);
-  createMelody();
-}
-
-function setOsc3Volume(value) {
-  osc3Gain.gain.value = value;
-  console.log(value);
-  createMelody();
-}
-
-//Update envelope dynamically
-function updateEnvelope(param, value) {
-  envelope[param] = parseFloat(value);
-}
-
-//Update filter dynamically
-function setFilterFrequency(value) {
-  filter.frequency.value = value;
-}
-
-function setFilterResonance(value) {
-  filter.Q.value = value; // Q is the filter's resonance
-}
-
-function setChorusFrequency(value) {
-  chorus.frequency.value = value;
-}
-
-function setChorusDepth(value) {
-  chorus.depth = value;
-}
-
-function setChorusSpread(value) {
-  chorus.spread = value;
-}
-
-//Update LFO dynamically
-function setLfoFrequency(value) {
-  lfo.frequency.value = value; // Update LFO rate
-}
-
-
-//Update distortion dynamically
-function setDistortionAmount(value) {
-  distortion.distortion = value;
-}
-
-//Attach event listeners for waveform selection
-document.getElementById("waveform1-select").addEventListener("change", (event) => {
-  setOsc1WaveType(event.target.value);
-  createMelody();
+// Initialize round-sliders
+$('#volume1-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 50,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  change: function (args) {
+    setOscVolume(osc1Gain, args.value);
+  }
 });
 
-document.getElementById("waveform2-select").addEventListener("change", (event) => {
-  setOsc2WaveType(event.target.value);
-  createMelody();
+$('#volume2-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 50,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  change: function (args) {
+    setOscVolume(osc2Gain, args.value);
+  }
 });
 
-document.getElementById("waveform3-select").addEventListener("change", (event) => {
-  setOsc3WaveType(event.target.value);
-  createMelody();
+$('#volume3-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 50,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  change: function (args) {
+    setOscVolume(osc3Gain, args.value);
+  }
 });
 
-//Attach event listeners for volume sliders
-document.getElementById("volume1-slider").addEventListener("input", (event) => {
-  setOsc1Volume(parseFloat(event.target.value));
-  createMelody();
+// ADSR envelope controls
+$('#attack-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0.1,
+  min: 0.1,
+  max: 5,
+  step: 0.01,
+  change: function (args) {
+    envelope.attack = args.value;
+  }
 });
 
-document.getElementById("volume2-slider").addEventListener("input", (event) => {
-  setOsc2Volume(parseFloat(event.target.value));
-  createMelody();
+$('#decay-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0.2,
+  min: 0,
+  max: 5,
+  step: 0.01,
+  change: function (args) {
+    envelope.decay = args.value;
+  }
 });
 
-document.getElementById("volume3-slider").addEventListener("input", (event) => {
-  setOsc3Volume(parseFloat(event.target.value));
-  createMelody();
+$('#sustain-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0.5,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  change: function (args) {
+    envelope.sustain = args.value;
+  }
 });
 
-document.getElementById("chorus-frequency").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setChorusFrequency(value);
-  document.getElementById("chorus-frequency-value").textContent = `${value} Hz`;
-  createMelody();
+$('#release-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 1.5,
+  min: 0,
+  max: 5,
+  step: 0.01,
+  change: function (args) {
+    envelope.release = args.value;
+  }
 });
 
-document.getElementById("chorus-depth").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setChorusDepth(value);
-  document.getElementById("chorus-depth-value").textContent = `${value}`;
-  createMelody();
+// Filter controls
+$('#filter-frequency-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 500,
+  min: 50,
+  max: 10000,
+  step: 1,
+  change: function (args) {
+    filter.frequency.value = args.value;
+  }
 });
 
-document.getElementById("chorus-spread").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setChorusSpread(value);
-  document.getElementById("chorus-spread-value").textContent = `${value}`;
-  createMelody();
+$('#filter-resonance-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 1,
+  min: 0.1,
+  max: 50,
+  step: 0.1,
+  change: function (args) {
+    filter.Q.value = args.value;
+  }
 });
 
-//Attach event listeners for ADSR sliders
-document.querySelectorAll(".adsr-slider").forEach((slider) => {
-  slider.addEventListener("input", (event) => {
-    const param = event.target.dataset.param;
-    const value = event.target.value;
-    updateEnvelope(param, value);
-    document.getElementById(`${param}-value`).textContent = value;
-    createMelody();
-  });
+// LFO frequency
+$('#lfo-frequency-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0.5,
+  min: 0.1,
+  max: 10,
+  step: 0.1,
+  change: function (args) {
+    lfo.frequency.value = args.value;
+  }
 });
 
-//Attach event listeners for filter controls
-document.getElementById("filter-frequency").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setFilterFrequency(value);
-  document.getElementById("filter-frequency-value").textContent = `${value} Hz`;
-  createMelody();
+// Distortion
+$('#distortion-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0.4,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  change: function (args) {
+    distortion.distortion = args.value;
+  }
 });
 
-document.getElementById("filter-resonance").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setFilterResonance(value);
-  document.getElementById("filter-resonance-value").textContent = value;
-  createMelody();
+// Chorus controls
+$('#chorus-frequency-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 1.5,
+  min: 0.1,
+  max: 10,
+  step: 0.1,
+  change: function (args) {
+    chorus.frequency.value = args.value;
+  }
 });
 
-//Attach event listener for LFO
-document.getElementById("lfo-frequency").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setLfoFrequency(value);
-  document.getElementById("lfo-frequency-value").textContent = `${value} Hz`;
-  createMelody();
+$('#chorus-depth-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 0,
+  min: 0,
+  max: 1,
+  step: 0.1,
+  change: function (args) {
+    chorus.depth = args.value;
+  }
 });
 
-
-//Attach event listener for distortion
-document.getElementById("distortion-slider").addEventListener("input", (event) => {
-  const value = parseFloat(event.target.value);
-  setDistortionAmount(value);
-  document.getElementById("distortion-value").textContent = value;
-  createMelody();
+$('#chorus-spread-knob').roundSlider({
+  radius: 50,
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 180,
+  min: 0,
+  max: 360,
+  step: 10,
+  change: function (args) {
+    chorus.spread = args.value;
+  }
 });
+
+// Attach waveform selectors
+document.getElementById("waveform1-select").addEventListener("change", (event) => setOscWaveType(osc1, event.target.value));
+document.getElementById("waveform2-select").addEventListener("change", (event) => setOscWaveType(osc2, event.target.value));
+document.getElementById("waveform3-select").addEventListener("change", (event) => setOscWaveType(osc3, event.target.value));
+
 
 
 ///////////////////////////// ADD EVENT LISTENER ///////////////////////////// 
@@ -1236,12 +1291,12 @@ document.getElementById("shift-octave-up").addEventListener("click", () => shift
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
 
 //Filter frequency slider
-document.getElementById("filter-frequency").addEventListener("input", (event) => {
+document.getElementById("filter-frequency-knob").addEventListener("input", (event) => {
   setFilterFrequency(parseFloat(event.target.value));
 });
 
 //Envelope sliders
-document.querySelectorAll(".adsr-slider").forEach(slider => {
+document.querySelectorAll(".adsr-knob").forEach(slider => {
   slider.addEventListener("input", (event) => {
     const param = event.target.dataset.param;
     const value = event.target.value;
@@ -1380,6 +1435,7 @@ function loadMelodyToSequencer(melody) {
   toggleSaveButtonState(); // Update the Save button state
 }
 
+/*
 ///////////////////////////// PRESET-SAVING FUNCTIONS ///////////////////////////// 
 // Preset-related functions
 async function fetchPresets() {
@@ -1505,3 +1561,4 @@ document.getElementById("load-preset").addEventListener("click", loadPreset);
 
 // Fetch presets on page load
 fetchPresets();
+*/

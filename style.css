@@ -134,13 +134,47 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  width: 90%;
+  height: 90%;
   margin: 0 auto;
   background: #1f1f1f;
   border: 1px solid #444;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   padding: 20px;
+}
+
+.container > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+.knob-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.knob-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  margin: 5px;
+}
+
+.knob-wrapper label {
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
 }
 
 h2, h3 {
