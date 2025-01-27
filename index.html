@@ -37,59 +37,75 @@
       <div id="bpm-control">
         <label for="bpm-input">BPM:</label>
         <input type="number" id="bpm-input" value="120" min="20" max="300" step="1">
+        <label>
+          <input type="checkbox" id="metronome-toggle" checked />
+          Enable Metronome
+        </label>
+      </div>
+
+      <div class="controls-row">
+        <!-- Saved Melodies Section -->
+        <div id="saved-melodies">
+          <h2>Saved Melodies</h2>
+          <label for="melody-dropdown"></label>
+          <select id="melody-dropdown">
+            <option value="" disabled selected>Choose a melody</option>
+          </select>
+          <button id="load-melody-button" disabled>Load Melody</button>
+        </div>
+      
+        <!-- Preset Controls -->
+        <div class="preset-container">
+          <select id="preset-dropdown">
+            <option value="" disabled selected>Select a preset</option>
+          </select>
+          <button id="load-preset">Load Preset</button>
+          <button id="save-preset">Save Preset</button>
+        </div>
+      </div>     
+      <div class="oscillator-container">
+        <h3>Oscillators</h3>
+      
+        <!-- Row 1 -->
+        <div class="oscillator-row">
+          <label for="waveform1-select">Wave:</label>
+          <select id="waveform1-select">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+          <label for="volume1-knob">Vol:</label>
+          <div id="volume1-knob" class="knob"></div>
+        </div>
+      
+        <!-- Row 2 -->
+        <div class="oscillator-row">
+          <label for="waveform2-select">Wave:</label>
+          <select id="waveform2-select">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+          <label for="volume2-knob">Vol:</label>
+          <div id="volume2-knob" class="knob"></div>
+        </div>
+      
+        <!-- Row 3 -->
+        <div class="oscillator-row">
+          <label for="waveform3-select">Wave:</label>
+          <select id="waveform3-select">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+          <label for="volume3-knob">Vol:</label>
+          <div id="volume3-knob" class="knob"></div>
+        </div>
       </div>
       
-      <label>
-        <input type="checkbox" id="metronome-toggle" checked />
-        Enable Metronome
-      </label>
-
-      <!-- Saved Melodies -->
-      <div id="saved-melodies">
-        <h2>Saved Melodies</h2>
-        <label for="melody-dropdown">Select a Melody:</label>
-        <select id="melody-dropdown">
-          <option value="" disabled selected>Choose a melody</option>
-        </select>
-        <button id="load-melody-button" disabled>Load Melody</button>
-      </div>
-
-      <!-- Synth Controls -->
-      <select id="preset-dropdown">
-        <option value="" disabled selected>Select a preset</option>
-      </select>
-      <button id="load-preset">Load Preset</button>
-      <button id="save-preset">Save Preset</button>
-
-      <h3>Waveform 1</h3>
-      <label for="waveform1-select">Wave Type:</label>
-      <select id="waveform1-select">
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-        <option value="triangle">Triangle</option>
-        <option value="sawtooth">Sawtooth</option>
-      </select>
-      <div id="volume1-knob"></div>
-
-      <h3>Waveform 2</h3>
-      <label for="waveform2-select">Wave Type:</label>
-      <select id="waveform2-select">
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-        <option value="triangle">Triangle</option>
-        <option value="sawtooth">Sawtooth</option>
-      </select>
-      <div id="volume2-knob"></div>
-
-      <h3>Waveform 3</h3>
-      <label for="waveform3-select">Wave Type:</label>
-      <select id="waveform3-select">
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-        <option value="triangle">Triangle</option>
-        <option value="sawtooth">Sawtooth</option>
-      </select>
-      <div id="volume3-knob"></div>
 
       <h3>ADSR Envelope</h3>
       <label>Attack:</label>
