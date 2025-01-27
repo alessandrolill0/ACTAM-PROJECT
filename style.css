@@ -190,13 +190,16 @@ label {
   font-weight: bold;
 }
 
+
+/* waves buttons*/
+
 select, input[type="range"], button {
   margin: 50px 40px;
-  font-size: 10px;
+  font-size: 14px;
   color: #000;
   background-color: #f39c12;
   border: none;
-  padding: 5px;
+  padding: 1px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -274,4 +277,26 @@ canvas {
 
 #stop-playback:hover:not(:disabled) {
   background-color: #da190b;
+}
+
+
+
+#load-preset,
+#save-preset {
+  display: inline-block;
+  margin: 40px;
+  padding: 12px 12px; /* Identico ai pulsanti sopra */
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #444; /* Stesso colore di sfondo */
+  border: 1px solid #888; /* Bordo simile */
+  border-radius: 5px; /* Bordo arrotondato */
+  transition: background-color 0.2s; /* Transizione uniforme */
+}
+
+#load-preset:hover,
+#save-preset:hover {
+  background-color: #f39c12; /* Colore hover simile */
+  color: #000; /* Colore del testo in hover */
 }
