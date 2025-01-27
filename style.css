@@ -255,6 +255,11 @@ select {
   height: auto;
 }
 
+#lfo-waveform{
+  width: 90px;
+  height: 50px;
+}
+
 /*/////////SEQUENCER///////////*/
 
 #sequencer-container {
