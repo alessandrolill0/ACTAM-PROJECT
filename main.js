@@ -752,6 +752,8 @@ $('#volume1-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     setOscVolume(osc1Gain, args.value);
     console.log("WaveFrom 1 loudness level: " + args.value);
@@ -766,6 +768,8 @@ $('#volume2-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     setOscVolume(osc2Gain, args.value);
     console.log("WaveFrom 2 loudness level: " + args.value);
@@ -780,6 +784,8 @@ $('#volume3-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     setOscVolume(osc3Gain, args.value);
     console.log("WaveFrom 3 loudness level: " + args.value);
@@ -795,6 +801,8 @@ $('#attack-knob').roundSlider({
   min: 0.1,
   max: 5,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     envelope.attack = args.value;
     console.log("attack: " + args.value);
@@ -809,6 +817,8 @@ $('#decay-knob').roundSlider({
   min: 0,
   max: 5,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     envelope.decay = args.value;
     console.log("decay: " + args.value);
@@ -823,6 +833,8 @@ $('#sustain-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     envelope.sustain = args.value;
     console.log("sustain: " + args.value);
@@ -837,6 +849,8 @@ $('#release-knob').roundSlider({
   min: 0,
   max: 5,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     envelope.release = args.value;
     console.log("release: " + args.value);
@@ -852,6 +866,8 @@ $('#filter-frequency-knob').roundSlider({
   min: 50,
   max: 10000,
   step: 1,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     filter.frequency.value = args.value;
     console.log("filter frequency: " + args.value);
@@ -866,6 +882,8 @@ $('#filter-resonance-knob').roundSlider({
   min: 0.1,
   max: 50,
   step: 0.1,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     filter.Q.value = args.value;
     console.log("filter resonance: " + args.value);
@@ -881,6 +899,8 @@ $('#lfo-frequency-knob').roundSlider({
   min: 0.1,
   max: 10,
   step: 0.1,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     lfo.frequency.value = args.value;
   }
@@ -895,6 +915,8 @@ $('#distortion-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.01,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     distortion.distortion = args.value;
   }
@@ -909,6 +931,8 @@ $('#chorus-frequency-knob').roundSlider({
   min: 0.1,
   max: 10,
   step: 0.1,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     chorus.frequency.value = args.value;
   }
@@ -922,6 +946,8 @@ $('#chorus-depth-knob').roundSlider({
   min: 0,
   max: 1,
   step: 0.1,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     chorus.depth = args.value;
   }
@@ -935,6 +961,8 @@ $('#chorus-spread-knob').roundSlider({
   min: 0,
   max: 360,
   step: 10,
+  startAngle: -40,
+  endAngle: 220,
   change: function (args) {
     chorus.spread = args.value;
   }
