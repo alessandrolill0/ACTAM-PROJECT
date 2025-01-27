@@ -745,7 +745,9 @@ function setOscVolume(gain, value) {
 
 // Initialize round-sliders
 $('#volume1-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 50,
@@ -761,7 +763,9 @@ $('#volume1-knob').roundSlider({
 });
 
 $('#volume2-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 50,
@@ -777,7 +781,9 @@ $('#volume2-knob').roundSlider({
 });
 
 $('#volume3-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 50,
@@ -794,7 +800,9 @@ $('#volume3-knob').roundSlider({
 
 // ADSR envelope controls
 $('#attack-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0.1,
@@ -810,7 +818,9 @@ $('#attack-knob').roundSlider({
 });
 
 $('#decay-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0.2,
@@ -826,7 +836,9 @@ $('#decay-knob').roundSlider({
 });
 
 $('#sustain-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0.5,
@@ -842,7 +854,9 @@ $('#sustain-knob').roundSlider({
 });
 
 $('#release-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 1.5,
@@ -859,7 +873,9 @@ $('#release-knob').roundSlider({
 
 // Filter controls
 $('#filter-frequency-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 500,
@@ -875,7 +891,9 @@ $('#filter-frequency-knob').roundSlider({
 });
 
 $('#filter-resonance-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 1,
@@ -892,7 +910,9 @@ $('#filter-resonance-knob').roundSlider({
 
 // LFO frequency
 $('#lfo-frequency-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0.5,
@@ -908,7 +928,9 @@ $('#lfo-frequency-knob').roundSlider({
 
 // Distortion
 $('#distortion-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0.4,
@@ -924,7 +946,9 @@ $('#distortion-knob').roundSlider({
 
 // Chorus controls
 $('#chorus-frequency-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 1.5,
@@ -939,7 +963,7 @@ $('#chorus-frequency-knob').roundSlider({
 });
 
 $('#chorus-depth-knob').roundSlider({
-  radius: 50,
+  radius: 40,
   sliderType: 'min-range',
   handleShape: 'round',
   value: 0,
@@ -948,13 +972,17 @@ $('#chorus-depth-knob').roundSlider({
   step: 0.1,
   startAngle: -40,
   endAngle: 220,
+  width: 8,
+  handleSize: "+5",
   change: function (args) {
     chorus.depth = args.value;
   }
 });
 
 $('#chorus-spread-knob').roundSlider({
-  radius: 50,
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
   sliderType: 'min-range',
   handleShape: 'round',
   value: 180,
@@ -1342,10 +1370,6 @@ document.querySelectorAll(".adsr-knob").forEach(slider => {
   });
 });
 
-//Oscillator waveform dropdown
-document.getElementById("waveform1-select").addEventListener("change", (event) => {
-  setOscillatorWaveform(osc1, event.target.value);
-});
 
 document.getElementById("melody-dropdown").addEventListener("change", () => {
   const loadButton = document.getElementById("load-melody-button");
