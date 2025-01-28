@@ -317,9 +317,10 @@ select {
   transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
   align-items: flex-end;
   position: relative;
+  bottom: 68.5%;
   display: flex;
   left: 35%;
-  top: 2%;
+
 }  
 
 #bpm-control {
