@@ -17,8 +17,8 @@ const app = initializeApp(firebaseConfig); //Initialize Firebase
 const db = getFirestore(app);
 
 //DOM Elements Selection
-const pitchDisplay = document.getElementById("pitch");
-const noteDisplay = document.getElementById("note");
+//const pitchDisplay = document.getElementById("pitch");
+//const noteDisplay = document.getElementById("note");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const playMelodyButton = document.getElementById("play-melody");
@@ -261,8 +261,8 @@ async function startPitchDetection() {
     stopButton.disabled = true; // Disabilita il pulsante "Stop" durante il countdown
     playMelodyButton.disabled = true; // Disabilita il pulsante di riproduzione
     resetMelodyButton.disabled = true; // Disabilita il pulsante di reset
-    pitchDisplay.textContent = "Pitch: N/A";
-    noteDisplay.textContent = "Detected Note: N/A";
+    //pitchDisplay.textContent = "Pitch: N/A";
+    //noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
     renderSequencer();
 
@@ -385,8 +385,8 @@ async function startPitchDetection() {
       } else {
         activeNote = { frequency, note, startTime: currentTime, duration: 0 };
       }
-      pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
-      noteDisplay.textContent = `Detected Note: ${note}`;
+      //pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
+      //noteDisplay.textContent = `Detected Note: ${note}`;
       renderSequencer();
       requestAnimationFrame(detectPitch);
     }
@@ -394,8 +394,8 @@ async function startPitchDetection() {
     stopButton.disabled = false; // Abilita il pulsante "Stop" dopo l'inizio della registrazione
   } catch (err) {
     console.error("Errore durante il rilevamento del pitch:", err);
-    pitchDisplay.textContent = "Pitch: Error";
-    noteDisplay.textContent = "Detected Note: N/A";
+    //pitchDisplay.textContent = "Pitch: Error";
+    //noteDisplay.textContent = "Detected Note: N/A";
     stopPitchDetection();
   }
   toggleSaveButtonState();
@@ -415,8 +415,8 @@ function stopPitchDetection() {
   playMelodyButton.disabled = recordedNotes.length === 0;
   resetMelodyButton.disabled = recordedNotes.length === 0;
   deleteNoteButton.disabled = recordedNotes.length === 0;
-  pitchDisplay.textContent = "Pitch: N/A";
-  noteDisplay.textContent = "Detected Note: N/A";
+  //pitchDisplay.textContent = "Pitch: N/A";
+  //noteDisplay.textContent = "Detected Note: N/A";
 
   if (source) source.disconnect(); // Disconnect audio context and stop stream
   if (audioContext) audioContext.close();
@@ -1079,8 +1079,8 @@ resetMelodyButton.addEventListener("click", () => {
   resetMelodyButton.disabled = true;
   stopPlaybackButton.disabled = true;
   //Reset visual displays
-  pitchDisplay.textContent = "Pitch: N/A";
-  noteDisplay.textContent = "Note: N/A";
+  //pitchDisplay.textContent = "Pitch: N/A";
+  //noteDisplay.textContent = "Note: N/A";
 });
 
 //Bpm input Button Event Listener

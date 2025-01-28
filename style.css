@@ -7,7 +7,7 @@
   gap: 20px;
   justify-content: center;
   width: 1400px; 
-  height: 550px;
+  height: 560px;
   margin: 0 auto;
   background: linear-gradient(145deg, #222831, #1b1f25);
   border: 1px solid #444;
@@ -68,7 +68,7 @@ h1 {
 #saved-melodies{
   position: relative;
   bottom: -29%;
-  left: -20%;
+  left: -19%;
   display: flex;
   font-size: 10px;
 }
@@ -191,7 +191,7 @@ button:hover:not(:disabled) {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: not-allowed;
+  cursor: pointer;
   border-radius: 5px;
   width: 34px; 
   height: 34px;
@@ -331,7 +331,6 @@ select {
   bottom: 68.5%;
   display: flex;
   left: 35%;
-
 }  
 
 #bpm-control {
@@ -389,7 +388,7 @@ select {
   align-items: center;
   gap: 5px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .oscillator-row {
@@ -413,7 +412,7 @@ select {
   align-items: center;
   gap: 5px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .filter-row {
@@ -437,7 +436,7 @@ select {
   align-items: flex-end; /* Align content to the right */
   gap: 10px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .adsr-grid {
@@ -472,7 +471,7 @@ select {
   align-items: flex-end; /* Align to the right */
   gap: 10px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .chorus-column {
@@ -492,7 +491,7 @@ select {
   align-items: flex-end; /* Align to the right */
   gap: 10px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .lfo-column {
@@ -517,7 +516,7 @@ select {
   align-items: flex-end; /* Align to the right */
   gap: 10px;
   position: relative;
-  bottom: 60%;
+  bottom: 63%;
 }
 
 .distortion-column {
