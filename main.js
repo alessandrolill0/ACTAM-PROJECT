@@ -227,12 +227,14 @@ noteRange.forEach((note, index) => {
   });
 }
 
-//Start pitche detection
+//Start pitch detection
 async function startPitchDetection() {
   try {
-    recordedNotes = []; //the previous array is deleted
+    startButton.classList.add("recording"); // Aggiungi lo stato "recording"
+
+    recordedNotes = []; // the previous array is deleted
     clearTimeout(recordingTimeout);
-    if (progressTimer !== null) { //Clear existing progressTimer if any
+    if (progressTimer !== null) { // Clear existing progressTimer if any
       clearInterval(progressTimer);
       progressTimer = null;
       progressBar.value = 0; // Reset the progress bar
@@ -252,6 +254,7 @@ async function startPitchDetection() {
       distortion.dispose();
       chorus.dispose();
     });
+
     // Preparazione iniziale
     isDetecting = true;
     startButton.disabled = true; // Disabilita il pulsante "Start"
@@ -262,7 +265,8 @@ async function startPitchDetection() {
     noteDisplay.textContent = "Detected Note: N/A";
     deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
     renderSequencer();
-    //Container for countdown
+
+    // Container for countdown
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
     countdownContainer.style.top = "50%";
@@ -271,11 +275,12 @@ async function startPitchDetection() {
     countdownContainer.style.fontSize = "120px";
     countdownContainer.style.fontWeight = "bold";
     countdownContainer.style.color = "#fff";
-    countdownContainer.style.backgroundColor="fff";
+    countdownContainer.style.backgroundColor = "fff";
     countdownContainer.style.fontFamily = "'Arial Black', sans-serif";
     countdownContainer.style.textShadow = "2px 2px 8px rgba(255, 255, 255, 0.5)";
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
+
     // Countdown based on bpm
     const beatDuration = 60 / bpm; // Calcola la durata di un battito
     for (let i = 3; i > 0; i--) {
@@ -285,16 +290,19 @@ async function startPitchDetection() {
     countdownContainer.textContent = "It's time to record!"; // Messaggio finale
     countdownContainer.style.fontSize = "100px"; // Adatta la dimensione del font
     setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Rimuove il messaggio dopo 1.5 battiti
-    //Start metronome with the rec
+
+    // Start metronome with the rec
     if (metronomeToggle.checked) {
       console.log("Start metronome with recording.");
       startMetronome(); // Il metronomo inizia con la registrazione
     }
-     //Delay before recording
-     const recordingDelay = 350; //Milliseconds delay
-     console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
-     await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
-    //Access to microphone
+
+    // Delay before recording
+    const recordingDelay = 350; // Milliseconds delay
+    console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
+    await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
+
+    // Access to microphone
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -303,17 +311,19 @@ async function startPitchDetection() {
     const buffer = new Float32Array(analyser.fftSize);
     source.connect(analyser);
     startTime = audioContext.currentTime;
+
     // Configurazione della barra di avanzamento della registrazione
     const totalDuration = calculateTotalDuration(bpm, 16); // Durata totale per 16 misure
     const progressContainer = document.getElementById("recording-progress-container");
     const progressBar = document.getElementById("recording-progress");
     progressContainer.style.display = "block";
     progressBar.value = 0;
+
     // Aggiorna la barra di avanzamento periodicamente
     const updateInterval = 100; // Aggiorna ogni 100ms
     const totalIntervals = (totalDuration * 1000) / updateInterval;
     let currentInterval = 0;
-    progressTimer  = setInterval(() => {
+    progressTimer = setInterval(() => {
       currentInterval++;
       const progress = (currentInterval / totalIntervals) * 100;
       progressBar.value = progress;
@@ -322,13 +332,14 @@ async function startPitchDetection() {
         progressTimer = null;
       }
     }, updateInterval);
+
     // Interrompi la registrazione automaticamente dopo la durata totale
     recordingTimeout = setTimeout(() => {
       stopPitchDetection(); // Interrompi la registrazione
       alert("Recording stopped after 16 bars.");
     }, totalDuration * 1000);
-    
-    //Recursive function for pitch detection
+
+    // Recursive function for pitch detection
     function detectPitch() {
       if (!isDetecting) return;
       analyser.getFloatTimeDomainData(buffer);
@@ -373,7 +384,6 @@ async function startPitchDetection() {
         }
       } else {
         activeNote = { frequency, note, startTime: currentTime, duration: 0 };
-        //recordedNotes.push(activeNote);
       }
       pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
       noteDisplay.textContent = `Detected Note: ${note}`;
@@ -392,9 +402,13 @@ async function startPitchDetection() {
   document.getElementById("save-melody").disabled = true;
 }
 
+
 //Stop pitch detection
 function stopPitchDetection() {
   if (!isDetecting) return;
+
+  startButton.classList.remove("recording"); // Rimuovi lo stato "recording"
+
   isDetecting = false;
   startButton.disabled = false;
   stopButton.disabled = true;
@@ -403,31 +417,38 @@ function stopPitchDetection() {
   deleteNoteButton.disabled = recordedNotes.length === 0;
   pitchDisplay.textContent = "Pitch: N/A";
   noteDisplay.textContent = "Detected Note: N/A";
-  if (source) source.disconnect(); //Disconnect audio context and stop stream
+
+  if (source) source.disconnect(); // Disconnect audio context and stop stream
   if (audioContext) audioContext.close();
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
-  if (recordingTimeout) {   //Clear and reset the recording timeout
+
+  if (recordingTimeout) { // Clear and reset the recording timeout
     clearTimeout(recordingTimeout);
     recordingTimeout = null;
   }
+
   if (progressTimer !== null) {
     clearInterval(progressTimer);
     progressTimer = null;
   }
+
   const progressContainer = document.getElementById("recording-progress-container");
   const progressBar = document.getElementById("recording-progress");
   progressContainer.style.display = "none";
   progressBar.value = 0; // Reset the progress bar to 0
   progressContainer.style.display = "none";
-  //Stop the metronome when the rec stops
+
+  // Stop the metronome when the rec stops
   if (metronomeActive) {
     console.log("Record completed");
     stopMetronome();
   }
+
   quantizeNotes();
   renderSequencer();
+
   document.getElementById("save-melody").disabled = recordedNotes.length === 0;
 }
 
