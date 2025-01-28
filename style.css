@@ -16,7 +16,7 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   padding: 20px;
   padding-top:100px;
-  padding-bottom: 220px; /* extra space for piano roll */
+  padding-bottom: 300px; /* extra space for piano roll */
   border-radius: 10px; /* Angoli arrotondati */
 }
 
