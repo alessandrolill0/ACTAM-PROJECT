@@ -162,6 +162,7 @@ button:hover:not(:disabled) {
   position: relative;
   display:flex;
   bottom: 68%;
+  left: 12%;
 }
 
 .stop-square {
