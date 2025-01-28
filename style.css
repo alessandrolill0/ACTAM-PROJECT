@@ -8,7 +8,7 @@
   gap: 20px;
   justify-content: center;
   width: 1400px; 
-  height: 900px;
+  height: 550px;
   margin: 0 auto;
   background: #1f1f1f;
   border: 1px solid #444;
@@ -356,6 +356,8 @@ select {
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  position: relative;
+  bottom: 60%;
 }
 
 .oscillator-row {
@@ -378,6 +380,8 @@ select {
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  position: relative;
+  bottom: 60%;
 }
 
 .filter-row {
@@ -400,6 +404,8 @@ select {
   flex-direction: column;
   align-items: flex-end; /* Align content to the right */
   gap: 10px;
+  position: relative;
+  bottom: 60%;
 }
 
 .adsr-grid {
@@ -433,6 +439,8 @@ select {
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
   gap: 10px;
+  position: relative;
+  bottom: 60%;
 }
 
 .chorus-column {
@@ -451,6 +459,8 @@ select {
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
   gap: 10px;
+  position: relative;
+  bottom: 60%;
 }
 
 .lfo-column {
@@ -474,6 +484,8 @@ select {
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
   gap: 10px;
+  position: relative;
+  bottom: 60%;
 }
 
 .distortion-column {
@@ -504,6 +516,7 @@ select {
   max-height: 320px;
   height: auto;
   position: relative;
+  bottom: 75%;
 }
 
 #sequencer {
