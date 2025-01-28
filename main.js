@@ -270,9 +270,10 @@ async function startPitchDetection() {
     countdownContainer.style.transform = "translate(-50%, -50%)";
     countdownContainer.style.fontSize = "120px";
     countdownContainer.style.fontWeight = "bold";
-    countdownContainer.style.color = "#000";
+    countdownContainer.style.color = "#fff";
+    countdownContainer.style.backgroundColor="fff";
     countdownContainer.style.fontFamily = "'Arial Black', sans-serif";
-    countdownContainer.style.textShadow = "2px 2px 8px rgba(0, 0, 0, 0.5)";
+    countdownContainer.style.textShadow = "2px 2px 8px rgba(255, 255, 255, 0.5)";
     countdownContainer.style.textAlign = "center";
     document.body.appendChild(countdownContainer);
     // Countdown based on bpm
@@ -286,11 +287,11 @@ async function startPitchDetection() {
     setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Rimuove il messaggio dopo 1.5 battiti
     //Start metronome with the rec
     if (metronomeToggle.checked) {
-      console.log("Avvio del metronomo con la registrazione.");
+      console.log("Start metronome with recording.");
       startMetronome(); // Il metronomo inizia con la registrazione
     }
      //Delay before recording
-     const recordingDelay = 350; // Ritardo in millisecondi
+     const recordingDelay = 350; //Milliseconds delay
      console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
      await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
     //Access to microphone
@@ -326,7 +327,8 @@ async function startPitchDetection() {
       stopPitchDetection(); // Interrompi la registrazione
       alert("Recording stopped after 16 bars.");
     }, totalDuration * 1000);
-    // Funzione ricorsiva per il rilevamento del pitch
+    
+    //Recursive function for pitch detection
     function detectPitch() {
       if (!isDetecting) return;
       analyser.getFloatTimeDomainData(buffer);
@@ -568,8 +570,6 @@ function updateSynthParameters() {
     console.error("Error updating synth parameters:", error.message);
   }
 }
-
-
 
 //Recreates the melodyPart with updated timings and parameters.
 function recreateMelodyPart() {
