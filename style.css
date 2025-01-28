@@ -16,7 +16,7 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   padding: 20px;
   padding-top:100px;
-  padding-bottom: 300px; /* extra space for piano roll */
+  padding-bottom: 220px; /* extra space for piano roll */
   border-radius: 10px; /* Angoli arrotondati */
 }
 
@@ -48,12 +48,14 @@ body {
   overflow: auto; 
 }
 
-/*TITLE*/
-h1{
-  position: center;
+h1 {
+  position: relative;
   color: #f39c12;
   text-align: center;
-  font-weight: bold; /*Grassetto*/
+  font-weight: bold;
+  top: -100px;
+  left: 415px;
+  font-size: 42px; /* Modifica la dimensione del testo */
 }
 
 /*SAVED MELODIES*/
@@ -83,7 +85,8 @@ h3{
   gap: 20px;
   margin: 20px 0;
   position: relative;
-  top: 10%;
+  top: -2%;
+  left: 176px;
 }
 
 button {
@@ -296,21 +299,33 @@ select {
   top: 2%;
 }  
 
+#bpm-control {
+  position: relative;
+  top: -18px; /* Sposta verso l'alto o il basso */
+  left: -670px;  /* Sposta verso sinistra o destra */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spaziatura tra gli elementi */
+  
+}
+
+#bpm-control label {
+  font-size: 24px; /* Aumenta la dimensione del testo */
+  font-weight: bold; /* (Opzionale) Rendi il testo in grassetto */
+}
+
 #bpm-input {
-  font-size: 16px;
-  width: 80px;
+  font-size: 20px;
+  width: 100px;
   text-align: center;
   padding: 5px;
-  margin-left: 10px;
 }
 
 #metronome-toggle {
   background-color: #9C27B0;
   color: white;
-}
-
-#metronome-toggle:hover:not(:disabled) {
-  background-color: #7B1FA2;
+  transform: scale(1.5); /* Scala la dimensione della checkbox */
+  margin-right: 5px; /* Spaziatura tra checkbox e testo */
 }
 
 /*/////////KNOB AND OSCILLATORS///////////*/
