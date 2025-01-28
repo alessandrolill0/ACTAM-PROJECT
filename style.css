@@ -48,11 +48,9 @@ body {
 
 /*TITLE*/
 h1{
-  position: relative;
+  position: center;
   color: #f39c12;
   text-align: center;
-  margin: 0 auto;
-  left: 300%;
   font-weight: bold; /*Grassetto*/
 }
 
@@ -77,6 +75,13 @@ h3{
 
 
 /*/////////BUTTONS///////////*/
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
 
 button {
   display: inline-block;
@@ -107,8 +112,6 @@ button:hover:not(:disabled) {
   background-color: white;
   color: white;
   position: relative;
-  top: 220%;
-  left: 40%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,8 +136,6 @@ button:hover:not(:disabled) {
   background-color: white; 
   color: white; 
   position: relative;
-  top: 220%; 
-  left: 50.3%; 
   display: flex;
   width: 35.7px; 
   height: 35.7px; 
@@ -162,8 +163,6 @@ button:hover:not(:disabled) {
   background-color: white;
   color: white;
   position: relative;
-  top: 220%;
-  left: 60%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,8 +192,6 @@ button:hover:not(:disabled) {
   background-color: white;
   color: white;
   position: relative;
-  top: 380%;
-  left: -38%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,11 +229,6 @@ button:hover:not(:disabled) {
 }
 
 /*/////////SELECT BUTTONS, LOAD AND SAVE PRESET BUTTONS,LOAD MELODY BUTTON, BPM AND METRONOME///////////*/
-
-#controls {
-  text-align: center;
-  margin-bottom: 20px;
-}
 
 select {
   padding: 10px;
