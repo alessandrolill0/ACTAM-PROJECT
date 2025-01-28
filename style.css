@@ -219,96 +219,6 @@ button:hover:not(:disabled) {
   background-color: rgb(165, 159, 159); 
 }
 
-
-/* SHIFT OCTAVE UP BUTTON */
-#shift-octave-up {
-  background-color: white;
-  color: black;
-  position: relative;
-  top: 380%;
-  left: 28.6%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 35.5px;
-  height: 35.5px;
-  padding: 0;
-  font-size: 17px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* SHIFT OCTAVE DOWN BUTTON */
-#shift-octave-down {
-  background-color: white;
-  color: black;
-  position: relative;
-  top: 380%;
-  left: 38.14%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 5px;
-  width: 35.5px;
-  height: 35.5px;
-  padding: 0;
-  font-size: 17px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Illuminazione durante il clic */
-#shift-octave-up:active,
-#shift-octave-down:active {
-  background-color: rgb(165, 159, 159); /* Sfondo grigio */
-  color: white; /* Colore del testo */
-}
-
-/* RESET MELODY BUTTON */
-#reset-melody {
-  background-color: white;
-  color: black;
-  position: relative;
-  top: 540%;
-  left: 6.3%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: not-allowed;
-  border-radius: 5px;
-  width: 37.5px;
-  height: 36px;
-  padding: 0;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* DELETE NOTE BUTTON */
-#delete-note {
-  background-color: white;
-  color: black;
-  position: relative;
-  top: 540%;
-  left: -26.4%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: not-allowed;
-  border-radius: 5px;
-  width: 38px;
-  height: 36px;
-  padding: 0;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-
-
 #reset-melody:active .button-text {
   color: rgb(165, 159, 159); 
 }
@@ -369,6 +279,20 @@ select {
   cursor: pointer; /* Mostra il cursore a mano su hover */
   transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
 }
+
+#control-sequencer{
+  padding: 8px 8px; /* Dimensioni interne del pulsante */
+  font-size: 14px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  justify-content: right; 
+  border-radius: 5px; /* Angoli arrotondati */
+  color: #fff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  align-items: flex-end;
+  position: relative;
+  display: flex;
+}  
 
 #bpm-input {
   font-size: 16px;
