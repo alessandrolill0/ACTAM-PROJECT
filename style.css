@@ -65,7 +65,7 @@ h2 {
 
 #saved-melodies{
   position: relative;
-  bottom: -140%;
+  bottom: -150%;
 }
 
 /*OSCILLATORS*/
@@ -292,6 +292,7 @@ select {
   position: relative;
   display: flex;
   left: 35%;
+  top: 2%;
 }  
 
 #bpm-input {
