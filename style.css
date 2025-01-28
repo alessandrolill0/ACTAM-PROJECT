@@ -64,16 +64,17 @@ h1 {
 }
 
 /*SAVED MELODIES*/
-h2 {
-  position: relative;
-  color: #f6f4f1;
-  margin: 0 auto;
-  top: 10%;
-}
 
 #saved-melodies{
   position: relative;
-  bottom: -150%;
+  bottom: -29%;
+  left: 20%;
+  display: flex;
+  font-size: 10px;
+}
+
+h2{
+  color:  #222831;
 }
 
 /*OSCILLATORS*/
@@ -164,7 +165,7 @@ button:hover:not(:disabled) {
   position: relative;
   display:flex;
   bottom: 68%;
-  left: 12%;
+  left: -34%;
   text-align: center;
 }
 
