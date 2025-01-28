@@ -1,6 +1,7 @@
 /*/////////CONTAINERS///////////*/
 
 .container {
+  position: relative;
   max-width: 2000px;
   display: flex;
   flex-wrap: wrap;
@@ -284,6 +285,7 @@ select {
   align-items: flex-end;
   position: relative;
   display: flex;
+  left: 35%;
 }  
 
 #bpm-input {
