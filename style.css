@@ -586,3 +586,50 @@ canvas {
 .step.active {
   background-color: lightskyblue;
 }
+
+/* Progress Bar Styles */
+#recording-progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 10px;
+  width: 100%;
+  position: relative;
+  bottom: 220%;
+}
+
+#recording-progress-container label {
+  font-size: 14px;
+  color: #e0e0e0;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#recording-progress {
+  width: 100%;
+  height: 20px;
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #007BFF 0%, #1f1f1f 100%);
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.6), inset -2px -2px 5px rgba(50, 50, 50, 0.3);
+  overflow: hidden;
+}
+
+#recording-progress::-webkit-progress-bar {
+  background-color: #1f1f1f;
+  border-radius: 10px;
+}
+
+#recording-progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #007BFF, #00FFFF);
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+}
+
+#recording-progress::-moz-progress-bar {
+  background: linear-gradient(90deg, #007BFF, #00FFFF);
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+}

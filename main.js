@@ -1567,7 +1567,6 @@ async function savePreset() {
     filterFrequency: $("#filter-frequency-knob").roundSlider("option", "value"),
     filterResonance: $("#filter-resonance-knob").roundSlider("option", "value"),
     distortion: $("#distortion-knob").roundSlider("option", "value"),
-    chorusFrequency: $("#chorus-frequency-knob").roundSlider("option", "value"),
     chorusDepth: $("#chorus-depth-knob").roundSlider("option", "value"),
     chorusSpread: $("#chorus-spread-knob").roundSlider("option", "value"),
   };
