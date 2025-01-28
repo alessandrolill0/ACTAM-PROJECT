@@ -257,19 +257,17 @@ async function startPitchDetection() {
 
     // Preparazione iniziale
     isDetecting = true;
-    startButton.disabled = true; // Disabilita il pulsante "Start"
-    stopButton.disabled = true; // Disabilita il pulsante "Stop" durante il countdown
-    playMelodyButton.disabled = true; // Disabilita il pulsante di riproduzione
-    resetMelodyButton.disabled = true; // Disabilita il pulsante di reset
-    //pitchDisplay.textContent = "Pitch: N/A";
-    //noteDisplay.textContent = "Detected Note: N/A";
-    deleteNoteButton.disabled = true; // Disabilita il pulsante di eliminazione
+    startButton.disabled = true;
+    stopButton.disabled = true;
+    playMelodyButton.disabled = true;
+    resetMelodyButton.disabled = true;
+    deleteNoteButton.disabled = true;
     renderSequencer();
 
     // Container for countdown
     const countdownContainer = document.createElement("div");
     countdownContainer.style.position = "fixed";
-    countdownContainer.style.top = "50%";
+    countdownContainer.style.top = "54%";
     countdownContainer.style.left = "50%";
     countdownContainer.style.transform = "translate(-50%, -50%)";
     countdownContainer.style.fontSize = "120px";
@@ -283,13 +281,13 @@ async function startPitchDetection() {
 
     // Countdown based on bpm
     const beatDuration = 60 / bpm; // Calcola la durata di un battito
-    for (let i = 3; i > 0; i--) {
+    for (let i = 4; i > 0; i--) {
       countdownContainer.textContent = i; // Mostra il numero corrente
       await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Attende il tempo di un battito
     }
     countdownContainer.textContent = "It's time to record!"; // Messaggio finale
-    countdownContainer.style.fontSize = "100px"; // Adatta la dimensione del font
-    setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500); // Rimuove il messaggio dopo 1.5 battiti
+    countdownContainer.style.fontSize = "100px"; 
+    setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500);
 
     // Start metronome with the rec
     if (metronomeToggle.checked) {
