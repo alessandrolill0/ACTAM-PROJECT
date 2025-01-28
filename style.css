@@ -59,13 +59,14 @@ h1{
 /*SAVED MELODIES*/
 h2 {
   position: relative;
-  color: #f39c12;
+  color: #f6f4f1;
   margin: 0 auto;
+  top: 10%;
 }
 
 #saved-melodies{
   position: relative;
-  bottom: 50%;
+  bottom: -140%;
 }
 
 /*OSCILLATORS*/
@@ -306,25 +307,7 @@ button:hover:not(:disabled) {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* SAVE MELODY BUTTON */
-#save-melody {
-  background-color: white;
-  color: black;
-  position: relative;
-  top: 540%;
-  left: -7.7%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: not-allowed;
-  border-radius: 5px;
-  width: 36.5px;
-  height: 36px;
-  padding: 0;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+
 
 #reset-melody:active .button-text {
   color: rgb(165, 159, 159); 
@@ -375,7 +358,7 @@ select {
   top: 100px; /* Sposta i pulsanti di 20px verso il basso */
 }
 
-#load-melody-button {
+#load-melody-button, #save-melody {
   padding: 8px 8px; /* Dimensioni interne del pulsante */
   font-size: 14px; /* Dimensione del testo */
   font-weight: bold; /* Grassetto */
