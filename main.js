@@ -193,7 +193,7 @@ noteRange.forEach((note, index) => {
     ctx.fillStyle = "#333";    //Each bar has an associated number
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(`Bar ${bar}`, x, 10);
+    ctx.fillText(` ${bar}`, x, 10);
   }
   //Draw the recorded notes
   recordedNotes.forEach((note, i) => {
@@ -699,7 +699,7 @@ const envelope = new Tone.AmplitudeEnvelope({
 }).toDestination();
 
 const chorus = new Tone.Chorus({
-  frequency: 5,
+  frequency: 1.5,
   delayTime: 3.5,
   depth: 0,
   type: "sine",
@@ -965,7 +965,23 @@ $('#distortion-knob').roundSlider({
   }
 });
 
-
+// Chorus controls
+$('#chorus-frequency-knob').roundSlider({
+  radius: 40,
+  width: 8,
+  handleSize: "+5",
+  sliderType: 'min-range',
+  handleShape: 'round',
+  value: 1.5,
+  min: 0.1,
+  max: 10,
+  step: 0.1,
+  startAngle: -40,
+  endAngle: 220,
+  change: function (args) {
+    chorus.frequency.value = args.value;
+  }
+});
 
 $('#chorus-depth-knob').roundSlider({
   radius: 40,
