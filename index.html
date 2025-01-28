@@ -112,45 +112,74 @@
         </div>
       </div>
 
-      <h3>Filter</h3>
-      <label>Frequency:</label>
-      <div id="filter-frequency-knob"></div>
-      <br>
-      <label>Resonance (Q):</label>
-      <div id="filter-resonance-knob"></div>
+      <div class="filter-container">
+        <h3>Filter</h3>
+        <div class="filter-row">
+          <label for="filter-frequency-knob">Frequency:</label>
+          <div id="filter-frequency-knob" class="knob"></div>
+        </div>
+        <div class="filter-row">
+          <label for="filter-resonance-knob">Resonance:</label>
+          <div id="filter-resonance-knob" class="knob"></div>
+        </div>
+      </div>
       
-      <h3>ADSR Envelope</h3>
-      <label>Attack:</label>
-      <div class="adsr-knob" id="attack-knob"></div>
-      <label>Decay:</label>
-      <div class="adsr-knob" id="decay-knob"></div>
-      <label>Sustain:</label>
-      <div class="adsr-knob" id="sustain-knob"></div>
-      <label>Release:</label>
-      <div class="adsr-knob" id="release-knob"></div>
+      <div class="adsr-container">
+        <h3>ADSR Envelope</h3>
+        <div class="adsr-grid">
+          <div class="adsr-row">
+            <label for="attack-knob">Attack:</label>
+            <div class="adsr-knob" id="attack-knob"></div>
+            <label for="decay-knob">Decay:</label>
+            <div class="adsr-knob" id="decay-knob"></div>
+          </div>
+          <div class="adsr-row">
+            <label for="sustain-knob">Sustain:</label>
+            <div class="adsr-knob" id="sustain-knob"></div>
+            <label for="release-knob">Release:</label>
+            <div class="adsr-knob" id="release-knob"></div>
+          </div>
+        </div>
+      </div>
+      
+      
 
-      <h3>LFO</h3>
-      <label for="lfo-waveform">Waveform:</label>
-      <select id="lfo-waveform">
-        <option value="sine">Sine</option>
-        <option value="triangle">Triangle</option>
-        <option value="square">Square</option>
-        <option value="sawtooth">Sawtooth</option>
-      </select>
-      <div id="lfo-frequency-knob"></div>
+      <div class="lfo-container">
+        <h3>LFO</h3>
+        <div class="lfo-column">
+          <label for="lfo-waveform">Waveform:</label>
+          <select id="lfo-waveform">
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+          </select>
+          <div id="lfo-frequency-knob" class="knob"></div>
+        </div>
+      </div>
+      
 
-      <h3>Distortion</h3>
-      <label>Amount:</label>
-      <div id="distortion-knob"></div>
+      <div class="distortion-container">
+        <h3>Distortion</h3>
+        <div class="distortion-column">
+          <label for="distortion-knob">Amount:</label>
+          <div id="distortion-knob" class="knob"></div>
+        </div>
+      </div>
+      
 
-      <h3>Chorus</h3>
-      <label>Frequency:</label>
-      <div id="chorus-frequency-knob"></div>
-      <label>Depth:</label>
-      <div id="chorus-depth-knob"></div>
-      <label>Spread:</label>
-      <div id="chorus-spread-knob"></div>
-
+      <div class="chorus-container">
+        <h3>Chorus</h3>
+        <div class="chorus-column">
+          <label for="chorus-frequency-knob">Frequency:</label>
+          <div id="chorus-frequency-knob" class="knob"></div>
+          <label for="chorus-depth-knob">Depth:</label>
+          <div id="chorus-depth-knob" class="knob"></div>
+          <label for="chorus-spread-knob">Spread:</label>
+          <div id="chorus-spread-knob" class="knob"></div>
+        </div>
+      </div>
+      
       <!-- Actual State -->
       <div id="status">
         <div id="pitch">Pitch: N/A</div>
