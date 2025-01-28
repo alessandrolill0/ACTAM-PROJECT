@@ -17,21 +17,43 @@
       </header>    
       <!-- Controllers -->
       <div id="controls">
-        <button id="start"></button>
-        <button id="stop" disabled></button>
-        <button id="play-melody" disabled></button>
-        <button id="shift-octave-up"></button>
-        <button id="shift-octave-down"></button>
-        <button id="reset-melody" disabled></button>
-        <button id="delete-note" disabled></button>
-        <button id="stop-playback" disabled></button>
-        <button id="save-melody" disabled></button>
+        <button id="start">
+          <span class="rec-circle"></span>
+        </button>
+        <button id="stop" disabled>
+          <span class="stop-square"></span>
+        </button>
+        <button id="play-melody" disabled>
+          <span class="play-triangle"></span>
+        </button>
+        <button id="shift-octave-up">
+          <span class="shift-text">8+</span>
+        </button>
+        <button id="shift-octave-down">
+          <span class="shift-text">8-</span>
+        </button>
+        <button id="reset-melody" disabled>
+          <span class="button-text">RM</span>
+        </button>
+        <button id="delete-note" disabled>
+          <span class="button-text">DN</span>
+        </button>
+        <button id="stop-playback" disabled>
+          <span class="pause-bar"></span>
+          <span class="pause-bar"></span>
+        </button>
+        <button id="save-melody" disabled>
+          <span class="button-text">SM</span>
+        </button>
       </div>
       
       <div id="recording-progress-container" style="display: none; margin-top: 10px;">
         <label for="recording-progress">Recording Progress:</label>
         <progress id="recording-progress" value="0" max="100" style="width: 100%;"></progress>
       </div>
+
+
+      
 
       <!-- BPM Configuration -->
       <div id="bpm-control">
