@@ -50,7 +50,7 @@ body {
 
 h1 {
   position: relative;
-  color: #f39c12;
+  color: lightskyblue;
   text-align: center;
   font-weight: bold;
   top: -100px;
@@ -73,7 +73,7 @@ h2 {
 
 /*OSCILLATORS*/
 h3{
-  color: #f39c12;
+  color: lightskyblue;
   margin: 20px 0;
 }
 
@@ -109,7 +109,7 @@ button:disabled {
 }
 
 button:hover:not(:disabled) {
-  background-color: #f39c12;
+  background-color: lightskyblue;
   color: #000;
 }
 
@@ -245,7 +245,7 @@ select {
   padding: 10px;
   font-size: 14px;
   border-radius: 5px;
-  background-color: #f39c12;
+  background-color: lightskyblue;
   color: #000;
   border: none;
 }
@@ -514,7 +514,7 @@ select {
 canvas {
   margin-top: 20px;
   background: #000;
-  border: 2px solid #f39c12;
+  border: 2px lightskyblue ;
   border-radius: 5px;
 }
 
@@ -537,5 +537,5 @@ canvas {
 }
 
 .step.active {
-  background-color: #f39c12;
+  background-color: lightskyblue;
 }
