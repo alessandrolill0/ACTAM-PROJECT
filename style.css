@@ -68,7 +68,7 @@ h2 {
 
 #saved-melodies{
   position: relative;
-  bottom: -140%;
+  bottom: -150%;
 }
 
 /*OSCILLATORS*/
@@ -296,6 +296,7 @@ select {
   position: relative;
   display: flex;
   left: 35%;
+  top: 2%;
 }  
 
 #bpm-control {
@@ -369,9 +370,118 @@ select {
   height: auto;
 }
 
-#lfo-waveform{
-  width: 90px;
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-row label {
+  margin-right: 5px;
+}
+
+.filter-row .knob {
+  width: 80px; /* Match the size of oscillator knobs */
+  height: auto;
+}
+
+.adsr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align content to the right */
+  gap: 10px;
+}
+
+.adsr-grid {
+  display: flex;
+  flex-direction: column; /* Two rows for knobs */
+  gap: 15px; /* Space between rows */
+}
+
+.adsr-row {
+  display: flex;
+  gap: 10px; /* Space between knobs and labels */
+  align-items: center;
+  justify-content: flex-end; /* Align row content to the right */
+}
+
+.adsr-row label {
+  margin-right: 5px;
+}
+
+.adsr-knob {
+  width: 50px; /* Example knob size */
   height: 50px;
+  background-color: #ccc;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+
+.chorus-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align to the right */
+  gap: 10px;
+}
+
+.chorus-column {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  gap: 10px; /* Space between knobs and labels */
+  align-items: flex-end; /* Align content to the right */
+}
+
+.chorus-column label {
+  margin-bottom: 5px; /* Space below the label */
+}
+
+.lfo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align to the right */
+  gap: 10px;
+}
+
+.lfo-column {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  gap: 10px; /* Space between elements */
+  align-items: flex-end; /* Align content to the right */
+}
+
+.lfo-column label {
+  margin-bottom: 5px;
+}
+
+#lfo-waveform {
+  width: 120px; /* Adjust width for better visibility */
+  height: auto;
+}
+
+.distortion-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align to the right */
+  gap: 10px;
+}
+
+.distortion-column {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  gap: 10px; /* Space between elements */
+  align-items: flex-end; /* Align content to the right */
+}
+
+.distortion-column label {
+  margin-bottom: 5px;
 }
 
 /*/////////SEQUENCER///////////*/
