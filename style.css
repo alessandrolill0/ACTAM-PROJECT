@@ -68,13 +68,13 @@ h1 {
 #saved-melodies{
   position: relative;
   bottom: -29%;
-  left: 20%;
+  left: -20%;
   display: flex;
   font-size: 10px;
 }
 
 h2{
-  color:  #222831;
+  color:  transparent;
 }
 
 /*OSCILLATORS*/
@@ -164,8 +164,8 @@ button:hover:not(:disabled) {
 #status{
   position: relative;
   display:flex;
-  bottom: 68%;
-  left: -34%;
+  bottom: 70%;
+  left: 10%;
   text-align: center;
 }
 
