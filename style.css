@@ -158,6 +158,12 @@ button:hover:not(:disabled) {
   cursor: pointer; 
 }
 
+#status{
+  position: relative;
+  display:flex;
+  bottom: 68%;
+}
+
 .stop-square {
   width: 16px; 
   height: 16px;
