@@ -164,6 +164,8 @@ button:hover:not(:disabled) {
   position: relative;
   display:flex;
   bottom: 68%;
+  left: 12%;
+  text-align: center;
 }
 
 .stop-square {
@@ -254,7 +256,7 @@ button:hover:not(:disabled) {
 
 select {
   padding: 10px;
-  font-size: 21px;
+  font-size: 16px;
   border-radius: 5px;
   background-color: lightskyblue;
   color: #000;
