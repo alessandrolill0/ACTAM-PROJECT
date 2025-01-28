@@ -738,7 +738,7 @@ document.getElementById("lfo-waveform").addEventListener("change", (event) => {
   setLfoWaveform(event.target.value);
 });
 
-// Oscillators and gains
+//Oscillators and gains
 const osc1 = new Tone.Oscillator("C3", "sine").start();
 const osc1Gain = new Tone.Gain(0.5);
 const osc2 = new Tone.Oscillator("C3", "sine").start();
@@ -762,72 +762,59 @@ function setOscVolume(gain, value) {
   gain.gain.value = value;
 }
 
-
 //CUSTOM LOGIC FOR PNG Knob1
 document.addEventListener("DOMContentLoaded", () => {
-  const volume1Img = document.getElementById("volume1-knob");
+  const volume1Img = document.getElementById("volume1-knob"); //Getting the volume
   let isDragging = false;
   let knobCenter = { x: 0, y: 0 };
-  // We mirror the same angle range as the old roundSlider: from -40° to 220° 
   const MIN_ANGLE = -40;
   const MAX_ANGLE = 220;
-  let currentAngle = 220; // an initial angle offset, if desired
-  // Helper to set knob rotation visually AND update actual oscillator volume
+  let currentAngle = 220; //Initial angle for the volume set to the maximum
+
   function updateVolume1Rotation(angleDeg) {
-    // Clamp angle to [MIN_ANGLE, MAX_ANGLE]
     const clamped = Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, angleDeg));
-    // Rotate the PNG
-    volume1Img.style.transform = `rotate(${clamped}deg)`;
+    volume1Img.style.transform = `rotate(${clamped}deg)`; //Rotat the image
     currentAngle = clamped;
-    // Convert angle range into [0..1] for the gain
-    // total span of angle
-    const angleRange = MAX_ANGLE - MIN_ANGLE; // e.g., 260 degrees
-    const normalized = (clamped - MIN_ANGLE) / angleRange; // 0..1
-    // Pass to your existing setOscVolume() from main.js 
-    setOscVolume(osc1Gain, normalized);
+    //Convert angle range into [0..1] for the gain
+    const angleRange = MAX_ANGLE - MIN_ANGLE; 
+    const normalized = (clamped - MIN_ANGLE) / angleRange;
+    setOscVolume(osc1Gain, normalized); //Pass to setOscVolume()
     console.log("Osc1 volume =>", normalized.toFixed(2));
   }
   // When user presses mouse on the knob:
   volume1Img.addEventListener("mousedown", (e) => {
     isDragging = true;
-    // Calculate the center of the knob (for angle math)
-    const rect = volume1Img.getBoundingClientRect();
+    const rect = volume1Img.getBoundingClientRect(); //Calculate the center of the knob (for angle math)
     knobCenter.x = rect.left + rect.width / 2;
     knobCenter.y = rect.top + rect.height / 2;
     e.preventDefault();
   });
-  // On mouse move, if dragging, rotate based on mouse angle:
+
+  //On mouse move, if dragging, rotate based on mouse angle:
   document.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
-
     const dx = e.clientX - knobCenter.x;
     const dy = e.clientY - knobCenter.y;
-    // atan2 returns angle in radians relative to +X axis
-    // We'll shift it so "straight up" ~ 0 degrees or whatever orientation you want
-    let angleRad = Math.atan2(dy, dx);
-
-    // Convert to degrees
+    let angleRad = Math.atan2(dy, dx); //atan2 returns angle in radians relative to +X axis
+    //Convert to degrees
     let angleDeg = (angleRad * 180) / Math.PI;
-    // You can shift by 90 if you want 0 deg to be at top, etc.
+    //You can shift by 90 if you want 0 deg to be at top, etc.
     angleDeg += 90;
-
-    // Now update the knob rotation + volume
+    //Now update the knob rotation + volume
     updateVolume1Rotation(angleDeg);
   });
 
-  // Stop dragging when mouse goes up anywhere
+  //Stop dragging when mouse goes up anywhere
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
     }
   });
 
-  // Optionally, set an initial visual angle (like "centered") 
   updateVolume1Rotation(currentAngle);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- LOGICA PER VOLUME2 ---
   const volume2Img = document.getElementById("volume2-knob");
 
   let isDraggingVol2 = false;
@@ -840,9 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const clamped = Math.max(MIN_ANGLE_2, Math.min(MAX_ANGLE_2, angleDeg));
     volume2Img.style.transform = `rotate(${clamped}deg)`;
     currentAngleVol2 = clamped;
-
-    // Calcolo volume [0..1]
-    const angleRange = MAX_ANGLE_2 - MIN_ANGLE_2; // 260
+    const angleRange = MAX_ANGLE_2 - MIN_ANGLE_2;
     const normalized = (clamped - MIN_ANGLE_2) / angleRange;
     setOscVolume(osc2Gain, normalized);
     console.log("Osc2 volume =>", normalized.toFixed(2));
@@ -870,33 +855,25 @@ document.addEventListener("DOMContentLoaded", () => {
       isDraggingVol2 = false;
     }
   });
-
-  // Imposta un angolo iniziale
   updateVolume2Rotation(currentAngleVol2);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- LOGICA PER VOLUME3 ---
   const volume3Img = document.getElementById("volume3-knob");
-
   let isDraggingVol3 = false;
   let knobCenterVol3 = { x: 0, y: 0 };
   const MIN_ANGLE_3 = -40;
   const MAX_ANGLE_3 = 220;
   let currentAngleVol3 = 220;
-
   function updateVolume3Rotation(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_3, Math.min(MAX_ANGLE_3, angleDeg));
     volume3Img.style.transform = `rotate(${clamped}deg)`;
     currentAngleVol3 = clamped;
-
-    // Calcolo volume [0..1]
-    const angleRange = MAX_ANGLE_3 - MIN_ANGLE_3; // 260
+    const angleRange = MAX_ANGLE_3 - MIN_ANGLE_3; 
     const normalized = (clamped - MIN_ANGLE_3) / angleRange;
     setOscVolume(osc3Gain, normalized);
     console.log("Osc3 volume =>", normalized.toFixed(2));
   }
-
   volume3Img.addEventListener("mousedown", (e) => {
     isDraggingVol3 = true;
     const rect = volume3Img.getBoundingClientRect();
@@ -904,7 +881,6 @@ document.addEventListener("DOMContentLoaded", () => {
     knobCenterVol3.y = rect.top + rect.height / 2;
     e.preventDefault();
   });
-
   document.addEventListener("mousemove", (e) => {
     if (!isDraggingVol3) return;
     const dx = e.clientX - knobCenterVol3.x;
@@ -913,127 +889,308 @@ document.addEventListener("DOMContentLoaded", () => {
     angleDeg += 90; // shift
     updateVolume3Rotation(angleDeg);
   });
-
   document.addEventListener("mouseup", () => {
     if (isDraggingVol3) {
       isDraggingVol3 = false;
     }
   });
-
-  // Imposta un angolo iniziale
   updateVolume3Rotation(currentAngleVol3);
 });
 
+document.addEventListener("DOMContentLoaded", () => {
 
-// ADSR envelope controls
-$('#attack-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0.1,
-  min: 0.1,
-  max: 5,
-  step: 0.01,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    envelope.attack = args.value;
-    console.log("attack: " + args.value);
+  // === ATTACK KNOB ===
+  const attackImg = document.getElementById("attack-knob");
+  let isDraggingA = false;
+  let centerA = { x: 0, y: 0 };
+  const MIN_ANGLE_A = -40;
+  const MAX_ANGLE_A = 220;
+  let currentAngleA = 90;
+
+  function updateAttack(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
+    attackImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleA = clamped;
+
+    // Normalizza [0..1]
+    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A; // 260
+    const normalized = (clamped - MIN_ANGLE_A) / angleRange;
+
+    // Mappa su [0..5] secondi
+    const minVal = 0;
+    const maxVal = 5;
+    const attackValue = minVal + normalized * (maxVal - minVal);
+
+    envelope.attack = attackValue;
+    console.log("Attack =>", attackValue.toFixed(2));
   }
+
+  attackImg.addEventListener("mousedown", (e) => {
+    isDraggingA = true;
+    const rect = attackImg.getBoundingClientRect();
+    centerA.x = rect.left + rect.width / 2;
+    centerA.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingA) return;
+    const dx = e.clientX - centerA.x;
+    const dy = e.clientY - centerA.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateAttack(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingA) isDraggingA = false;
+  });
+
+  // Imposta un iniziale
+  updateAttack(currentAngleA);
+
+  // === DECAY KNOB ===
+  const decayImg = document.getElementById("decay-knob");
+  let isDraggingD = false;
+  let centerD = { x: 0, y: 0 };
+  let currentAngleD = 90;
+
+  function updateDecay(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
+    decayImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleD = clamped;
+
+    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
+    const normalized = (clamped - MIN_ANGLE_A) / angleRange;
+
+    // Mappa su [0..5]
+    const decayValue = 0 + normalized * (5 - 0);
+    envelope.decay = decayValue;
+    console.log("Decay =>", decayValue.toFixed(2));
+  }
+
+  decayImg.addEventListener("mousedown", (e) => {
+    isDraggingD = true;
+    const rect = decayImg.getBoundingClientRect();
+    centerD.x = rect.left + rect.width / 2;
+    centerD.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingD) return;
+    const dx = e.clientX - centerD.x;
+    const dy = e.clientY - centerD.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateDecay(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingD) isDraggingD = false;
+  });
+
+  updateDecay(currentAngleD);
+
+  // === SUSTAIN KNOB ===
+  const sustainImg = document.getElementById("sustain-knob");
+  let isDraggingS = false;
+  let centerS = { x: 0, y: 0 };
+  let currentAngleS = 90;
+
+  function updateSustain(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
+    sustainImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleS = clamped;
+
+    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
+    const normalized = (clamped - MIN_ANGLE_A) / angleRange;
+
+    // Mappa su [0..1]
+    const sustainValue = 0 + normalized * (1 - 0);
+    envelope.sustain = sustainValue;
+    console.log("Sustain =>", sustainValue.toFixed(2));
+  }
+
+  sustainImg.addEventListener("mousedown", (e) => {
+    isDraggingS = true;
+    const rect = sustainImg.getBoundingClientRect();
+    centerS.x = rect.left + rect.width / 2;
+    centerS.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingS) return;
+    const dx = e.clientX - centerS.x;
+    const dy = e.clientY - centerS.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateSustain(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingS) isDraggingS = false;
+  });
+
+  updateSustain(currentAngleS);
+
+  // === RELEASE KNOB ===
+  const releaseImg = document.getElementById("release-knob");
+  let isDraggingR = false;
+  let centerR = { x: 0, y: 0 };
+  let currentAngleR = 90;
+
+  function updateRelease(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
+    releaseImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleR = clamped;
+
+    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
+    const normalized = (clamped - MIN_ANGLE_A) / angleRange;
+
+    // Mappa su [0..5]
+    const releaseValue = 0 + normalized * (5 - 0);
+    envelope.release = releaseValue;
+    console.log("Release =>", releaseValue.toFixed(2));
+  }
+
+  releaseImg.addEventListener("mousedown", (e) => {
+    isDraggingR = true;
+    const rect = releaseImg.getBoundingClientRect();
+    centerR.x = rect.left + rect.width / 2;
+    centerR.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingR) return;
+    const dx = e.clientX - centerR.x;
+    const dy = e.clientY - centerR.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateRelease(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingR) isDraggingR = false;
+  });
+
+  updateRelease(currentAngleR);
+
 });
 
-$('#decay-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0.2,
-  min: 0,
-  max: 5,
-  step: 0.01,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    envelope.decay = args.value;
-    console.log("decay: " + args.value);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // === FILTER FREQUENCY KNOB ===
+  const filterFreqImg = document.getElementById("filter-frequency-knob");
+  let isDraggingFreq = false;
+  let centerFreq = { x: 0, y: 0 };
+  const MIN_ANGLE_F = -40;
+  const MAX_ANGLE_F = 220;
+  let currentAngleF = 90; // offset iniziale
+
+  function updateFilterFrequencyRotation(angleDeg) {
+    // Clampa l'angolo
+    const clamped = Math.max(MIN_ANGLE_F, Math.min(MAX_ANGLE_F, angleDeg));
+    // Ruota l'immagine
+    filterFreqImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleF = clamped;
+
+    // Normalizza l'angolo in [0..1]
+    const angleRange = MAX_ANGLE_F - MIN_ANGLE_F; // es. 260
+    const normalized = (clamped - MIN_ANGLE_F) / angleRange; // => 0..1
+
+    // Mappa [0..1] su [50..10000] (o altro range desiderato)
+    // Esempio lineare semplice:
+    const MIN_FREQ = 50;   
+    const MAX_FREQ = 10000;
+    const freqValue = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
+
+    // Aggiorna il filtro
+    filter.frequency.value = freqValue;
+
+    console.log("Filter Frequency =>", freqValue.toFixed(2));
   }
+
+  filterFreqImg.addEventListener("mousedown", (e) => {
+    isDraggingFreq = true;
+    const rect = filterFreqImg.getBoundingClientRect();
+    centerFreq.x = rect.left + rect.width / 2;
+    centerFreq.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingFreq) return;
+    const dx = e.clientX - centerFreq.x;
+    const dy = e.clientY - centerFreq.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90; // shift di 90° per far coincidere "alto" con 0 gradi
+    updateFilterFrequencyRotation(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingFreq) isDraggingFreq = false;
+  });
+
+  // Imposta un angolo iniziale
+  updateFilterFrequencyRotation(currentAngleF);
+
+  // === FILTER RESONANCE KNOB ===
+  const filterResImg = document.getElementById("filter-resonance-knob");
+  let isDraggingRes = false;
+  let centerRes = { x: 0, y: 0 };
+  const MIN_ANGLE_R = -40;
+  const MAX_ANGLE_R = 220;
+  let currentAngleR = 90;
+
+  function updateFilterResonanceRotation(angleDeg) {
+    // Clampa l'angolo
+    const clamped = Math.max(MIN_ANGLE_R, Math.min(MAX_ANGLE_R, angleDeg));
+    // Ruota l'immagine
+    filterResImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleR = clamped;
+
+    // Normalizza [0..1]
+    const angleRange = MAX_ANGLE_R - MIN_ANGLE_R;
+    const normalized = (clamped - MIN_ANGLE_R) / angleRange; // => 0..1
+
+    // Mappa su [0.1..50], ad esempio
+    const MIN_RES = 0.1;
+    const MAX_RES = 50;
+    const resValue = MIN_RES + normalized * (MAX_RES - MIN_RES);
+
+    filter.Q.value = resValue;
+    console.log("Filter Resonance =>", resValue.toFixed(2));
+  }
+
+  filterResImg.addEventListener("mousedown", (e) => {
+    isDraggingRes = true;
+    const rect = filterResImg.getBoundingClientRect();
+    centerRes.x = rect.left + rect.width / 2;
+    centerRes.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingRes) return;
+    const dx = e.clientX - centerRes.x;
+    const dy = e.clientY - centerRes.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateFilterResonanceRotation(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingRes) isDraggingRes = false;
+  });
+
+  // Inizializza l'angolo
+  updateFilterResonanceRotation(currentAngleR);
 });
 
-$('#sustain-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0.5,
-  min: 0,
-  max: 1,
-  step: 0.01,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    envelope.sustain = args.value;
-    console.log("sustain: " + args.value);
-  }
-});
-
-$('#release-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 1.5,
-  min: 0,
-  max: 5,
-  step: 0.01,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    envelope.release = args.value;
-    console.log("release: " + args.value);
-  }
-});
-
-// Filter controls
-$('#filter-frequency-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 500,
-  min: 50,
-  max: 10000,
-  step: 1,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    filter.frequency.value = args.value;
-    console.log("filter frequency: " + args.value);
-  }
-});
-
-$('#filter-resonance-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 1,
-  min: 0.1,
-  max: 50,
-  step: 0.1,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    filter.Q.value = args.value;
-    console.log("filter resonance: " + args.value);
-  }
-});
 
 // LFO frequency
 $('#lfo-frequency-knob').roundSlider({
