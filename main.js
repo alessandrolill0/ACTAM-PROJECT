@@ -28,6 +28,7 @@ const sequencerCanvas = document.getElementById("sequencer");
 const ctx = sequencerCanvas.getContext("2d");
 const bpmInput = document.getElementById("bpm-input");
 const metronomeToggle = document.getElementById("metronome-toggle");
+const metronomeButton = document.getElementById("metronome-button");
 const stopPlaybackButton = document.getElementById("stop-playback"); // Get the button element
 
 //Global Variables
@@ -1375,14 +1376,7 @@ bpmInput.addEventListener("input", (event) => {
   renderSequencer();
 });
 
-//Metronome Button Event Listener
-metronomeToggle.addEventListener("click", () => {
-  if (metronomeActive) {
-    stopMetronome();
-  } else {
-    startMetronome();
-  }
-});
+
 
 startButton.addEventListener("click", startPitchDetection);//Add event listeners to pitch control buttons
 stopButton.addEventListener("click", stopPitchDetection);
@@ -1618,14 +1612,20 @@ stopPlaybackButton.addEventListener("click", () => {
   stopPlaybackButton.disabled = true;
 });
 
-//Metronome toggle during the rec
+// Metronome toggle
 metronomeToggle.addEventListener("change", () => {
-  if (!isDetecting) {
-    if (metronomeToggle.checked) {
-      startMetronome();
-    } else {
-      stopMetronome();
-    }
+  if (!isDetecting) { 
+    console.log("Metronome toggle clicked, but not recording. No action taken.");
+    return;
+  }
+
+  // Solo durante la registrazione
+  if (metronomeToggle.checked) {
+    console.log("Start metronome during recording.");
+    startMetronome();
+  } else {
+    console.log("Stop metronome during recording.");
+    stopMetronome();
   }
 });
 
