@@ -265,30 +265,33 @@ async function startPitchDetection() {
     deleteNoteButton.disabled = true;
     renderSequencer();
 
-    // Container for countdown
-    const countdownContainer = document.createElement("div");
-    countdownContainer.style.position = "fixed";
-    countdownContainer.style.top = "54%";
-    countdownContainer.style.left = "50%";
-    countdownContainer.style.transform = "translate(-50%, -50%)";
-    countdownContainer.style.fontSize = "120px";
-    countdownContainer.style.fontWeight = "bold";
-    countdownContainer.style.color = "#fff";
-    countdownContainer.style.backgroundColor = "fff";
-    countdownContainer.style.fontFamily = "'Arial Black', sans-serif";
-    countdownContainer.style.textShadow = "2px 2px 8px rgba(255, 255, 255, 0.5)";
-    countdownContainer.style.textAlign = "center";
-    document.body.appendChild(countdownContainer);
+// Container for countdown
+const countdownContainer = document.createElement("div");
+countdownContainer.style.position = "fixed";
+countdownContainer.style.top = "68.5%";  // Spostato leggermente più in basso
+countdownContainer.style.left = "52%"; // Spostato leggermente più a destra
+countdownContainer.style.transform = "translate(-50%, -50%)";
+countdownContainer.style.fontSize = "50px"; 
+countdownContainer.style.fontWeight = "normal";
+countdownContainer.style.color = "#000"; 
+countdownContainer.style.fontFamily = "'Arial Black', sans-serif";
+countdownContainer.style.textShadow = "0 0 2px #00509E, 0 0 4px #00509E";
+countdownContainer.style.textAlign = "center";
+countdownContainer.style.padding = "10px 20px"; 
+countdownContainer.style.borderRadius = "15px"; 
+countdownContainer.style.background = "linear-gradient(145deg, #7fbff7, #62a3da)";
+document.body.appendChild(countdownContainer);
 
-    // Countdown based on bpm
-    const beatDuration = 60 / bpm; // Calcola la durata di un battito
-    for (let i = 4; i > 0; i--) {
-      countdownContainer.textContent = i; // Mostra il numero corrente
-      await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000)); // Attende il tempo di un battito
-    }
-    countdownContainer.textContent = "It's time to record!"; // Messaggio finale
-    countdownContainer.style.fontSize = "100px"; 
-    setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500);
+// Countdown based on bpm
+const beatDuration = 60 / bpm; 
+for (let i = 4; i > 0; i--) {
+  countdownContainer.textContent = i;
+  await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000));
+}
+countdownContainer.textContent = "It's time to record!";
+countdownContainer.style.fontSize = "40px"; 
+setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1500);
+
 
     // Start metronome with the rec
     if (metronomeToggle.checked) {
