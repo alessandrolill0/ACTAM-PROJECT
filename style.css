@@ -580,7 +580,7 @@ select option:hover {
   align-items: flex-end; /* Align content to the right */
   gap: 10px;
   position: relative;
-  bottom: 63%;
+  bottom: 64%;
 }
 
 .adsr-grid {
