@@ -52,7 +52,6 @@ body {
   min-height: 900px; 
   overflow: auto; 
 }
-
 h1 {
   position: relative;
   color: lightskyblue;
@@ -60,17 +59,20 @@ h1 {
   font-weight: bold;
   top: -100px;
   left: 415px;
-  font-size: 42px; /* Modifica la dimensione del testo */
+  font-size: 42px; /* Dimensione del testo */
+  text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* Ombra scura più realistica */
 }
+
 
 /*SAVED MELODIES*/
 
 #saved-melodies{
   position: relative;
   bottom: -29%;
-  left: -18%;
+  left: -17.2%;
   display: flex;
   font-size: 10px;
+  gap: 8px;
 }
 
 h2{
@@ -256,13 +258,35 @@ button:hover:not(:disabled) {
 /*/////////SELECT BUTTONS, LOAD AND SAVE PRESET BUTTONS,LOAD MELODY BUTTON, BPM AND METRONOME///////////*/
 
 select {
-  padding: 10px;
+  padding: 12px 15px;
   font-size: 16px;
-  border-radius: 5px;
-  background-color: lightskyblue;
-  color: #000;
+  font-weight: bold;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #73adcf, #3884af);
+  color: #ffffff;
+  border: none;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombre meno evidenti */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Stile per le opzioni della tendina */
+select option {
+  background-color: #6fa3c1; /* Stesso colore di sfondo del pulsante */
+  color: #ffffff; /* Testo visibile */
+  padding: 10px;
   border: none;
 }
+
+/* Quando un'opzione è selezionata o in hover */
+select option:checked,
+select option:hover {
+  background-color: #5286a5; /* Colore più scuro per la selezione */
+  color: #ffffff;
+}
+
 
 #preset-dropdown {
   width: 205px;
@@ -281,14 +305,15 @@ select {
   cursor: pointer;
   left: -10px;
 
-  background-color: #444; /* Colore di sfondo */
-  color: #fff; /* Colore del testo */
+  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
+  color: #ffffff; /* Colore del testo */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
   transition: background-color 0.3s ease, transform 0.2s ease;
   position: relative; /* Posizionamento relativo */
   top: 100px; /* Sposta i pulsanti di 20px verso il basso */
   gap: 5px;
 }
-
 
 #load-preset {
   padding: 10px 10px; /* Dimensioni dei pulsanti */
@@ -297,15 +322,55 @@ select {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background-color: #444; /* Colore di sfondo */
-  color: #fff; /* Colore del testo */
+
+  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
+  color: #ffffff; /* Colore del testo */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
   transition: background-color 0.3s ease, transform 0.2s ease;
   position: relative; /* Posizionamento relativo */
   top: 100px; /* Sposta i pulsanti di 20px verso il basso */
   gap: 5px;
 }
 
-#load-melody-button, #save-melody, #delete-note, #reset-melody {
+
+#load-melody-button {
+  padding: 10px 10px; /* Dimensioni interne del pulsante */
+  font-size: 16px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  position: relative;
+
+}
+
+
+
+ #save-melody {
+  padding: 10px 10px; /* Dimensioni interne del pulsante */
+  font-size: 16px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  position: relative;
+  left: -8px;
+}
+
+
+/*tasti grigi piccoli*/
+ #delete-note, #reset-melody {
   padding: 8px 8px; /* Dimensioni interne del pulsante */
   font-size: 14px; /* Dimensione del testo */
   font-weight: bold; /* Grassetto */
@@ -378,36 +443,50 @@ select {
   border-color: #888; /* Bordo più scuro per il passaggio del mouse */
 }
 
-/*METRONOME*/
+/* Stile base del pulsante metronomo (OFF) */
 .metronome-button {
   display: flex;
-  justify-content: center; /* Centra il testo */
+  justify-content: center;
   align-items: center;
-  background-color: #444;
-  color: white; /* Testo bianco di default */
-  font-size: 16px !important;
-  font-weight: normal !important;
+  font-size: 16px !important; /* Forza la riduzione del font */
+  font-weight: bold;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
   text-align: center;
+  width: 250px !important; /* Forza la larghezza */
+  height: 35px !important; /* Forza l'altezza */
   transition: background-color 0.3s, transform 0.2s;
-  width: 290px; /* Larghezza fissa */
-  height: 40px; /* Altezza aumentata per contenere il testo */
+  background: linear-gradient(145deg, #5e5d5d, #514949);
+  color: #ffffff;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2);
 }
 
-
+/* Stile hover quando OFF */
 .metronome-button:hover {
-  background-color: lightskyblue;
+  background: linear-gradient(145deg, #666, #555);
 }
 
+/* Stile attivo quando cliccato */
 .metronome-button:active {
   transform: scale(0.95);
 }
 
+/* Stile ON (quando il metronomo è abilitato) */
 #metronome-toggle:checked + .metronome-button {
-  background-color: lightskyblue; /* Colore sfondo ON */
-  color: black; /* Testo nero quando attivo */
+  background: linear-gradient(145deg, #73adcf, #3884af);
+  color: #ffffff;
+  font-size: 16px !important; /* Forza la dimensione del testo anche quando ON */
+  width: 250px !important; /* Forza la larghezza */
+  height: 35px !important; /* Forza l'altezza */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
+              -2px -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Stile hover per stato ON */
+#metronome-toggle:checked + .metronome-button:hover {
+  background: linear-gradient(145deg, #8bc9e0, #4aa2c6);
 }
 
 
