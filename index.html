@@ -34,15 +34,15 @@
       
 
       <!-- BPM Configuration -->
-      <div id="bpm-control">
-        <label for="bpm-input">BPM:</label>
-        <input type="number" id="bpm-input" value="120" min="20" max="300" step="1">
-        <label>
-          <input type="checkbox" id="metronome-toggle" checked />
-          Enable Metronome
-        </label>
-      </div>
-
+<!-- BPM Configuration -->
+<div id="bpm-control">
+  <label for="bpm-input">BPM:</label>
+  <input type="number" id="bpm-input" value="120" min="20" max="300" step="1">
+  
+  <!-- Checkbox nascosta e pulsante associato -->
+  <input type="checkbox" id="metronome-toggle" style="display: none;">
+  <label for="metronome-toggle" id="metronome-button" class="metronome-button">Enable Metronome</label>
+</div>
       
         <!-- Saved Melodies Section -->
         <div id="saved-melodies">
@@ -78,7 +78,12 @@
             <option value="sawtooth">Sawtooth</option>
           </select>
           <label for="volume1-knob">Vol:</label>
-          <div id="volume1-knob" class="knob"></div>
+          <img
+          id="volume1-knob"
+          src="Images/pngegg.png"
+          alt="Volume Knob Image"
+          style="width:80px; height:80px;"
+        />
         </div>
       
         <!-- Row 2 -->
@@ -91,8 +96,13 @@
             <option value="sawtooth">Sawtooth</option>
           </select>
           <label for="volume2-knob">Vol:</label>
-          <div id="volume2-knob" class="knob"></div>
-        </div>
+          <img
+          id="volume2-knob"
+          src="Images/pngegg.png"
+          alt="Volume Knob Image"
+          style="width:80px; height:80px;"
+        />
+      </div>
       
         <!-- Row 3 -->
         <div class="oscillator-row">
@@ -104,19 +114,34 @@
             <option value="sawtooth">Sawtooth</option>
           </select>
           <label for="volume3-knob">Vol:</label>
-          <div id="volume3-knob" class="knob"></div>
-        </div>
+          <img
+          id="volume3-knob"
+          src="Images/pngegg.png"
+          alt="Volume Knob Image"
+          style="width:80px; height:80px;"
+        />
+      </div>
       </div>
 
       <div class="filter-container">
         <h3>Filter</h3>
         <div class="filter-row">
           <label for="filter-frequency-knob">Frequency:</label>
-          <div id="filter-frequency-knob" class="knob"></div>
+          <img
+          id="filter-frequency-knob"
+          src="Images/pngegg.png"
+          alt="Filter Frequency Knob Image"
+          style="width:80px; height:80px;"
+        />
         </div>
         <div class="filter-row">
           <label for="filter-resonance-knob">Resonance:</label>
-          <div id="filter-resonance-knob" class="knob"></div>
+          <img
+          id="filter-resonance-knob"
+          src="Images/pngegg.png"
+          alt="Filter Resonance Knob Image"
+          style="width:80px; height:80px;"
+        />
         </div>
       </div>
       
@@ -125,15 +150,39 @@
         <div class="adsr-grid">
           <div class="adsr-row">
             <label for="attack-knob">Attack:</label>
-            <div class="adsr-knob" id="attack-knob"></div>
+            <img
+            class="adsr-knob"
+            id="attack-knob"
+            src="Images/pngegg.png"
+            alt="ADSR Attack Knob"
+            style="width:80px; height:80px;"
+          />
             <label for="decay-knob">Decay:</label>
-            <div class="adsr-knob" id="decay-knob"></div>
+            <img
+            class="adsr-knob"
+            id="decay-knob"
+            src="Images/pngegg.png"
+            alt="ADSR Decay Knob"
+            style="width:80px; height:80px;"
+          />
           </div>
           <div class="adsr-row">
             <label for="sustain-knob">Sustain:</label>
-            <div class="adsr-knob" id="sustain-knob"></div>
+            <img
+            class="adsr-knob"
+            id="sustain-knob"
+            src="Images/pngegg.png"
+            alt="ADSR Sustain Knob"
+            style="width:80px; height:80px;"
+          />
             <label for="release-knob">Release:</label>
-            <div class="adsr-knob" id="release-knob"></div>
+            <img
+            class="adsr-knob"
+            id="release-knob"
+            src="Images/pngegg.png"
+            alt="ADSR Release Knob"
+            style="width:80px; height:80px;"
+          />
           </div>
         </div>
       </div>

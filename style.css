@@ -68,7 +68,7 @@ h1 {
 #saved-melodies{
   position: relative;
   bottom: -29%;
-  left: -19%;
+  left: -18%;
   display: flex;
   font-size: 10px;
 }
@@ -330,7 +330,7 @@ select {
   position: relative;
   bottom: 68.5%;
   display: flex;
-  left: 35%;
+  left: 43%;
 }  
 
 #bpm-control {
@@ -343,24 +343,73 @@ select {
   
 }
 
-#bpm-control label {
-  font-size: 24px; /* Aumenta la dimensione del testo */
-  font-weight: bold; /* (Opzionale) Rendi il testo in grassetto */
+#bpm-control > label {
+  font-size: 24px; /* Dimensione del testo */
+  font-weight: 600; /* Peso del testo */
+  color: #f0f0f0; /* Colore del testo */
+  letter-spacing: 1px; /* Spaziatura tra lettere */
+  transition: color 0.3s ease, text-shadow 0.3s ease; /* Transizioni fluide */
 }
 
+
+/*BPM IMPUT*/
 #bpm-input {
   font-size: 20px;
   width: 100px;
   text-align: center;
   padding: 5px;
+  background-color: #f9f9f9; /* Colore di sfondo chiaro */
+  border: 2px solid #ccc; /* Bordo sottile grigio */
+  border-radius: 8px; /* Angoli leggermente arrotondati */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Effetto ombra */
+  transition: all 0.2s ease; /* Transizione per un effetto fluido */
 }
 
-#metronome-toggle {
-  background-color: #9C27B0;
-  color: white;
-  transform: scale(1.5); /* Scala la dimensione della checkbox */
-  margin-right: 5px; /* Spaziatura tra checkbox e testo */
+/* Quando l'elemento è attivo o in focus */
+#bpm-input:focus {
+  border-color: lightskyblue; /* Cambia colore del bordo */
+  box-shadow: 0 0 8px lightskyblue; /* Aggiunge un'ombra luminosa */
+  outline: none; /* Rimuove il contorno predefinito */
 }
+
+/* Quando l'elemento è hover */
+#bpm-input:hover {
+  background-color: #fff; /* Cambia leggermente il colore di sfondo */
+  border-color: #888; /* Bordo più scuro per il passaggio del mouse */
+}
+
+/*METRONOME*/
+.metronome-button {
+  display: flex;
+  justify-content: center; /* Centra il testo */
+  align-items: center;
+  background-color: #444;
+  color: white; /* Testo bianco di default */
+  font-size: 16px !important;
+  font-weight: normal !important;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 290px; /* Larghezza fissa */
+  height: 40px; /* Altezza aumentata per contenere il testo */
+}
+
+
+.metronome-button:hover {
+  background-color: lightskyblue;
+}
+
+.metronome-button:active {
+  transform: scale(0.95);
+}
+
+#metronome-toggle:checked + .metronome-button {
+  background-color: lightskyblue; /* Colore sfondo ON */
+  color: black; /* Testo nero quando attivo */
+}
+
 
 /*/////////KNOB AND OSCILLATORS///////////*/
 .knob-container {
