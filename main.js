@@ -1191,95 +1191,198 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inizializza l'angolo
   updateFilterResonanceRotation(currentAngleR);
 });
+document.addEventListener("DOMContentLoaded", () => {
+  // LFO Frequency
+  const lfoFreqImg = document.getElementById("lfo-frequency-knob");
+  let isDraggingLfoF = false;
+  let centerLfoF = { x: 0, y: 0 };
+  const MIN_ANGLE_LFOF = -40;
+  const MAX_ANGLE_LFOF = 220;
+  let currentAngleLfoF = 90; // offset iniziale
 
+  function updateLfoFrequency(angleDeg) {
+    // 1) clampa l'angolo
+    const clamped = Math.max(MIN_ANGLE_LFOF, Math.min(MAX_ANGLE_LFOF, angleDeg));
+    // 2) ruota l'immagine
+    lfoFreqImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleLfoF = clamped;
 
-// LFO frequency
-$('#lfo-frequency-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0.5,
-  min: 0.1,
-  max: 10,
-  step: 0.1,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    lfo.frequency.value = args.value;
+    // 3) normalizza [0..1]
+    const angleRange = MAX_ANGLE_LFOF - MIN_ANGLE_LFOF; // 260
+    const normalized = (clamped - MIN_ANGLE_LFOF) / angleRange; // => 0..1
+
+    // 4) Mappa [0..1] su [0.1..10]
+    const MIN_FREQ = 0.1;
+    const MAX_FREQ = 10;
+    const newFreq = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
+
+    // 5) Aggiorna lfo
+    lfo.frequency.value = newFreq;
+    console.log("LFO Frequency =>", newFreq.toFixed(2));
   }
+
+  lfoFreqImg.addEventListener("mousedown", (e) => {
+    isDraggingLfoF = true;
+    const rect = lfoFreqImg.getBoundingClientRect();
+    centerLfoF.x = rect.left + rect.width / 2;
+    centerLfoF.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingLfoF) return;
+    const dx = e.clientX - centerLfoF.x;
+    const dy = e.clientY - centerLfoF.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90; // shift
+    updateLfoFrequency(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingLfoF) isDraggingLfoF = false;
+  });
+
+  // Imposta un angolo iniziale
+  updateLfoFrequency(currentAngleLfoF);
 });
 
-// Distortion
-$('#distortion-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0.4,
-  min: 0,
-  max: 1,
-  step: 0.01,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    distortion.distortion = args.value;
+document.addEventListener("DOMContentLoaded", () => {
+  // DISTORTION AMOUNT
+  const distImg = document.getElementById("distortion-knob");
+  let isDraggingDist = false;
+  let centerDist = { x: 0, y: 0 };
+  const MIN_ANGLE_DIST = -40;
+  const MAX_ANGLE_DIST = 220;
+  let currentAngleDist = 90;
+
+  function updateDistortion(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_DIST, Math.min(MAX_ANGLE_DIST, angleDeg));
+    distImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleDist = clamped;
+
+    const angleRange = MAX_ANGLE_DIST - MIN_ANGLE_DIST; // 260
+    const normalized = (clamped - MIN_ANGLE_DIST) / angleRange; // => 0..1
+
+    // Distortion in [0..1]
+    const newDist = 0 + normalized * (1 - 0);
+    distortion.distortion = newDist;
+    console.log("Distortion =>", newDist.toFixed(2));
   }
+
+  distImg.addEventListener("mousedown", (e) => {
+    isDraggingDist = true;
+    const rect = distImg.getBoundingClientRect();
+    centerDist.x = rect.left + rect.width / 2;
+    centerDist.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingDist) return;
+    const dx = e.clientX - centerDist.x;
+    const dy = e.clientY - centerDist.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateDistortion(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingDist) isDraggingDist = false;
+  });
+
+  // inizializza
+  updateDistortion(currentAngleDist);
 });
 
-// Chorus controls
-$('#chorus-frequency-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 1.5,
-  min: 0.1,
-  max: 10,
-  step: 0.1,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    chorus.frequency.value = args.value;
+document.addEventListener("DOMContentLoaded", () => {
+  // CHORUS DEPTH
+  const chorusDepthImg = document.getElementById("chorus-depth-knob");
+  let isDraggingDepth = false;
+  let centerDepth = { x: 0, y: 0 };
+  const MIN_ANGLE_DEPTH = -40;
+  const MAX_ANGLE_DEPTH = 220;
+  let currentAngleDepth = 90;
+
+  function updateChorusDepth(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_DEPTH, Math.min(MAX_ANGLE_DEPTH, angleDeg));
+    chorusDepthImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleDepth = clamped;
+
+    const angleRange = MAX_ANGLE_DEPTH - MIN_ANGLE_DEPTH; // 260
+    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange; // => 0..1
+
+    // chorus.depth in [0..1]
+    chorus.depth = normalized;
+    console.log("Chorus Depth =>", normalized.toFixed(2));
   }
+
+  chorusDepthImg.addEventListener("mousedown", (e) => {
+    isDraggingDepth = true;
+    const rect = chorusDepthImg.getBoundingClientRect();
+    centerDepth.x = rect.left + rect.width / 2;
+    centerDepth.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingDepth) return;
+    const dx = e.clientX - centerDepth.x;
+    const dy = e.clientY - centerDepth.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateChorusDepth(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingDepth) isDraggingDepth = false;
+  });
+
+  updateChorusDepth(currentAngleDepth);
+
+  // CHORUS SPREAD
+  const chorusSpreadImg = document.getElementById("chorus-spread-knob");
+  let isDraggingSpread = false;
+  let centerSpread = { x: 0, y: 0 };
+  let currentAngleSpread = 90;
+
+  function updateChorusSpread(angleDeg) {
+    const clamped = Math.max(MIN_ANGLE_DEPTH, Math.min(MAX_ANGLE_DEPTH, angleDeg));
+    chorusSpreadImg.style.transform = `rotate(${clamped}deg)`;
+    currentAngleSpread = clamped;
+
+    const angleRange = MAX_ANGLE_DEPTH - MIN_ANGLE_DEPTH;
+    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange; // => 0..1
+
+    // chorus.spread in [0..360]
+    const newSpread = 0 + normalized * 360;
+    chorus.spread = newSpread;
+    console.log("Chorus Spread =>", newSpread.toFixed(2));
+  }
+
+  chorusSpreadImg.addEventListener("mousedown", (e) => {
+    isDraggingSpread = true;
+    const rect = chorusSpreadImg.getBoundingClientRect();
+    centerSpread.x = rect.left + rect.width / 2;
+    centerSpread.y = rect.top + rect.height / 2;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDraggingSpread) return;
+    const dx = e.clientX - centerSpread.x;
+    const dy = e.clientY - centerSpread.y;
+    let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    angleDeg += 90;
+    updateChorusSpread(angleDeg);
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDraggingSpread) isDraggingSpread = false;
+  });
+
+  updateChorusSpread(currentAngleSpread);
 });
 
-$('#chorus-depth-knob').roundSlider({
-  radius: 40,
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 0,
-  min: 0,
-  max: 1,
-  step: 0.1,
-  startAngle: -40,
-  endAngle: 220,
-  width: 8,
-  handleSize: "+5",
-  change: function (args) {
-    chorus.depth = args.value;
-  }
-});
-
-$('#chorus-spread-knob').roundSlider({
-  radius: 40,
-  width: 8,
-  handleSize: "+5",
-  sliderType: 'min-range',
-  handleShape: 'round',
-  value: 180,
-  min: 0,
-  max: 360,
-  step: 10,
-  startAngle: -40,
-  endAngle: 220,
-  change: function (args) {
-    chorus.spread = args.value;
-  }
-});
 
 // Attach waveform selectors
 document.getElementById("waveform1-select").addEventListener("change", (event) => setOscWaveType(osc1, event.target.value));

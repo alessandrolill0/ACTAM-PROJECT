@@ -444,10 +444,14 @@ select {
 #volume2-knob,
 #volume1-knob,
 #filter-frequency-knob,
-#filter-resonance-knob{
-  width: 50px; /* Example knob size */
+#filter-resonance-knob,
+#chorus-spread-knob,
+#chorus-depth-knob,
+#distortion-knob,
+#lfo-frequency-knob{
+  width: 50px; 
   height: 50px;
-  background-color: #ccc;
+  background-color: #ccc; /*knob background*/
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
