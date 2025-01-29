@@ -545,11 +545,11 @@ function createMelody() {
     }));
   }
   //Update global synth parameters in real time
-  try {
+  /*try {
     updateSynthParameters();
   } catch (error) {
     console.error("Error updating synth parameters:", error);
-  }
+  }*/
 }
 
 // Updates global synth parameters dynamically
@@ -1962,7 +1962,7 @@ async function savePreset() {
     chorusDepth: document.getElementById("chorus-depth-knob").value,
     chorusSpread: document.getElementById("chorus-spread-knob").value,
   };
-  
+
   try {
     // Salva su Firestore
     await addDoc(collection(db, "presets"), presetData);
@@ -2046,7 +2046,7 @@ async function loadPreset() {
       // Ecc.
 
       // 4) (Opzionale) Chiama updateSynthParameters() per aggiornare i parametri in Tone.js
-      updateSynthParameters();
+      //updateSynthParameters();
 
       alert(`Preset "${preset.name}" loaded successfully!`);
     } else {
