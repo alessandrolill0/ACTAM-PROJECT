@@ -1868,24 +1868,39 @@ function renderPresets(presets) {
   });
 }
 
+
 // Save the current settings as a preset
 async function savePreset() {
   const presetName = prompt("Enter a name for the preset:");
   if (!presetName) return;
 
-  // Retrieve waveform selections
-  const waveform1 = document.getElementById("waveform1-select").value;
-  const waveform2 = document.getElementById("waveform2-select")?.value || "";
-  const waveform3 = document.getElementById("waveform3-select")?.value || "";
-  const lfoWaveform = document.getElementById("lfo-waveform").value;
-
-  // Retrieve values from custom rotary knobs (using data-value instead of .value)
-  const getKnobValue = (id) => {
+  // Helper function per calcolare i valori dei knob in base alla rotazione
+  const getKnobValue = (id, min = 0, max = 1, minAngle = -40, maxAngle = 220) => {
     const knob = document.getElementById(id);
-    return knob ? parseFloat(knob.getAttribute("data-value")) || 0 : 0;
+    if (!knob) {
+      console.error(`Knob with ID "${id}" not found.`);
+      return 0;
+    }
+
+    // Ottieni l'angolo attuale dalla proprietà CSS transform
+    const transform = knob.style.transform || "rotate(0deg)";
+    const angle = parseFloat(transform.match(/rotate\((-?\d+(?:\.\d+)?)deg\)/)?.[1] || 0);
+
+    // Converti l'angolo in un valore normalizzato (tra min e max)
+    const normalizedValue = (angle - minAngle) / (maxAngle - minAngle);
+    const value = Math.max(min, Math.min(max, min + normalizedValue * (max - min))); // Clamp tra min e max
+
+    console.log(`Knob ${id} angle: ${angle}, value: ${value}`); // Debug
+    return value;
   };
 
-  // Construct the preset data object
+  // Recupera i valori dai waveform selectors
+  const waveform1 = document.getElementById("waveform1-select")?.value || "sine";
+  const waveform2 = document.getElementById("waveform2-select")?.value || "sine";
+  const waveform3 = document.getElementById("waveform3-select")?.value || "sine";
+  const lfoWaveform = document.getElementById("lfo-waveform")?.value || "sine";
+
+  // Costruisci i dati del preset
   const presetData = {
     name: presetName,
 
@@ -1894,43 +1909,47 @@ async function savePreset() {
     waveform2,
     waveform3,
 
-    // Volume (fix: get values from data-value instead of .value)
+    // Volume (ottenuto dai knob)
     volume1: getKnobValue("volume1-knob"),
     volume2: getKnobValue("volume2-knob"),
     volume3: getKnobValue("volume3-knob"),
 
-    // ADSR
-    attack: getKnobValue("attack-knob"),
-    decay: getKnobValue("decay-knob"),
-    sustain: getKnobValue("sustain-knob"),
-    release: getKnobValue("release-knob"),
+    // ADSR (Attack, Decay, Sustain, Release)
+    attack: getKnobValue("attack-knob", 0, 5),
+    decay: getKnobValue("decay-knob", 0, 5),
+    sustain: getKnobValue("sustain-knob", 0, 1),
+    release: getKnobValue("release-knob", 0, 5),
 
     // LFO
     lfoWaveform,
-    lfoFrequency: getKnobValue("lfo-frequency-knob"),
+    lfoFrequency: getKnobValue("lfo-frequency-knob", 0.1, 20),
 
     // Filter
-    filterFrequency: getKnobValue("filter-frequency-knob"),
-    filterResonance: getKnobValue("filter-resonance-knob"),
+    filterFrequency: getKnobValue("filter-frequency-knob", 50, 10000),
+    filterResonance: getKnobValue("filter-resonance-knob", 0.1, 10),
 
     // Distortion
-    distortion: getKnobValue("distortion-knob"),
+    distortion: getKnobValue("distortion-knob", 0, 1),
 
     // Chorus
-    chorusDepth: getKnobValue("chorus-depth-knob"),
-    chorusSpread: getKnobValue("chorus-spread-knob"),
+    chorusDepth: getKnobValue("chorus-depth-knob", 0, 1),
+    chorusSpread: getKnobValue("chorus-spread-knob", 0, 360),
   };
 
+  console.log("Preset data to be saved:", presetData); // Debug finale
+
   try {
-    // Save to Firestore
+    // Salva i dati su Firestore
     await addDoc(collection(db, "presets"), presetData);
-    alert("Preset saved successfully!");
-    fetchPresets(); // Reload the preset list
+    alert(`Preset "${presetName}" saved successfully!`);
+    fetchPresets(); // Ricarica la lista dei preset
   } catch (error) {
     console.error("Error saving preset:", error);
     alert("Error saving preset. Please try again.");
   }
 }
+
+
 
 // Load the selected preset and apply settings
 async function loadPreset() {
@@ -1954,15 +1973,14 @@ async function loadPreset() {
       document.getElementById("waveform3-select").value = preset.waveform3;
 
       // Helper function to update knob values and rotate them visually
-      const updateKnob = (id, value, min = 0, max = 1, minAngle = -135, maxAngle = 135) => {
+      const updateKnob = (id, value, min = 0, max = 1, minAngle = -40, maxAngle = 220) => {
         const knob = document.getElementById(id);
         if (!knob) return;
-
-        // Store the value in data attribute
+        // Store the value in a data attribute for future reference
         knob.setAttribute("data-value", value);
-
         // Map value to rotation angle
         const angle = minAngle + ((value - min) / (max - min)) * (maxAngle - minAngle);
+        // Rotate the knob
         knob.style.transform = `rotate(${angle}deg)`;
       };
 
