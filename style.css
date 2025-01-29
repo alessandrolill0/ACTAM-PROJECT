@@ -305,7 +305,7 @@ select {
   gap: 5px;
 }
 
-#load-melody-button, #save-melody {
+#load-melody-button, #save-melody, #delete-note, #reset-melody {
   padding: 8px 8px; /* Dimensioni interne del pulsante */
   font-size: 14px; /* Dimensione del testo */
   font-weight: bold; /* Grassetto */
