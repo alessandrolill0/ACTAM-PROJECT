@@ -123,71 +123,90 @@ button:hover:not(:disabled) {
 
 /* START RECORDING BUTTON */
 #start {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
   color: white;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 5px; /* Angoli arrotondati */
+  width: 37px; /* Rimpicciolito il tasto */
+  height: 37px; /* Rimpicciolito il tasto */
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1), /* Ombra esterna ancora più chiara */
+    inset 0 0 4px rgba(0, 0, 0, 0.05); /* Ombra interna ancora più leggera */
+  border: 2px solid rgba(200, 200, 200, 0.4); /* Bordo semi-trasparente */
+  transition: all 0.2s ease-in-out; /* Transizione per un aspetto fluido */
 }
 
+/* Cerchio interno (spia) */
 .rec-circle {
-  width: 15px; 
-  height: 15px;
+  width: 14.5px; 
+  height: 14.5px;
   background-color: rgb(124, 15, 15); /* Rosso scuro per inattivo */
   border-radius: 50%; 
-  border: 2px solid black;
+  border: 1px solid black;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3); /* Effetto luminoso più leggero per il cerchio */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transizione per cambiamenti di stato */
 }
 
 /* Stato attivo temporaneo */
 #start:active .rec-circle {
-  background-color: rgb(255, 0, 0); /* Rosso acceso temporaneo */
+  background-color: rgb(255, 50, 50); /* Rosso acceso temporaneo */
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6); /* Glow accentuato, ma non troppo */
 }
 
 /* Stato persistente durante la registrazione */
 #start.recording .rec-circle {
   background-color: rgb(255, 0, 0); /* Rosso acceso persistente */
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Glow luminoso ma controllato */
 }
+
+
 
 /* STOP RECORDING BUTTON */
 #stop {
-  background-color: white; 
-  color: white; 
+  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
+  color: white;
   position: relative;
   display: flex;
-  width: 35.7px; 
-  height: 35.7px; 
+  width: 36px; 
+  height: 36px; 
   align-items: center; 
   justify-content: center; 
   cursor: pointer; 
+  border-radius: 5px; /* Angoli arrotondati */
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.1), /* Ombra esterna più marcata per maggiore profondità */
+    inset 0 0 8px rgba(0, 0, 0, 0.05); /* Ombra interna più evidente */
+  border: 2px solid rgba(200, 200, 200, 0.4); /* Bordo semi-trasparente */
 }
 
-#status{
-  position: relative;
-  display:flex;
-  bottom: 70%;
-  left: 10%;
-  text-align: center;
+/* Luminanza nera quando il tasto è premuto */
+#stop:active {
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più scura e intensa */
+    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più intensa */
 }
 
+/* Quadrato all'interno del tasto */
 .stop-square {
-  width: 16px; 
-  height: 16px;
-  width: 16px; 
-  height: 16px; 
-  background-color: black; 
-  transition: background-color 0.3s ease; 
+  width: 16px;
+  height: 15px;
+  background-color: black; /* Colore del quadrato */
+  transition: background-color 0.3s ease; /* Animazione del colore */
 }
 
+/* Cambia colore quando il tasto è attivo */
 #stop:active .stop-square {
-  background-color: rgb(165, 159, 159); 
+  background-color: rgba(0, 0, 0, 0.7); /* Colore più scuro */
 }
 
 
 /* PLAY MELODY BUTTON */
 #play-melody {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
   color: white;
   position: relative;
   display: flex;
@@ -195,28 +214,41 @@ button:hover:not(:disabled) {
   justify-content: center;
   cursor: pointer;
   border-radius: 5px;
-  width: 34px; 
-  height: 34px;
+  width: 34.5px; 
+  height: 35px;
   padding: 0;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.3), /* Ombra esterna più marcata */
+    inset 0 0 8px rgba(0, 0, 0, 0.2); /* Ombra interna per maggiore profondità */
+  border: 2px solid rgba(200, 200, 200, 0.6); /* Bordo semi-trasparente */
 }
 
+/* Triangolo all'interno del tasto */
 .play-triangle {
   width: 0;
   height: 0;
   border-top: 9px solid transparent;
   border-bottom: 9px solid transparent;
-  border-left: 20px solid black;
+  border-left: 18px solid black;
   transition: border-left-color 0.3s ease;
 }
 
-#play-melody:active .play-triangle {
-  border-left-color: rgb(150, 150, 150); 
+/* Effetto quando il tasto è premuto */
+#play-melody:active {
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più forte quando premuto */
+    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più forte */
 }
+
+#play-melody:active .play-triangle {
+  border-left-color: rgb(150, 150, 150); /* Colore più chiaro per il triangolo quando premuto */
+}
+
 
 
 /* STOP PLAYBACK MELODY BUTTON */
 #stop-playback {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
   color: white;
   position: relative;
   display: flex;
@@ -225,23 +257,35 @@ button:hover:not(:disabled) {
   cursor: pointer;
   border-radius: 5px;
   width: 37px;
-  height: 35px;
+  height: 35.5px;
   padding: 0;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.3), /* Ombra esterna marcata */
+    inset 0 0 8px rgba(0, 0, 0, 0.2); /* Ombra interna per maggiore profondità */
+  border: 2px solid rgba(200, 200, 200, 0.6); /* Bordo semi-trasparente */
 }
 
+/* Barre di pausa all'interno del tasto */
 .pause-bar {
-  flex-shrink: 0;  /*equal bars*/
+  flex-shrink: 0;  /* Barre uguali */
   width: 6px;
   height: 20px;
   background-color: black;
-  margin: 0 2px; 
+  margin: 0 2px;
   transition: background-color 0.3s ease;
 }
 
-/* Stato attivo (clic) */
-#stop-playback:active .pause-bar {
-  background-color: rgb(165, 159, 159); 
+/* Effetto quando il tasto è premuto */
+#stop-playback:active {
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più forte */
+    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più intensa */
 }
+
+#stop-playback:active .pause-bar {
+  background-color: rgb(150, 150, 150); /* Colore più chiaro per le barre quando premuto */
+}
+
 
 #reset-melody:active .button-text {
   color: rgb(165, 159, 159); 
@@ -794,11 +838,10 @@ canvas {
 #recording-progress::-webkit-progress-value {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
+ 
 }
 
 #recording-progress::-moz-progress-bar {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
 }
