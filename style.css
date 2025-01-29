@@ -774,11 +774,10 @@ canvas {
 #recording-progress::-webkit-progress-value {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
+ 
 }
 
 #recording-progress::-moz-progress-bar {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
 }
