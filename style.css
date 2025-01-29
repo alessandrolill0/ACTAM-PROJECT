@@ -624,13 +624,13 @@ select option:hover {
   align-items: flex-end; /* Align content to the right */
   gap: 10px;
   position: relative;
-  bottom: 63%;
+  bottom: 64%;
 }
 
 .adsr-grid {
   display: flex;
-  flex-direction: column; /* Two rows for knobs */
-  gap: 15px; /* Space between rows */
+  flex-direction: column; 
+  gap: 15px;
 }
 
 .adsr-row {
@@ -686,7 +686,7 @@ select option:hover {
   display: flex;
   flex-direction: column; /* Arrange items vertically */
   gap: 10px; /* Space between elements */
-  align-items: flex-end; /* Align content to the right */
+  align-items: center; /* Align content to the right */
 }
 
 .lfo-column label {
@@ -773,6 +773,11 @@ canvas {
 
 .step.active {
   background-color: lightskyblue;
+}
+
+#filter-resonance-knob{
+  position: relative;
+  right: 1%;
 }
 
 /* Progress Bar Styles */
