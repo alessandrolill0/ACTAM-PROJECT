@@ -544,56 +544,6 @@ function createMelody() {
       duration: note.duration,
     }));
   }
-  //Update global synth parameters in real time
-  /*try {
-    updateSynthParameters();
-  } catch (error) {
-    console.error("Error updating synth parameters:", error);
-  }*/
-}
-
-// Updates global synth parameters dynamically
-function updateSynthParameters() {
-  try {
-    // ===== Filter Params =====
-    filter.frequency.value = currentFilterFreq;
-    filter.Q.value = currentFilterRes;
-    
-    // ===== ADSR Envelope =====
-    envelope.attack  = currentAttack;
-    envelope.decay   = currentDecay;
-    envelope.sustain = currentSustain;
-    envelope.release = currentRelease;
-
-    // ===== LFO =====
-    lfo.frequency.value = currentLfoFreq;  
-    // If you also switch waveforms from a <select>, you can read that DOM value
-    // or a global variable, e.g. lfo.type = currentLfoWaveform;
-
-    // ===== Distortion =====
-    distortion.distortion = currentDistortion;
-
-    // ===== Chorus =====
-    chorus.depth = currentChorusDepth;
-    chorus.spread = currentChorusSpread;
-
-    // ===== Oscillator Waveforms (if changed via <select>) =====
-    const waveform1 = document.getElementById("waveform1-select").value;
-    const waveform2 = document.getElementById("waveform2-select").value;
-    const waveform3 = document.getElementById("waveform3-select").value;
-    osc1.type = waveform1;
-    osc2.type = waveform2;
-    osc3.type = waveform3;
-
-    // ===== Oscillator Volumes (if you also store them globally) =====
-    osc1Gain.gain.value = currentVolume1;
-    osc2Gain.gain.value = currentVolume2;
-    osc3Gain.gain.value = currentVolume3;
-
-    console.log("Synth parameters updated successfully.");
-  } catch (error) {
-    console.error("Error updating synth parameters:", error.message);
-  }
 }
 
 
@@ -1923,63 +1873,63 @@ async function savePreset() {
   const presetName = prompt("Enter a name for the preset:");
   if (!presetName) return;
 
-  // Leggi i waveform dalle <select>
+  // Retrieve waveform selections
   const waveform1 = document.getElementById("waveform1-select").value;
-  const waveform2 = document.getElementById("waveform2-select").value;
-  const waveform3 = document.getElementById("waveform3-select").value;
-
+  const waveform2 = document.getElementById("waveform2-select")?.value || "";
+  const waveform3 = document.getElementById("waveform3-select")?.value || "";
   const lfoWaveform = document.getElementById("lfo-waveform").value;
 
-  // Costruisci un oggetto con tutti i valori correnti
+  // Retrieve values from custom rotary knobs (using data-value instead of .value)
+  const getKnobValue = (id) => {
+    const knob = document.getElementById(id);
+    return knob ? parseFloat(knob.getAttribute("data-value")) || 0 : 0;
+  };
+
+  // Construct the preset data object
   const presetData = {
     name: presetName,
 
     // Waveforms
-    waveform1: waveform1,
-    waveform2: waveform2,
-    waveform3: waveform3,
+    waveform1,
+    waveform2,
+    waveform3,
 
-    // Volumi
-    volume1: document.getElementById("volume1-knob").value,
-    volume2: document.getElementById("volume2-knob").value,
-    volume3: document.getElementById("volume3-knob").value,
+    // Volume (fix: get values from data-value instead of .value)
+    volume1: getKnobValue("volume1-knob"),
+    volume2: getKnobValue("volume2-knob"),
+    volume3: getKnobValue("volume3-knob"),
 
     // ADSR
-    attack: document.getElementById("attack-knob").value,
-    decay: document.getElementById("decay-knob").value,
-    sustain: document.getElementById("sustain-knob").value,
-    release: document.getElementById("release-knob").value,
+    attack: getKnobValue("attack-knob"),
+    decay: getKnobValue("decay-knob"),
+    sustain: getKnobValue("sustain-knob"),
+    release: getKnobValue("release-knob"),
 
-    // LFO //lfo-frequency-knob
-    lfoWaveform: document.getElementById("lfo-waveform").value,
-    lfoFrequency: document.getElementById("lfo-frequency-knob").value,
+    // LFO
+    lfoWaveform,
+    lfoFrequency: getKnobValue("lfo-frequency-knob"),
 
     // Filter
-    filterFrequency: document.getElementById("filter-frequency-knob").value,
-    filterResonance: document.getElementById("filter-resonance-knob").value,
+    filterFrequency: getKnobValue("filter-frequency-knob"),
+    filterResonance: getKnobValue("filter-resonance-knob"),
 
     // Distortion
-    distortion: document.getElementById("distortion-knob").value,
+    distortion: getKnobValue("distortion-knob"),
 
     // Chorus
-    chorusDepth: document.getElementById("chorus-depth-knob").value,
-    chorusSpread: document.getElementById("chorus-spread-knob").value,
+    chorusDepth: getKnobValue("chorus-depth-knob"),
+    chorusSpread: getKnobValue("chorus-spread-knob"),
   };
 
   try {
-    // Salva su Firestore
+    // Save to Firestore
     await addDoc(collection(db, "presets"), presetData);
     alert("Preset saved successfully!");
-    fetchPresets(); // Ricarica la lista dei preset
+    fetchPresets(); // Reload the preset list
   } catch (error) {
     console.error("Error saving preset:", error);
     alert("Error saving preset. Please try again.");
   }
-}
-
-// Apply a value to a round-slider knob
-function setKnobValue(knobId, value) {
-  $(`#${knobId}`).roundSlider("option", "value", value);
 }
 
 // Load the selected preset and apply settings
@@ -1998,58 +1948,43 @@ async function loadPreset() {
     if (docSnap.exists()) {
       const preset = docSnap.data();
 
-      // 1) Imposta waveforms
+      // 1) Set waveforms
       document.getElementById("waveform1-select").value = preset.waveform1;
       document.getElementById("waveform2-select").value = preset.waveform2;
       document.getElementById("waveform3-select").value = preset.waveform3;
 
-      // 2) Aggiorna variabili globali
-      currentVolume1 = preset.volume1 ?? 0.5;
-      currentVolume2 = preset.volume2 ?? 0.5;
-      currentVolume3 = preset.volume3 ?? 0.5;
+      // Helper function to update knob values and rotate them visually
+      const updateKnob = (id, value, min = 0, max = 1, minAngle = -135, maxAngle = 135) => {
+        const knob = document.getElementById(id);
+        if (!knob) return;
 
-      currentAttack = preset.attack ?? 0.1;
-      currentDecay = preset.decay ?? 0.2;
-      currentSustain = preset.sustain ?? 0.5;
-      currentRelease = preset.release ?? 1.5;
+        // Store the value in data attribute
+        knob.setAttribute("data-value", value);
+
+        // Map value to rotation angle
+        const angle = minAngle + ((value - min) / (max - min)) * (maxAngle - minAngle);
+        knob.style.transform = `rotate(${angle}deg)`;
+      };
+
+      // 2) Update knob values and rotate
+      updateKnob("volume1-knob", preset.volume1, 0, 1);
+      updateKnob("volume2-knob", preset.volume2, 0, 1);
+      updateKnob("volume3-knob", preset.volume3, 0, 1);
+
+      updateKnob("attack-knob", preset.attack, 0, 5);
+      updateKnob("decay-knob", preset.decay, 0, 5);
+      updateKnob("sustain-knob", preset.sustain, 0, 1);
+      updateKnob("release-knob", preset.release, 0, 5);
 
       document.getElementById("lfo-waveform").value = preset.lfoWaveform ?? "sine";
-      currentLfoFreq = preset.lfoFrequency ?? 0.5;
+      updateKnob("lfo-frequency-knob", preset.lfoFrequency, 0.1, 20);
 
-      currentFilterFreq = preset.filterFrequency ?? 500;
-      currentFilterRes = preset.filterResonance ?? 1.0;
+      updateKnob("filter-frequency-knob", preset.filterFrequency, 50, 10000);
+      updateKnob("filter-resonance-knob", preset.filterResonance, 0.1, 10);
 
-      currentDistortion = preset.distortion ?? 0.4;
-
-      currentChorusDepth = preset.chorusDepth ?? 0.0;
-      currentChorusSpread = preset.chorusSpread ?? 180;
-
-      // 3) Aggiorna la rotazione di tutti i knob PNG
-      // Volumes
-      setVolumeKnobAngle(document.getElementById("volume1-knob"), currentVolume1);
-      setVolumeKnobAngle(document.getElementById("volume2-knob"), currentVolume2);
-      setVolumeKnobAngle(document.getElementById("volume3-knob"), currentVolume3);
-
-      // Esempio per Attack (0..5) => -40..220
-      setADSRKnobAngle(
-        document.getElementById("attack-knob"),
-        currentAttack, // in secondi
-        0, 5, // range
-        -40, 220
-      );
-      // E così via per decay, sustain, release
-
-      // Esempio Filter freq => 50..10000 => -40..220
-      setFilterFreqKnobAngle(
-        document.getElementById("filter-frequency-knob"),
-        currentFilterFreq,
-        50, 10000,
-        -40, 220
-      );
-      // Ecc.
-
-      // 4) (Opzionale) Chiama updateSynthParameters() per aggiornare i parametri in Tone.js
-      //updateSynthParameters();
+      updateKnob("distortion-knob", preset.distortion, 0, 1);
+      updateKnob("chorus-depth-knob", preset.chorusDepth, 0, 1);
+      updateKnob("chorus-spread-knob", preset.chorusSpread, 0, 360);
 
       alert(`Preset "${preset.name}" loaded successfully!`);
     } else {
