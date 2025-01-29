@@ -91,7 +91,7 @@ h3{
   gap: 20px;
   margin: 20px 0;
   position: relative;
-  top: -2%;
+  top: -3.8%;
   left: 176px;
 }
 
@@ -305,7 +305,7 @@ select {
   gap: 5px;
 }
 
-#load-melody-button, #save-melody {
+#load-melody-button, #save-melody, #delete-note, #reset-melody {
   padding: 8px 8px; /* Dimensioni interne del pulsante */
   font-size: 14px; /* Dimensione del testo */
   font-weight: bold; /* Grassetto */
@@ -440,6 +440,22 @@ select {
   bottom: 63%;
 }
 
+#volume3-knob,
+#volume2-knob,
+#volume1-knob,
+#filter-frequency-knob,
+#filter-resonance-knob,
+#chorus-spread-knob,
+#chorus-depth-knob,
+#distortion-knob,
+#lfo-frequency-knob{
+  width: 50px; 
+  height: 50px;
+  background-color: #5e5d5f; /*knob background*/
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .oscillator-row {
   display: flex;
   align-items: center;
@@ -508,7 +524,7 @@ select {
 .adsr-knob {
   width: 50px; /* Example knob size */
   height: 50px;
-  background-color: #ccc;
+  background-color: #5e5d5f; /*knob background*/
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
