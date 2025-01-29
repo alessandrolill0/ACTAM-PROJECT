@@ -1171,7 +1171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalized = (clamped - MIN_ANGLE_LFOF) / angleRange; // => 0..1
 
     // 4) Mappa [0..1] su [0.1..10]
-    const MIN_FREQ = 0.1;
+    const MIN_FREQ = 0;
     const MAX_FREQ = 10;
     const newFreq = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
 
