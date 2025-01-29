@@ -68,7 +68,7 @@ h1 {
 #saved-melodies{
   position: relative;
   bottom: -29%;
-  left: -19%;
+  left: -18%;
   display: flex;
   font-size: 10px;
 }
@@ -330,7 +330,7 @@ select {
   position: relative;
   bottom: 68.5%;
   display: flex;
-  left: 35%;
+  left: 43%;
 }  
 
 #bpm-control {
