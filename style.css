@@ -440,6 +440,18 @@ select {
   bottom: 63%;
 }
 
+#volume3-knob,
+#volume2-knob,
+#volume1-knob,
+#filter-frequency-knob,
+#filter-resonance-knob{
+  width: 50px; /* Example knob size */
+  height: 50px;
+  background-color: #ccc;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .oscillator-row {
   display: flex;
   align-items: center;
