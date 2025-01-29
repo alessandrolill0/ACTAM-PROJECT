@@ -732,9 +732,12 @@ envelope.toDestination();
 const lfo = new Tone.LFO({
   type: "sine",
   frequency: 0.5,
-  min: 200,
+  min: 50,
   max: 1000,
 }).start();
+
+lfo.connect(filter.frequency);
+
 
 // Update the LFO waveform
 function setLfoWaveform(type) {
