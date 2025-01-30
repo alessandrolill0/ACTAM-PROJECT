@@ -14,7 +14,8 @@
     <div class="container">
       <header>
         <h1>Vox2Seq</h1>
-      </header>    
+      </header>   
+      
       <!-- Controllers -->
       <div class="controls">
         <button id="start">
@@ -31,6 +32,8 @@
           <span class="pause-bar"></span>
         </button>
       </div>
+
+    
       
 
       <!-- BPM Configuration -->
@@ -70,14 +73,14 @@
         <h3>Oscillators</h3>
         <!-- Row 1 -->
         <div class="oscillator-row">
-          <label for="waveform1-select">Wave</label>
+          <label for="waveform1-select" class="parameter">Wave</label>
           <select id="waveform1-select">
             <option value="sine">Sine</option>
             <option value="square">Square</option>
             <option value="triangle">Triangle</option>
             <option value="sawtooth">Sawtooth</option>
           </select>
-          <label for="volume1-knob">Vol</label>
+          <label for="volume1-knob" class="parameter">Vol</label>
           <img
           id="volume1-knob"
           src="Images/pngegg.png"
@@ -88,14 +91,14 @@
       
         <!-- Row 2 -->
         <div class="oscillator-row">
-          <label for="waveform2-select">Wave</label>
+          <label for="waveform2-select" class="parameter">Wave</label>
           <select id="waveform2-select">
             <option value="sine">Sine</option>
             <option value="square">Square</option>
             <option value="triangle">Triangle</option>
             <option value="sawtooth">Sawtooth</option>
           </select>
-          <label for="volume2-knob">Vol</label>
+          <label for="volume2-knob" class="parameter">Vol</label>
           <img
           id="volume2-knob"
           src="Images/pngegg.png"
@@ -106,14 +109,14 @@
       
         <!-- Row 3 -->
         <div class="oscillator-row">
-          <label for="waveform3-select">Wave</label>
+          <label for="waveform3-select" class="parameter">Wave</label>
           <select id="waveform3-select">
             <option value="sine">Sine</option>
             <option value="square">Square</option>
             <option value="triangle">Triangle</option>
             <option value="sawtooth">Sawtooth</option>
           </select>
-          <label for="volume3-knob">Vol</label>
+          <label for="volume3-knob" class="parameter">Vol</label>
           <img
           id="volume3-knob"
           src="Images/pngegg.png"
@@ -126,7 +129,7 @@
       <div class="filter-container">
         <h3>Filter</h3>
         <div class="filter-row">
-          <label for="filter-frequency-knob">Frequency</label>
+          <label for="filter-frequency-knob" class="parameter">Frequency</label>
           <img
           id="filter-frequency-knob"
           src="Images/pngegg.png"
@@ -135,7 +138,7 @@
         />
         </div>
         <div class="filter-row">
-          <label for="filter-resonance-knob">Resonance</label>
+          <label for="filter-resonance-knob" class="parameter">Resonance</label>
           <img
           id="filter-resonance-knob"
           src="Images/pngegg.png"
@@ -149,7 +152,7 @@
         <h3>ADSR Envelope</h3>
         <div class="adsr-grid">
           <div class="adsr-row">
-            <label for="attack-knob">Att</label>
+            <label for="attack-knob" class="parameter">Att</label>
             <img
             class="adsr-knob"
             id="attack-knob"
@@ -157,7 +160,7 @@
             alt="ADSR Attack Knob"
             style="width:80px; height:80px;"
           />
-            <label for="decay-knob">Dec</label>
+            <label for="decay-knob" class="parameter">Dec</label>
             <img
             class="adsr-knob"
             id="decay-knob"
@@ -167,7 +170,7 @@
           />
           </div>
           <div class="adsr-row">
-            <label for="sustain-knob">Sus</label>
+            <label for="sustain-knob" class="parameter">Sus</label>
             <img
             class="adsr-knob"
             id="sustain-knob"
@@ -175,7 +178,7 @@
             alt="ADSR Sustain Knob"
             style="width:80px; height:80px;"
           />
-            <label for="release-knob">Rel</label>
+            <label for="release-knob" class="parameter">Rel</label>
             <img
             class="adsr-knob"
             id="release-knob"
@@ -210,7 +213,7 @@
       <div class="distortion-container">
         <h3>Distortion</h3>
         <div class="distortion-row">
-          <label for="distortion-knob">Amount</label>
+          <label for="distortion-knob" class="parameter">Amount</label>
           <img
             id="distortion-knob"
             src="Images/pngegg.png"
@@ -224,7 +227,7 @@
       <div class="chorus-container">
         <h3>Chorus</h3>
         <div class="chorus-row">
-          <label for="chorus-depth-knob">Depth</label>
+          <label for="chorus-depth-knob" class="parameter">Depth</label>
           <img
             id="chorus-depth-knob"
             src="Images/pngegg.png"
@@ -233,7 +236,7 @@
           />
         </div>
         <div class="chorus-row">
-          <label for="chorus-spread-knob">Spread</label>
+          <label for="chorus-spread-knob" class="parameter">Spread</label>
           <img
             id="chorus-spread-knob"
             src="Images/pngegg.png"
@@ -265,6 +268,12 @@
         </button>
       </div>
       
+      <img src="images/line2.png" id="line-2">
+      <img src="images/line2.png" id="line-1">
+      <img src="images/line2.png" id="line-3">
+      <img src="images/line2.png" id="line-4">
+      <img src="images/line2.png" id="line-5">
+      
       <!-- Sequencer -->
       <div id="sequencer-container">
         <canvas id="sequencer" width="1500" height="800"></canvas>
@@ -274,6 +283,8 @@
         <label for="recording-progress"></label>
         <progress id="recording-progress" value="0" max="100" style="width: 100%;"></progress>
       </div>
+
+      
     </div>
   </main>
   

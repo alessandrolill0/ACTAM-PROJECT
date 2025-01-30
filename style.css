@@ -75,6 +75,45 @@ h1 {
   gap: 8px;
 }
 
+.parameter {
+  font-weight: bold;
+}
+
+#line-1{
+  position: absolute;
+  bottom: 390px;
+  left: 340px;
+  height: 290px;
+}
+
+#line-2{
+  position: absolute;
+  bottom: 390px;
+  left: 553px;
+  height: 290px;
+}
+
+#line-3{
+  position: absolute;
+  bottom: 390px;
+  right: 585px;
+  height: 290px;
+}
+
+#line-4{
+  position: absolute;
+  bottom: 390px;
+  right: 425px;
+  height: 290px;
+}
+
+#line-5{
+  position: absolute;
+  bottom: 390px;
+  right: 232px;
+  height: 290px;
+}
+
 h2{
   color:  transparent;
 }
@@ -83,6 +122,7 @@ h2{
 h3{
   color: lightskyblue;
   margin: 20px 0;
+  font-size: 20px;
 }
 
 /*/////////BUTTONS///////////*/
