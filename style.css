@@ -1073,3 +1073,12 @@ canvas {
   display: flex;
   justify-content: center;
 }
+
+
+#oscilloscope {
+width : 300px; 
+height : 90px; 
+position: relative; 
+bottom: 945px;
+left: 550.6px;
+}
