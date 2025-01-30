@@ -601,26 +601,41 @@ function shiftOctave(direction) {
     alert("No notes to shift.");
     return;
   }
+
+  const A4 = 440;
+  let isOutOfRange = false;
+
+  // Verifica se almeno una nota eccede il range prima di applicare la modifica
+  for (const note of recordedNotes) {
+    const midiNumber = midiFromNoteName(note.note);
+    if (midiNumber === null) continue;
+
+    const newMidiNumber = midiNumber + direction * 12;
+
+    if (newMidiNumber < 36 || newMidiNumber > 108) {
+      alert("Shifting exceeds the valid range of C2 to C8. Adjustment canceled.");
+      isOutOfRange = true;
+      break;
+    }
+  }
+
+  // Se almeno una nota è fuori range, annulla l'operazione
+  if (isOutOfRange) return;
+
+  // Se tutte le note sono valide, applica lo shift
   recordedNotes.forEach((note) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
 
-    //Shift MIDI number by 12 semitones (1 octave)
     const newMidiNumber = midiNumber + direction * 12;
-
-    //Ensure it remains within the valid MIDI range (C2 to C8)
-    if (newMidiNumber < 36 || newMidiNumber > 108) {
-      alert("Shifting exceeds the valid range of C2 to C8. Adjustment canceled.");
-      return;
-    }
     const newNoteName = noteNames[newMidiNumber % 12] + Math.floor(newMidiNumber / 12 - 1);
-    note.note = newNoteName; // Update note name
-    //Update frequency based on the new MIDI number
-    const A4 = 440;
+    
+    note.note = newNoteName;
     note.frequency = A4 * Math.pow(2, (newMidiNumber - 69) / 12);
   });
+
   createMelody();
-  renderSequencer(); // Re-render the sequencer to reflect changes
+  renderSequencer();
 }
 
 //Checks if a new note position overlaps with existing notes.
