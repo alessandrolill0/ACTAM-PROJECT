@@ -1484,7 +1484,7 @@ window.addEventListener("mouseup", () => {
     isResizingStart = false;
     isResizingEnd = false;
     //selectedNoteIndex = null;
-    createAndStartMelodyPart()
+    //createAndStartMelodyPart()
     renderSequencer(); // Finalize the sequencer visualization
   }
 });
@@ -1672,7 +1672,7 @@ document.addEventListener("keydown", (event) => {
     if (confirmDelete) {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
-      createMelody()
+     // createMelody()
       renderSequencer(); // Update the sequencer visualization
     }
   }
@@ -1870,6 +1870,7 @@ function loadMelodyToSequencer(melody) {
     startTime: note.startTime,
     duration: note.duration,
   }));
+  resetMelodyButton.disabled = false; 
   bpm = melody.bpm; // Set the sequencer's BPM to the melody's BPM
   document.getElementById("bpm-input").value = bpm; // Update the BPM input field if it exists
   alert(`Melody "${melody.name}" loaded successfully!`);
