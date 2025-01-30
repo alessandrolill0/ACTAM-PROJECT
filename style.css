@@ -1070,7 +1070,6 @@ canvas {
   bottom: 857px;
   left: 200px;
   display: flex;
-  align-items: center; /* Centro verticale */
   justify-content: center;
 }
 
