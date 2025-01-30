@@ -740,6 +740,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalized = (clamped - MIN_ANGLE) / angleRange;
     setOscVolume(osc1Gain, normalized); //Pass to setOscVolume()
     console.log("Osc1 volume =>", normalized.toFixed(2));
+    updateParameterDisplay("volume1", osc1Gain.gain.value);
   }
   // When user presses mouse on the knob:
   volume1Img.addEventListener("mousedown", (e) => {
@@ -797,6 +798,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set the volume based on normalized value
     setOscVolume(osc2Gain, normalized);
     console.log("Osc2 volume =>", normalized.toFixed(2));
+    updateParameterDisplay("volume2", osc2Gain.gain.value);
   }
 
   volume2Img.addEventListener("mousedown", (e) => {
@@ -844,6 +846,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalized = (clamped - MIN_ANGLE_3) / angleRange;
     setOscVolume(osc3Gain, normalized);
     console.log("Osc3 volume =>", normalized.toFixed(2));
+    updateParameterDisplay("volume3", osc3Gain.gain.value);
   }
   volume3Img.addEventListener("mousedown", (e) => {
     isDraggingVol3 = true;
@@ -895,6 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     envelope.attack = attackValue;
     console.log("Attack =>", attackValue.toFixed(2));
+    updateParameterDisplay("attack", attackValue);
   }
 
   attackImg.addEventListener("mousedown", (e) => {
@@ -940,6 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const decayValue = 0 + normalized * (5 - 0);
     envelope.decay = decayValue;
     console.log("Decay =>", decayValue.toFixed(2));
+    updateParameterDisplay("decay", decayValue);
   }
 
   decayImg.addEventListener("mousedown", (e) => {
@@ -984,6 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sustainValue = 0 + normalized * (1 - 0);
     envelope.sustain = sustainValue;
     console.log("Sustain =>", sustainValue.toFixed(2));
+    updateParameterDisplay("sustain", sustainValue);
   }
 
   sustainImg.addEventListener("mousedown", (e) => {
@@ -1028,6 +1034,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const releaseValue = 0 + normalized * (5 - 0);
     envelope.release = releaseValue;
     console.log("Release =>", releaseValue.toFixed(2));
+    updateParameterDisplay("release", releaseValue);
   }
 
   releaseImg.addEventListener("mousedown", (e) => {
@@ -1086,8 +1093,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Aggiorna il filtro
     filter.frequency.value = freqValue;
-
     console.log("Filter Frequency =>", freqValue.toFixed(2));
+    updateParameterDisplay("filterFrequency", freqValue);
   }
 
   filterFreqImg.addEventListener("mousedown", (e) => {
@@ -1141,6 +1148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     filter.Q.value = resValue;
     console.log("Filter Resonance =>", resValue.toFixed(2));
+    updateParameterDisplay("filterResonance", resValue);
   }
 
   filterResImg.addEventListener("mousedown", (e) => {
@@ -1196,6 +1204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 5) Aggiorna lfo
     lfo.frequency.value = newFreq;
     console.log("LFO Frequency =>", newFreq.toFixed(2));
+    updateParameterDisplay("lfoFrequency", newFreq);
   }
 
   lfoFreqImg.addEventListener("mousedown", (e) => {
@@ -1245,6 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newDist = 0 + normalized * (1 - 0);
     distortion.distortion = newDist;
     console.log("Distortion =>", newDist.toFixed(2));
+    updateParameterDisplay("distortion", newDist);
   }
 
   distImg.addEventListener("mousedown", (e) => {
@@ -1293,6 +1303,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // chorus.depth in [0..1]
     chorus.depth = normalized;
     console.log("Chorus Depth =>", normalized.toFixed(2));
+    updateParameterDisplay("chorusDepth", normalized);
   }
 
   chorusDepthImg.addEventListener("mousedown", (e) => {
@@ -1337,6 +1348,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newSpread = 0 + normalized * 360;
     chorus.spread = newSpread;
     console.log("Chorus Spread =>", newSpread.toFixed(2));
+    updateParameterDisplay("chorusSpread", normalized);
   }
 
   chorusSpreadImg.addEventListener("mousedown", (e) => {
@@ -2057,3 +2069,62 @@ document.getElementById("load-preset").addEventListener("click", loadPreset);
 
 // Fetch presets on page load
 fetchPresets();
+
+function updateParameterDisplay(parameter, value) {
+  const display = document.getElementById("parameter-values");
+  if (!display) return;
+
+  // Formatta il valore
+  const formatValue = (label, value) => `${label}: ${value.toFixed(2)}`;
+
+  let label = "";
+
+  // Associa il parametro al testo da visualizzare
+  switch (parameter) {
+    case "volume1":
+      label = "Volume 1";
+      break;
+    case "volume2":
+      label = "Volume 2";
+      break;
+    case "volume3":
+      label = "Volume 3";
+      break;
+    case "attack":
+      label = "Attack";
+      break;
+    case "decay":
+      label = "Decay";
+      break;
+    case "sustain":
+      label = "Sustain";
+      break;
+    case "release":
+      label = "Release";
+      break;
+    case "lfoFrequency":
+      label = "LFO Frequency";
+      break;
+    case "filterFrequency":
+      label = "Filter Frequency";
+      break;
+    case "filterResonance":
+      label = "Filter Resonance";
+      break;
+    case "distortion":
+      label = "Distortion";
+      break;
+    case "chorusDepth":
+      label = "Chorus Depth";
+      break;
+    case "chorusSpread":
+      label = "Chorus Spread";
+      break;
+    default:
+      return;
+  }
+
+  // Mostra solo il valore del parametro modificato
+  display.innerHTML = formatValue(label, value);
+}
+
