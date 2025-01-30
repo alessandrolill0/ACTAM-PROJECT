@@ -2145,7 +2145,7 @@ envelope.connect(oscilloscopeAnalyzer);
 function drawOscilloscope() {
     requestAnimationFrame(drawOscilloscope);
     oscilloscopeAnalyzer.getByteTimeDomainData(dataArray);
-    oscilloscopeCtx.fillStyle = "black";
+    oscilloscopeCtx.fillStyle = "#1b1f25";
     oscilloscopeCtx.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
     oscilloscopeCtx.lineWidth = 2;
     oscilloscopeCtx.strokeStyle = "lightskyblue";
