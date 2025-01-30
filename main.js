@@ -28,7 +28,7 @@ const sequencerCanvas = document.getElementById("sequencer");
 const ctx = sequencerCanvas.getContext("2d");
 const bpmInput = document.getElementById("bpm-input");
 const metronomeToggle = document.getElementById("metronome-toggle");
-//const metronomeButton = document.getElementById("metronome-button");
+const metronomeButton = document.getElementById("metronome-button");
 const stopPlaybackButton = document.getElementById("stop-playback"); // Get the button element
 
 //Global Variables
@@ -43,7 +43,7 @@ let isDetecting = false;
 let startTime = 0;
 let lastSelectedNoteIndex = null; //index of last selected note, helpful for stretching and moving the notes around
 let metronomeActive = false;
-//let metronomeAudioCtx = null;
+let metronomeAudioCtx = null;
 let metronomeInterval = null;
 let recordingTimeout = null; // To store the timeout reference
 let activeNote = null;
@@ -144,7 +144,7 @@ noteRange.forEach((note, index) => {
   const y = index * rowHeight; //Vertical position
   const isBlack = isBlackKey(note); //Checks if diesis
   if (isBlack) {
-    // Draw black key(shifted to the right)
+    // Disegna tasto nero (spostato verso destra)
     const blackKeyOffset = whiteKeyWidth - blackKeyWidth; //Having the same length of white keys
     ctx.fillStyle = "#000";
     ctx.fillRect(
@@ -170,7 +170,7 @@ noteRange.forEach((note, index) => {
       keyHeight
     );
 
-    //C for white notes as reference
+    // C for white notes as reference
   if (note.startsWith("C")) {
       ctx.fillStyle = "#333";
       ctx.font = "11px Verdana";
@@ -191,7 +191,7 @@ noteRange.forEach((note, index) => {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
-    ctx.fillStyle = "#333";  //Each bar has an associated number
+    ctx.fillStyle = "#333";    //Each bar has an associated number
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(` ${bar}`, x, 10);
@@ -231,7 +231,8 @@ noteRange.forEach((note, index) => {
 //Start pitch detection
 async function startPitchDetection() {
   try {
-    startButton.classList.add("recording");
+    startButton.classList.add("recording"); // Aggiungi lo stato "recording"
+
     recordedNotes = []; // the previous array is deleted
     clearTimeout(recordingTimeout);
     if (progressTimer !== null) { // Clear existing progressTimer if any
@@ -255,7 +256,7 @@ async function startPitchDetection() {
       chorus.dispose();
     });
 
-    //Starting preparation
+    // Preparazione iniziale
     isDetecting = true;
     startButton.disabled = true;
     stopButton.disabled = true;
@@ -264,7 +265,7 @@ async function startPitchDetection() {
     deleteNoteButton.disabled = true;
     renderSequencer();
 
-//Container for countdown
+// Container for countdown
 const countdownContainer = document.createElement("div");
 countdownContainer.style.position = "fixed";
 countdownContainer.style.top = "68.5%";  // Spostato leggermente più in basso
@@ -280,7 +281,9 @@ countdownContainer.style.padding = "10px 20px";
 countdownContainer.style.borderRadius = "15px"; 
 countdownContainer.style.background = "linear-gradient(145deg, #7fbff7, #62a3da)";
 document.body.appendChild(countdownContainer);
-const beatDuration = 60 / bpm; //Countdown based on bpm
+
+// Countdown based on bpm
+const beatDuration = 60 / bpm; 
 for (let i = 4; i > 0; i--) {
   countdownContainer.textContent = i;
   await new Promise((resolve) => setTimeout(resolve, beatDuration * 1000));
@@ -293,15 +296,15 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
     // Start metronome with the rec
     if (metronomeToggle.checked) {
       console.log("Start metronome with recording.");
-      startMetronome(); //Metronome starts rec
+      startMetronome(); // Il metronomo inizia con la registrazione
     }
 
     // Delay before recording
     const recordingDelay = 350; // Milliseconds delay
     console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
-    await new Promise((resolve) => setTimeout(resolve, recordingDelay)); //Wait the delay
+    await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
 
-    //Access to microphone
+    // Access to microphone
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     source = audioContext.createMediaStreamSource(stream);
@@ -724,9 +727,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const volume1Img = document.getElementById("volume1-knob"); //Getting the volume
   let isDragging = false;
   let knobCenter = { x: 0, y: 0 };
-  const MIN_ANGLE = -40;
-  const MAX_ANGLE = 220;
-  let currentAngle = 220; //Initial angle for the volume set to the maximum
+  const MIN_ANGLE = -135;
+  const MAX_ANGLE = 135;
+  let currentAngle = 0; //Initial angle for the volume set to the maximum
 
   function updateVolume1Rotation(angleDeg) {
     const clamped = Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, angleDeg));
@@ -758,6 +761,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //You can shift by 90 if you want 0 deg to be at top, etc.
     angleDeg += 90;
     //Now update the knob rotation + volume
+    if (angleDeg > 180) angleDeg -= 360;
     updateVolume1Rotation(angleDeg);
   });
 
@@ -776,16 +780,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isDraggingVol2 = false;
   let knobCenterVol2 = { x: 0, y: 0 };
-  const MIN_ANGLE_2 = -40;
-  const MAX_ANGLE_2 = 220;
-  let currentAngleVol2 = 220;
+  const MIN_ANGLE_2 = -135;
+  const MAX_ANGLE_2 = 135;
+  let currentAngleVol2 = 0; // Start at the minimum angle
 
   function updateVolume2Rotation(angleDeg) {
+    // Clamp the angle between MIN_ANGLE_2 and MAX_ANGLE_2
     const clamped = Math.max(MIN_ANGLE_2, Math.min(MAX_ANGLE_2, angleDeg));
     volume2Img.style.transform = `rotate(${clamped}deg)`;
     currentAngleVol2 = clamped;
+
+    // Normalize the clamped angle to a 0–1 range
     const angleRange = MAX_ANGLE_2 - MIN_ANGLE_2;
     const normalized = (clamped - MIN_ANGLE_2) / angleRange;
+
+    // Set the volume based on normalized value
     setOscVolume(osc2Gain, normalized);
     console.log("Osc2 volume =>", normalized.toFixed(2));
   }
@@ -800,10 +809,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("mousemove", (e) => {
     if (!isDraggingVol2) return;
+
     const dx = e.clientX - knobCenterVol2.x;
     const dy = e.clientY - knobCenterVol2.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    angleDeg += 90; // shift
+    angleDeg += 90; // Align the 0° position to the top
+    if (angleDeg > 180) angleDeg -= 360;
     updateVolume2Rotation(angleDeg);
   });
 
@@ -812,16 +823,19 @@ document.addEventListener("DOMContentLoaded", () => {
       isDraggingVol2 = false;
     }
   });
+
+  // Initialize the knob to the minimum angle
   updateVolume2Rotation(currentAngleVol2);
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const volume3Img = document.getElementById("volume3-knob");
   let isDraggingVol3 = false;
   let knobCenterVol3 = { x: 0, y: 0 };
-  const MIN_ANGLE_3 = -40;
-  const MAX_ANGLE_3 = 220;
-  let currentAngleVol3 = 220;
+  const MIN_ANGLE_3 = -135;
+  const MAX_ANGLE_3 = 135;
+  let currentAngleVol3 = 0;
   function updateVolume3Rotation(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_3, Math.min(MAX_ANGLE_3, angleDeg));
     volume3Img.style.transform = `rotate(${clamped}deg)`;
@@ -844,6 +858,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - knobCenterVol3.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90; // shift
+    if (angleDeg > 180) angleDeg -= 360;
     updateVolume3Rotation(angleDeg);
   });
   document.addEventListener("mouseup", () => {
@@ -860,19 +875,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const attackImg = document.getElementById("attack-knob");
   let isDraggingA = false;
   let centerA = { x: 0, y: 0 };
-  const MIN_ANGLE_A = -40;
-  const MAX_ANGLE_A = 220;
-  let currentAngleA = -35;
+  const MIN_ANGLE_A = -135;
+  const MAX_ANGLE_A = 135;
+  let currentAngleA = 0;
 
   function updateAttack(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
     attackImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleA = clamped;
+
+    // Normalizza [0..1]
     const angleRange = MAX_ANGLE_A - MIN_ANGLE_A; // 260
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
-    const minVal = 0;
+
+    // Mappa su [0..5] secondi
+    const minVal = 0.1;
     const maxVal = 5;
     const attackValue = minVal + normalized * (maxVal - minVal);
+
     envelope.attack = attackValue;
     console.log("Attack =>", attackValue.toFixed(2));
   }
@@ -891,6 +911,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerA.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateAttack(angleDeg);
   });
 
@@ -898,13 +919,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isDraggingA) isDraggingA = false;
   });
 
+  // Imposta un iniziale
   updateAttack(currentAngleA);
 
   // === DECAY KNOB ===
   const decayImg = document.getElementById("decay-knob");
   let isDraggingD = false;
   let centerD = { x: 0, y: 0 };
-  let currentAngleD = 90;
+  let currentAngleD = 0;
 
   function updateDecay(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
@@ -934,6 +956,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerD.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateDecay(angleDeg);
   });
 
@@ -947,7 +970,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sustainImg = document.getElementById("sustain-knob");
   let isDraggingS = false;
   let centerS = { x: 0, y: 0 };
-  let currentAngleS = 90;
+  let currentAngleS = 0;
 
   function updateSustain(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
@@ -977,6 +1000,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerS.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateSustain(angleDeg);
   });
 
@@ -990,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const releaseImg = document.getElementById("release-knob");
   let isDraggingR = false;
   let centerR = { x: 0, y: 0 };
-  let currentAngleR = 90;
+  let currentAngleR = 0;
 
   function updateRelease(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
@@ -1020,6 +1044,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerR.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateRelease(angleDeg);
   });
 
@@ -1038,9 +1063,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterFreqImg = document.getElementById("filter-frequency-knob");
   let isDraggingFreq = false;
   let centerFreq = { x: 0, y: 0 };
-  const MIN_ANGLE_F = -40;
-  const MAX_ANGLE_F = 220;
-  let currentAngleF = 90; // offset iniziale
+  const MIN_ANGLE_F = -135;
+  const MAX_ANGLE_F = 135;
+  let currentAngleF = 0; // offset iniziale
 
   function updateFilterFrequencyRotation(angleDeg) {
     // Clampa l'angolo
@@ -1079,6 +1104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerFreq.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90; // shift di 90° per far coincidere "alto" con 0 gradi
+    if (angleDeg > 180) angleDeg -= 360;
     updateFilterFrequencyRotation(angleDeg);
   });
 
@@ -1093,9 +1119,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterResImg = document.getElementById("filter-resonance-knob");
   let isDraggingRes = false;
   let centerRes = { x: 0, y: 0 };
-  const MIN_ANGLE_R = -40;
-  const MAX_ANGLE_R = 220;
-  let currentAngleR = 90;
+  const MIN_ANGLE_R = -135;
+  const MAX_ANGLE_R = 135;
+  let currentAngleR = 0;
 
   function updateFilterResonanceRotation(angleDeg) {
     // Clampa l'angolo
@@ -1131,6 +1157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerRes.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateFilterResonanceRotation(angleDeg);
   });
 
@@ -1146,9 +1173,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const lfoFreqImg = document.getElementById("lfo-frequency-knob");
   let isDraggingLfoF = false;
   let centerLfoF = { x: 0, y: 0 };
-  const MIN_ANGLE_LFOF = -40;
-  const MAX_ANGLE_LFOF = 220;
-  let currentAngleLfoF = 90; // offset iniziale
+  const MIN_ANGLE_LFOF = -135;
+  const MAX_ANGLE_LFOF = 135;
+  let currentAngleLfoF = 0; // offset iniziale
 
   function updateLfoFrequency(angleDeg) {
     // 1) clampa l'angolo
@@ -1185,6 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerLfoF.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90; // shift
+    if (angleDeg > 180) angleDeg -= 360;
     updateLfoFrequency(angleDeg);
   });
 
@@ -1201,9 +1229,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const distImg = document.getElementById("distortion-knob");
   let isDraggingDist = false;
   let centerDist = { x: 0, y: 0 };
-  const MIN_ANGLE_DIST = -40;
-  const MAX_ANGLE_DIST = 220;
-  let currentAngleDist = 90;
+  const MIN_ANGLE_DIST = -135;
+  const MAX_ANGLE_DIST = 135;
+  let currentAngleDist = 0;
 
   function updateDistortion(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_DIST, Math.min(MAX_ANGLE_DIST, angleDeg));
@@ -1233,6 +1261,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerDist.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateDistortion(angleDeg);
   });
 
@@ -1249,9 +1278,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const chorusDepthImg = document.getElementById("chorus-depth-knob");
   let isDraggingDepth = false;
   let centerDepth = { x: 0, y: 0 };
-  const MIN_ANGLE_DEPTH = -40;
-  const MAX_ANGLE_DEPTH = 220;
-  let currentAngleDepth = 90;
+  const MIN_ANGLE_DEPTH = -135;
+  const MAX_ANGLE_DEPTH = 135;
+  let currentAngleDepth = 0;
 
   function updateChorusDepth(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_DEPTH, Math.min(MAX_ANGLE_DEPTH, angleDeg));
@@ -1280,6 +1309,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerDepth.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateChorusDepth(angleDeg);
   });
 
@@ -1293,7 +1323,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const chorusSpreadImg = document.getElementById("chorus-spread-knob");
   let isDraggingSpread = false;
   let centerSpread = { x: 0, y: 0 };
-  let currentAngleSpread = 90;
+  let currentAngleSpread = 0;
 
   function updateChorusSpread(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_DEPTH, Math.min(MAX_ANGLE_DEPTH, angleDeg));
@@ -1323,6 +1353,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dy = e.clientY - centerSpread.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
     angleDeg += 90;
+    if (angleDeg > 180) angleDeg -= 360;
     updateChorusSpread(angleDeg);
   });
 
@@ -1351,6 +1382,8 @@ document.addEventListener("DOMContentLoaded", () => {
   stopPlaybackButton.disabled = true; // Initialize the Stop Playback button as disabled
   renderSequencer();
 });
+
+
 
 //Play Melody Button Event Listener
 playMelodyButton.addEventListener("click", async () => {
@@ -1439,6 +1472,7 @@ window.addEventListener("mouseup", () => {
     isResizingStart = false;
     isResizingEnd = false;
     //selectedNoteIndex = null;
+    createAndStartMelodyPart()
     renderSequencer(); // Finalize the sequencer visualization
   }
 });
@@ -1687,6 +1721,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 //Event listeners for the octave shift buttons
 document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
+
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
 
 //Filter frequency slider
@@ -1702,6 +1737,7 @@ document.querySelectorAll(".adsr-knob").forEach(slider => {
     updateEnvelope(param, value);
   });
 });
+
 
 document.getElementById("melody-dropdown").addEventListener("change", () => {
   const loadButton = document.getElementById("load-melody-button");
@@ -1830,7 +1866,6 @@ function loadMelodyToSequencer(melody) {
 }
 
 ///////////////////////////// PRESET-SAVING FUNCTIONS /////////////////////////////
-
 // Fetch presets from Firestore and render in the dropdown
 async function fetchPresets() {
   try {
@@ -1856,6 +1891,7 @@ function renderPresets(presets) {
     presetDropdown.appendChild(option);
   });
 }
+
 
 // Save the current settings as a preset
 async function savePreset() {
@@ -1949,7 +1985,7 @@ async function loadPreset() {
     if (docSnap.exists()) {
       const preset = docSnap.data();
 
-      //1)Set waveforms
+      // 1) Set waveforms
       document.getElementById("waveform1-select").value = preset.waveform1;
       document.getElementById("waveform2-select").value = preset.waveform2;
       document.getElementById("waveform3-select").value = preset.waveform3;
@@ -1958,7 +1994,7 @@ async function loadPreset() {
       setOscWaveType(osc2, preset.waveform2); // Oscillatore 2
       setOscWaveType(osc3, preset.waveform3); // Oscillatore 3
 
-      //Helper function yo update knobs visually
+      // Helper function per aggiornare i knob visivamente e logicamente
       const updateKnob = (id, normalizedValue, min = 0, max = 1, minAngle = -40, maxAngle = 220) => {
         const knob = document.getElementById(id);
         if (!knob) return;
@@ -1966,21 +2002,25 @@ async function loadPreset() {
         const angleRange = maxAngle - minAngle;
         const angle = minAngle + normalizedValue * angleRange;
 
-        //Rotate the knob
+        // Ruota il knob visivamente
         knob.style.transform = `rotate(${angle}deg)`;
 
-        //Update Values
+        // Aggiorna i valori logici (volume, filtro, ecc.)
         if (id === "volume1-knob") setOscVolume(osc1Gain, normalizedValue);
         if (id === "volume2-knob") setOscVolume(osc2Gain, normalizedValue);
         if (id === "volume3-knob") setOscVolume(osc3Gain, normalizedValue);
-        if (id === "filter-frequency-knob") filter.frequency.value = normalizedValue * (10000 - 50) + 50; //Mapping
-        if (id === "filter-resonance-knob") filter.Q.value = normalizedValue * (10 - 0.1) + 0.1; //Mapping
-        if (id === "lfo-frequency-knob") lfo.frequency.value = normalizedValue * (20 - 0.1) + 0.1; //Mapping
-        if (id === "distortion-knob") distortion.distortion = normalizedValue;//Mapping
-        if (id === "chorus-depth-knob") chorus.depth = normalizedValue; //Mapping
-        if (id === "chorus-spread-knob") chorus.spread = normalizedValue * 360; //Mapping
+
+        if (id === "filter-frequency-knob") filter.frequency.value = normalizedValue * (10000 - 50) + 50; // Mappa [0..1] in [50..10000]
+        if (id === "filter-resonance-knob") filter.Q.value = normalizedValue * (10 - 0.1) + 0.1; // Mappa [0..1] in [0.1..10]
+
+        if (id === "lfo-frequency-knob") lfo.frequency.value = normalizedValue * (20 - 0.1) + 0.1; // Mappa [0..1] in [0.1..20]
+
+        if (id === "distortion-knob") distortion.distortion = normalizedValue; // Mappa [0..1]
+        if (id === "chorus-depth-knob") chorus.depth = normalizedValue; // Mappa [0..1]
+        if (id === "chorus-spread-knob") chorus.spread = normalizedValue * 360; // Mappa [0..1] in [0..360]
       };
 
+      // 2) Aggiorna i knob e i relativi valori logici
       updateKnob("volume1-knob", preset.volume1);
       updateKnob("volume2-knob", preset.volume2);
       updateKnob("volume3-knob", preset.volume3);
@@ -2010,9 +2050,10 @@ async function loadPreset() {
   }
 }
 
+
 // Attach event listeners
 document.getElementById("save-preset").addEventListener("click", savePreset);
 document.getElementById("load-preset").addEventListener("click", loadPreset);
 
-//Fetch presets on page load
+// Fetch presets on page load
 fetchPresets();
