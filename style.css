@@ -1064,6 +1064,7 @@ canvas {
   padding: 20px; /* Spacing inside the container */
   color: white; /* Text color to contrast with the background */
   text-align: center; /* Center the text */
+  align-items: center;
   font-size: 18px;
   font-weight: bold;
   position: relative;
