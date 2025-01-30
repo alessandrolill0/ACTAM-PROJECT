@@ -1051,21 +1051,27 @@ canvas {
 }
 
 #parameter-display {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.8);
+  width: 230px;
+  height: 10px;
+  background: linear-gradient(145deg, #222831, #1b1f25);
+  backdrop-filter: blur(10px) brightness(1.2);
+  -webkit-backdrop-filter: blur(10px) brightness(1.2);
   color: #fff;
-  padding: 10px;
-  border-radius: 10px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  text-align: left;
-  white-space: pre-line;
-  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); /* Display-like shadow */
+  padding: 20px; /* Spacing inside the container */
+  color: white; /* Text color to contrast with the background */
+  text-align: center; /* Center the text */
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
   position: relative;
-  top: 10px; /* Regola la posizione in base al layout */
-  right: 10px;
-  top: 58%;
+  bottom: 857px;
+  left: 200px;
+  display: flex;
+  justify-content: center;
 }
 
 
