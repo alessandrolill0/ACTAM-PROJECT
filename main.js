@@ -2128,3 +2128,46 @@ function updateParameterDisplay(parameter, value) {
   display.innerHTML = formatValue(label, value);
 }
 
+const oscilloscopeCanvas = document.getElementById("oscilloscope");
+document.body.appendChild(oscilloscopeCanvas);
+const oscilloscopeCtx = oscilloscopeCanvas.getContext("2d");
+
+// === CREAZIONE DELL'ANALYZER PER L'ONDA ===
+const oscilloscopeAnalyzer = Tone.context.createAnalyser();
+oscilloscopeAnalyzer.fftSize = 2048;
+const bufferLength = oscilloscopeAnalyzer.fftSize;
+const dataArray = new Uint8Array(bufferLength);
+
+// Connettiamo l'analizzatore all'uscita finale del synth
+envelope.connect(oscilloscopeAnalyzer);
+
+// === FUNZIONE PER DISEGNARE L'ONDA IN TEMPO REALE ===
+function drawOscilloscope() {
+    requestAnimationFrame(drawOscilloscope);
+    oscilloscopeAnalyzer.getByteTimeDomainData(dataArray);
+    oscilloscopeCtx.fillStyle = "black";
+    oscilloscopeCtx.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+    oscilloscopeCtx.lineWidth = 2;
+    oscilloscopeCtx.strokeStyle = "lightskyblue";
+    oscilloscopeCtx.beginPath();
+
+    let sliceWidth = oscilloscopeCanvas.width / bufferLength;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+        let v = dataArray[i] / 128.0;
+        let y = v * oscilloscopeCanvas.height / 2;
+
+        if (i === 0) {
+            oscilloscopeCtx.moveTo(x, y);
+        } else {
+            oscilloscopeCtx.lineTo(x, y);
+        }
+        x += sliceWidth;
+    }
+    oscilloscopeCtx.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
+    oscilloscopeCtx.stroke();
+}
+
+// Avvia il rendering dell'oscilloscopio
+drawOscilloscope();
