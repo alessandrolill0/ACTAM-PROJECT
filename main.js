@@ -862,7 +862,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let centerA = { x: 0, y: 0 };
   const MIN_ANGLE_A = -40;
   const MAX_ANGLE_A = 220;
-  let currentAngleA = -35;
+  let currentAngleA = -40;
 
   function updateAttack(angleDeg) {
     const clamped = Math.max(MIN_ANGLE_A, Math.min(MAX_ANGLE_A, angleDeg));
@@ -870,7 +870,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentAngleA = clamped;
     const angleRange = MAX_ANGLE_A - MIN_ANGLE_A; // 260
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
-    const minVal = 0;
+    const minVal = 0.1;
     const maxVal = 5;
     const attackValue = minVal + normalized * (maxVal - minVal);
     envelope.attack = attackValue;
