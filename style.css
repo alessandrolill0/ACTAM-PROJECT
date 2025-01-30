@@ -648,7 +648,7 @@ select option:hover {
   width: 250px !important; /* Forza la larghezza */
   height: 35px !important; /* Forza l'altezza */
   transition: background-color 0.3s, transform 0.2s;
-  background: linear-gradient(145deg, #5e5d5d, #474242);
+  background: linear-gradient(145deg, #626262, #373333);
   color: #ffffff;
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
               -2px -2px 4px rgba(0, 0, 0, 0.2);
