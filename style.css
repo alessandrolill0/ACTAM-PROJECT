@@ -438,7 +438,7 @@ select option:hover {
   background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
   color: #ffffff; /* Colore del testo */
   cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione su hover e colore */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
 }
 
@@ -452,12 +452,16 @@ select option:hover {
   transform: scale(0.95); /* Riduzione alla pressione */
 }
 
+/* Effetto di illuminazione per la scritta quando viene cliccato */
+#delete-note:active {
+  color: rgb(255, 0, 0); /* Colore della scritta che diventa grigio chiaro */
+  text-shadow: 0 0 8px rgb(152, 0, 0), 0 0 12px lightgray; /* Luminanza grigia per la scritta */
+}
+
 /* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
   transform: scale(0.95); /* Effetto di riduzione quando cliccato */
 }
-
-
 
 
 /* Tasti grigi piccoli con effetto uniforme */
@@ -470,7 +474,7 @@ select option:hover {
   background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
   color: #ffffff; /* Colore del testo */
   cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione su hover e colore */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
 }
 
@@ -484,11 +488,16 @@ select option:hover {
   transform: scale(0.95); /* Riduzione alla pressione */
 }
 
+/* Effetto di illuminazione per la scritta quando viene cliccato */
+#reset-melody:active {
+  color: lightgray; /* Colore della scritta che diventa grigio chiaro */
+  text-shadow: 0 0 4px lightgray, 0 0 6px lightgray; /* Luminanza grigia per la scritta */
+}
+
 /* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
   transform: scale(0.95); /* Effetto di riduzione quando cliccato */
 }
-
 
 
 /* Tasti grigi piccoli con effetto uniforme */
@@ -501,7 +510,7 @@ select option:hover {
   background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
   color: #ffffff; /* Colore del testo */
   cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione per hover e glow */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
 }
 
@@ -513,13 +522,14 @@ select option:hover {
 /* Effetto clic */
 #shift-octave-up:active {
   transform: scale(0.95); /* Riduzione alla pressione */
+  color: lightskyblue; /* Colore del testo cambia a lightskyblue */
+  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; /* Aggiunge l'effetto di illuminazione (glow) */
 }
 
 /* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
   transform: scale(0.95); /* Effetto di riduzione quando cliccato */
 }
-
 
 /* Tasti grigi con effetto uniforme */
 #shift-octave-down {
@@ -531,7 +541,7 @@ select option:hover {
   background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
   color: #ffffff; /* Colore del testo */
   cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione per hover e glow */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
 }
 
@@ -543,6 +553,8 @@ select option:hover {
 /* Effetto clic */
 #shift-octave-down:active {
   transform: scale(0.95); /* Riduzione alla pressione */
+  color: lightskyblue; /* Colore del testo cambia a lightskyblue */
+  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; /* Aggiunge l'effetto di illuminazione (glow) */
 }
 
 /* Quando si clicca su uno dei tasti */
@@ -587,7 +599,7 @@ select option:hover {
 }
 
 
-/*BPM IMPUT*/
+/* BPM INPUT */
 #bpm-input {
   font-size: 20px;
   width: 100px;
@@ -603,26 +615,31 @@ select option:hover {
   left: -10px;
 }
 
-
+/* Etichetta BPM */
 .bpm-label {
-  display: inline-block; /* Permette di impostare larghezza e altezza */
-  padding: 5px 10px; /* Spaziatura all'interno del rettangolo */
-  background: linear-gradient(145deg, #5e5d5d, #363232); /* Sfumatura uniforme più scura */
-  color: #ffffff; /* Colore del testo bianco */
-  font-size: 20px !important; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border-radius: 5px; /* Bordi arrotondati */
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15), /* Ombra esterna più leggera */
-              -2px -2px 4px rgba(0, 0, 0, 0.1); /* Ombra interna più morbida */
-  margin-right: 10px; /* Spazio tra il rettangolo e l'input */
+  display: inline-block;
+  padding: 5px 10px;
+  background: linear-gradient(145deg, #5e5d5d, #363232);
+  color: #ffffff !important; /* Colore bianco di default */
+  font-size: 20px !important;
+  font-weight: bold;
+  border-radius: 5px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15),
+              -2px -2px 4px rgba(0, 0, 0, 0.1);
+  margin-right: 10px;
+  transition: color 0.3s ease; /* Transizione per il cambio di colore */
 }
 
-
+/* Cambia il colore della scritta BPM e aggiungi un effetto luminoso quando l'input è in focus */
+#bpm-control:focus-within .bpm-label {
+  color: lightskyblue !important; /* Colore blu chiaro */
+  text-shadow: 0 0 1px lightskyblue, 0 0 3px lightskyblue, 0 0 7.5px lightskyblue; /* Aggiunge il glow blu */
+}
 
 /* Quando l'elemento è attivo o in focus */
 #bpm-input:focus {
   border-color: lightskyblue; /* Cambia colore del bordo */
-  box-shadow: 0 0 8px lightskyblue; /* Aggiunge un'ombra luminosa */
+  box-shadow: 0 0 2px lightskyblue; /* Aggiunge un'ombra luminosa */
   outline: none; /* Rimuove il contorno predefinito */
 }
 
