@@ -58,7 +58,7 @@ h1 {
   text-align: center;
   font-weight: bold;
   top: -100px;
-  left: 418px;
+  left: 398px;
   font-size: 42px; /* Dimensione del testo */
   text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* Ombra scura più realistica */
 }
@@ -136,7 +136,7 @@ h3{
   margin: 20px 0;
   position: relative;
   top: -3.8%;
-  left: 177px;
+  left: 160px;
 }
 
 button {
