@@ -83,6 +83,8 @@ h2{
 h3{
   color: lightskyblue;
   margin: 20px 0;
+  text-shadow: 3px 3px 3px rgba(0, 0, 18, 0.6); /* Ombra scura più realistica */
+
 }
 
 /*/////////BUTTONS///////////*/
@@ -287,17 +289,12 @@ button:hover:not(:disabled) {
 }
 
 
-#reset-melody:active .button-text {
-  color: rgb(165, 159, 159); 
-}
 
-#delete-note:active .button-text {
-  color: rgb(255, 0, 0); 
-}
-
+/*
 #save-melody:active .button-text {
   color: rgb(0, 128, 0); 
 }
+  */
 
 /*/////////SELECT BUTTONS, LOAD AND SAVE PRESET BUTTONS,LOAD MELODY BUTTON, BPM AND METRONOME///////////*/
 
@@ -413,22 +410,11 @@ select option:hover {
 }
 
 
-/*tasti grigi piccoli*/
- #delete-note, #reset-melody {
-  padding: 8px 8px; /* Dimensioni interne del pulsante */
-  font-size: 14px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: 2px solid #444; /* Colore del bordo uguale al colore di sfondo */
-  border-radius: 5px; /* Angoli arrotondati */
-  background-color: #444; /* Colore di sfondo */
-  color: #fff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
-}
+
 
 #control-sequencer{
   padding: 8px 8px; /* Dimensioni interne del pulsante */
-  font-size: 14px; /* Dimensione del testo */
+  font-size: 40px !important; /* Dimensione del testo */
   font-weight: bold; /* Grassetto */
   justify-content: right; 
   border-radius: 5px; /* Angoli arrotondati */
@@ -441,6 +427,146 @@ select option:hover {
   display: flex;
   left: 43%;
 }  
+
+/* Tasti grigi piccoli con effetto uniforme */
+#delete-note {
+  padding: 8px 8px; /* Dimensioni interne del pulsante */
+  font-size: 15px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+}
+
+/* Hover effect */
+#delete-note:hover {
+  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+}
+
+/* Effetto clic */
+#delete-note:active {
+  transform: scale(0.95); /* Riduzione alla pressione */
+}
+
+/* Quando si clicca su uno dei tasti */
+#delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
+  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+}
+
+
+
+
+/* Tasti grigi piccoli con effetto uniforme */
+#reset-melody {
+  padding: 8px 6.9px; /* Dimensioni interne del pulsante */
+  font-size: 15px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+}
+
+/* Hover effect */
+#reset-melody:hover {
+  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+}
+
+/* Effetto clic */
+#reset-melody:active {
+  transform: scale(0.95); /* Riduzione alla pressione */
+}
+
+/* Quando si clicca su uno dei tasti */
+#delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
+  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+}
+
+
+
+/* Tasti grigi piccoli con effetto uniforme */
+#shift-octave-up {
+  padding: 8px 12.2px; /* Dimensioni interne del pulsante */
+  font-size: 15px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+}
+
+/* Hover effect */
+#shift-octave-up:hover {
+  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+}
+
+/* Effetto clic */
+#shift-octave-up:active {
+  transform: scale(0.95); /* Riduzione alla pressione */
+}
+
+/* Quando si clicca su uno dei tasti */
+#delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
+  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+}
+
+
+/* Tasti grigi con effetto uniforme */
+#shift-octave-down {
+  padding: 8px 13.2px; /* Dimensioni interne del pulsante */
+  font-size: 15px; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border: none; /* Nessun bordo visibile */
+  border-radius: 5px; /* Angoli arrotondati */
+  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
+  color: #ffffff; /* Colore del testo */
+  cursor: pointer; /* Mostra il cursore a mano su hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+}
+
+/* Hover effect */
+#shift-octave-down:hover {
+  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+}
+
+/* Effetto clic */
+#shift-octave-down:active {
+  transform: scale(0.95); /* Riduzione alla pressione */
+}
+
+/* Quando si clicca su uno dei tasti */
+#delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
+  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+}
+
+/* Hover (effetto quando si passa sopra) */
+#delete-note:hover, #reset-melody:hover, #shift-octave-up:hover, #shift-octave-down:hover {
+  background-color: #666; /* Cambia il colore di sfondo quando hover */
+}
+
+
+#reset-melody:active .button-text {
+  color: rgb(165, 159, 159); 
+}
+
+#delete-note:active .button-text {
+  color: rgb(255, 0, 0); 
+}
+
+
+
+
 
 #bpm-control {
   position: relative;
