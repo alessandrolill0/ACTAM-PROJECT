@@ -1448,7 +1448,6 @@ window.addEventListener("mouseup", () => {
     isResizingStart = false;
     isResizingEnd = false;
     //selectedNoteIndex = null;
-    createAndStartMelodyPart()
     renderSequencer(); // Finalize the sequencer visualization
   }
 });
