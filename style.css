@@ -35,7 +35,7 @@
   justify-content: center;
   gap: 10px;
   margin: 20px 0;
-  bottom: 63.991%;
+  bottom: 57.991%;
   left: 8%;
 }
 
@@ -58,7 +58,7 @@ h1 {
   text-align: center;
   font-weight: bold;
   top: -100px;
-  left: 398px;
+  left: 399px;
   font-size: 42px; /* Dimensione del testo */
   text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* Ombra scura più realistica */
 }
@@ -626,7 +626,7 @@ select option:hover {
 
 #bpm-control {
   position: relative;
-  top: -55px !important; /* Sposta verso l'alto o il basso */
+  top: -23px !important; /* Sposta verso l'alto o il basso */
   left: -690px !important;  /* Sposta verso sinistra o destra */
   display: flex;
   align-items: center;
@@ -695,21 +695,21 @@ select option:hover {
   border-color: #888; /* Bordo più scuro per il passaggio del mouse */
 }
 
-/* Stile base del pulsante metronomo (OFF) */
+/* Stile base del pulsante metronomo (OFF e ON) */
 .metronome-button {
   display: flex;
   justify-content: center;
   position: relative;
   left: -5px;
   align-items: center;
-  font-size: 16px !important; /* Forza la riduzione del font */
+  font-size: 16px !important;
   font-weight: bold;
   border: none;
   border-radius: 15px;
   cursor: pointer;
   text-align: center;
-  width: 255px !important; /* Forza la larghezza */
-  height: 35px !important; /* Forza l'altezza */
+  width: 255px; /* Mantieni uguale per tutti gli stati */
+  height: 35px; /* Mantieni uguale per tutti gli stati */
   transition: background-color 0.3s, transform 0.2s;
   background: linear-gradient(145deg, #626262, #373333);
   color: #ffffff;
@@ -731,18 +731,12 @@ select option:hover {
 #metronome-toggle:checked + .metronome-button {
   background: linear-gradient(145deg, #73adcf, #3884af);
   color: #ffffff;
-  font-size: 16px !important; /* Forza la dimensione del testo anche quando ON */
-  width: 250px !important; /* Forza la larghezza */
-  height: 35px !important; /* Forza l'altezza */
-  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
-              -2px -2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Stile hover per stato ON */
 #metronome-toggle:checked + .metronome-button:hover {
   background: linear-gradient(145deg, #8bc9e0, #4aa2c6);
 }
-
 
 /*/////////KNOB AND OSCILLATORS///////////*/
 .knob-container {
