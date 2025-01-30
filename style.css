@@ -744,10 +744,15 @@ select option:hover {
   height: auto;
 }
 
+#filter-resonance-knob {
+  position: relative;
+  top: 12%;
+}
+
 .adsr-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align content to the right */
+  align-items: center; /* Align content to the right */
   gap: 10px;
   position: relative;
   bottom: 64%;
@@ -778,32 +783,43 @@ select option:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+#sustain-knob {
+  position: relative;
+  right: 1.4%;
+}
+
 
 .chorus-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align to the right */
-  gap: 10px;
+  align-items: center;
+  gap: 5px;
   position: relative;
   bottom: 63%;
 }
 
-.chorus-column {
+.chorus-row {
   display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  gap: 10px; /* Space between knobs and labels */
-  align-items: flex-end; /* Align content to the right */
+  align-items: center;
+  gap: 5px;
 }
 
-.chorus-column label {
-  margin-bottom: 5px; /* Space below the label */
+.chorus-row label {
+  margin-right: 5px;
 }
+
+#chorus-spread-knob {
+  position: relative;
+  top: 12%;
+  right: 3%;
+}
+
 
 .lfo-container {
   display: flex;
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
-  gap: 10px;
+  gap: 20px;
   position: relative;
   bottom: 63%;
 }
@@ -824,24 +840,28 @@ select option:hover {
   height: auto;
 }
 
+#lfo-frequency-knob {
+  position: relative;
+  top: 19.5%;
+}
+
 .distortion-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align to the right */
-  gap: 10px;
+  align-items: center;
+  gap: 5px;
   position: relative;
   bottom: 63%;
 }
 
-.distortion-column {
+.distortion-row {
   display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  gap: 10px; /* Space between elements */
-  align-items: flex-end; /* Align content to the right */
+  align-items: center;
+  gap: 5px;
 }
 
-.distortion-column label {
-  margin-bottom: 5px;
+.distortion-row label {
+  margin-right: 5px;
 }
 
 /*/////////SEQUENCER///////////*/
@@ -944,11 +964,10 @@ canvas {
 #recording-progress::-webkit-progress-value {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
+ 
 }
 
 #recording-progress::-moz-progress-bar {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
-  transition: width 0.3s ease-in-out;
 }
