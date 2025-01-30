@@ -1781,7 +1781,6 @@ document.getElementById("delete-note").addEventListener("click", () => {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
       lastSelectedNoteIndex = null;
-      createAndStartMelodyPart();
       renderSequencer(); // Update the sequencer visualization
     }
   }
