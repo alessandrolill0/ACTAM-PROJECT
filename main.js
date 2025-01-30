@@ -892,7 +892,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
 
     // Mappa su [0..5] secondi
-    const minVal = 0;
+    const minVal = 0.1;
     const maxVal = 5;
     const attackValue = minVal + normalized * (maxVal - minVal);
 

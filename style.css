@@ -35,7 +35,7 @@
   justify-content: center;
   gap: 10px;
   margin: 20px 0;
-  bottom: 58%;
+  bottom: 63.991%;
   left: 8%;
 }
 
@@ -43,7 +43,7 @@
 
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
+  margin: 20;
   padding: 100;
   background-color: lightcyan;
   color: #e0e0e0;
@@ -58,7 +58,7 @@ h1 {
   text-align: center;
   font-weight: bold;
   top: -100px;
-  left: 415px;
+  left: 398px;
   font-size: 42px; /* Dimensione del testo */
   text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* Ombra scura più realistica */
 }
@@ -136,7 +136,7 @@ h3{
   margin: 20px 0;
   position: relative;
   top: -3.8%;
-  left: 176px;
+  left: 160px;
 }
 
 button {
@@ -415,6 +415,10 @@ select option:hover {
 }
 
 
+
+
+
+
 #load-melody-button {
   padding: 10px 10px; /* Dimensioni interne del pulsante */
   font-size: 16px; /* Dimensione del testo */
@@ -622,8 +626,8 @@ select option:hover {
 
 #bpm-control {
   position: relative;
-  top: -18px; /* Sposta verso l'alto o il basso */
-  left: -670px;  /* Sposta verso sinistra o destra */
+  top: -55px !important; /* Sposta verso l'alto o il basso */
+  left: -690px !important;  /* Sposta verso sinistra o destra */
   display: flex;
   align-items: center;
   gap: 10px; /* Spaziatura tra gli elementi */
@@ -667,6 +671,8 @@ select option:hover {
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15),
               -2px -2px 4px rgba(0, 0, 0, 0.1);
   margin-right: 10px;
+  position: relative;
+  bottom: -2px;
   transition: color 0.3s ease; /* Transizione per il cambio di colore */
 }
 
@@ -702,7 +708,7 @@ select option:hover {
   border-radius: 15px;
   cursor: pointer;
   text-align: center;
-  width: 250px !important; /* Forza la larghezza */
+  width: 255px !important; /* Forza la larghezza */
   height: 35px !important; /* Forza l'altezza */
   transition: background-color 0.3s, transform 0.2s;
   background: linear-gradient(145deg, #626262, #373333);
