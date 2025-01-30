@@ -593,12 +593,31 @@ select option:hover {
   width: 100px;
   text-align: center;
   padding: 5px;
-  background-color: #f9f9f9; /* Colore di sfondo chiaro */
-  border: 2px solid #ccc; /* Bordo sottile grigio */
+  font-weight: 5300; /* Grassetto */
+  position: relative;
+  background-color: #ffffff; /* Colore di sfondo chiaro */
+  border: 3px solid #606060; /* Bordo sottile grigio */
   border-radius: 8px; /* Angoli leggermente arrotondati */
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Effetto ombra */
   transition: all 0.2s ease; /* Transizione per un effetto fluido */
+  left: -10px;
 }
+
+
+.bpm-label {
+  display: inline-block; /* Permette di impostare larghezza e altezza */
+  padding: 5px 10px; /* Spaziatura all'interno del rettangolo */
+  background: linear-gradient(145deg, #5e5d5d, #363232); /* Sfumatura uniforme più scura */
+  color: #ffffff; /* Colore del testo bianco */
+  font-size: 20px !important; /* Dimensione del testo */
+  font-weight: bold; /* Grassetto */
+  border-radius: 5px; /* Bordi arrotondati */
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15), /* Ombra esterna più leggera */
+              -2px -2px 4px rgba(0, 0, 0, 0.1); /* Ombra interna più morbida */
+  margin-right: 10px; /* Spazio tra il rettangolo e l'input */
+}
+
+
 
 /* Quando l'elemento è attivo o in focus */
 #bpm-input:focus {
@@ -617,6 +636,8 @@ select option:hover {
 .metronome-button {
   display: flex;
   justify-content: center;
+  position: relative;
+  left: -5px;
   align-items: center;
   font-size: 16px !important; /* Forza la riduzione del font */
   font-weight: bold;
