@@ -1055,3 +1055,21 @@ canvas {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
 }
+
+#parameter-display {
+  width: 250px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-line;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+  position: absolute;
+  top: 10px; /* Regola la posizione in base al layout */
+  right: 10px;
+}
+
