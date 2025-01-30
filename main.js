@@ -1383,6 +1383,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSequencer();
 });
 
+
+
 //Play Melody Button Event Listener
 playMelodyButton.addEventListener("click", async () => {
   if (recordedNotes.length === 0) {
