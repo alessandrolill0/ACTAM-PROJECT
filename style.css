@@ -626,7 +626,7 @@ select option:hover {
 
 #bpm-control {
   position: relative;
-  top: -54px !important; /* Sposta verso l'alto o il basso */
+  top: -55px !important; /* Sposta verso l'alto o il basso */
   left: -690px !important;  /* Sposta verso sinistra o destra */
   display: flex;
   align-items: center;
