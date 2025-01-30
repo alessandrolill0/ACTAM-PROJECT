@@ -1077,8 +1077,8 @@ canvas {
 
 #oscilloscope {
 width : 300px; 
-height : 100px; 
+height : 90px; 
 position: relative; 
-bottom: 960px;
-left: 500px;
+bottom: 945px;
+left: 550.6px;
 }
