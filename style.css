@@ -375,7 +375,15 @@ select option:hover {
   text-align: center;
   margin-top: 200px;
 }
-
+#melody-dropdown{
+  width: 245px;
+  position:relative;
+  height: 41px; /* Imposta l'altezza desiderata */
+  text-align: center;
+  margin-top: 200px;
+  right: 7px;
+  bottom: 100px;
+}
 
 #save-preset {
   padding: 10px 10px; /* Dimensioni dei pulsanti */
@@ -413,9 +421,6 @@ select option:hover {
   top: 100px; /* Sposta i pulsanti di 20px verso il basso */
   gap: 5px;
 }
-
-
-
 
 
 
