@@ -7,3 +7,9 @@ An advanced web-based music sequencer and melody composer that enables users to 
   5. **Database Features:** Save, load, and play melodies stored in a database.
 
 🎶Have fun!🎶
+
+
+
+
+
+![Immagine WhatsApp 2025-01-30 ore 17 43 06_9cec1b65](https://github.com/user-attachments/assets/c3391ba7-777d-4ae7-83db-c516f8393d4c)
