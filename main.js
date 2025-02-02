@@ -1162,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const normalized = (clamped - MIN_ANGLE_R) / angleRange; // => 0..1
 
     // Mappa su [0.1..50], ad esempio
-    const MIN_RES = 0.1;
+    const MIN_RES = 0;
     const MAX_RES = 50;
     const resValue = MIN_RES + normalized * (MAX_RES - MIN_RES);
 
@@ -1931,13 +1931,12 @@ async function savePreset() {
   if (!presetName) return;
 
   // Helper function per calcolare i valori dei knob in base alla rotazione
-  const getKnobValue = (id, min = 0, max = 1, minAngle = -40, maxAngle = 220) => {
+  const getKnobValue = (id, min = 0, max = 1, minAngle = -135, maxAngle = 135) => {
     const knob = document.getElementById(id);
     if (!knob) {
       console.error(`Knob with ID "${id}" not found.`);
       return 0;
     }
-
     // Ottieni l'angolo attuale dalla proprietà CSS transform
     const transform = knob.style.transform || "rotate(0deg)";
     const angle = parseFloat(transform.match(/rotate\((-?\d+(?:\.\d+)?)deg\)/)?.[1] || 0);
@@ -1949,10 +1948,10 @@ async function savePreset() {
   };
 
   // Recupera i valori dai waveform selectors
-  const waveform1 = document.getElementById("waveform1-select")?.value || "sine";
-  const waveform2 = document.getElementById("waveform2-select")?.value || "sine";
-  const waveform3 = document.getElementById("waveform3-select")?.value || "sine";
-  const lfoWaveform = document.getElementById("lfo-waveform")?.value || "sine";
+  const waveform1 = document.getElementById("waveform1-select").value;
+  const waveform2 = document.getElementById("waveform2-select").value;
+  const waveform3 = document.getElementById("waveform3-select").value;
+  const lfoWaveform = document.getElementById("lfo-waveform").value;
 
   // Costruisci i dati del preset
   const presetData = {
@@ -1969,18 +1968,18 @@ async function savePreset() {
     volume3: getKnobValue("volume3-knob"),
 
     // ADSR (Attack, Decay, Sustain, Release)
-    attack: getKnobValue("attack-knob", 0, 5),
+    attack: getKnobValue("attack-knob", 0.1, 5),
     decay: getKnobValue("decay-knob", 0, 5),
     sustain: getKnobValue("sustain-knob", 0, 1),
     release: getKnobValue("release-knob", 0, 5),
 
     // LFO
     lfoWaveform,
-    lfoFrequency: getKnobValue("lfo-frequency-knob", 0.1, 20),
+    lfoFrequency: getKnobValue("lfo-frequency-knob", 0, 10),
 
     // Filter
     filterFrequency: getKnobValue("filter-frequency-knob", 50, 10000),
-    filterResonance: getKnobValue("filter-resonance-knob", 0.1, 10),
+    filterResonance: getKnobValue("filter-resonance-knob", 0, 50),
 
     // Distortion
     distortion: getKnobValue("distortion-knob", 0, 1),
@@ -2027,50 +2026,102 @@ async function loadPreset() {
       setOscWaveType(osc3, preset.waveform3); // Oscillatore 3
 
       // Helper function per aggiornare i knob visivamente e logicamente
-      const updateKnob = (id, normalizedValue, min = 0, max = 1, minAngle = -40, maxAngle = 220) => {
+      function updateKnob(id, normalizedValue, minVal, maxVal, minAngle = -135, maxAngle = 135) {
         const knob = document.getElementById(id);
         if (!knob) return;
-
+        
+        // Calcola l'angolo in base al valore normalizzato
         const angleRange = maxAngle - minAngle;
         const angle = minAngle + normalizedValue * angleRange;
-
-        // Ruota il knob visivamente
         knob.style.transform = `rotate(${angle}deg)`;
-
-        // Aggiorna i valori logici (volume, filtro, ecc.)
-        if (id === "volume1-knob") setOscVolume(osc1Gain, normalizedValue);
-        if (id === "volume2-knob") setOscVolume(osc2Gain, normalizedValue);
-        if (id === "volume3-knob") setOscVolume(osc3Gain, normalizedValue);
-
-        if (id === "filter-frequency-knob") filter.frequency.value = normalizedValue * (10000 - 50) + 50; // Mappa [0..1] in [50..10000]
-        if (id === "filter-resonance-knob") filter.Q.value = normalizedValue * (10 - 0.1) + 0.1; // Mappa [0..1] in [0.1..10]
-
-        if (id === "lfo-frequency-knob") lfo.frequency.value = normalizedValue * (20 - 0.1) + 0.1; // Mappa [0..1] in [0.1..20]
-
-        if (id === "distortion-knob") distortion.distortion = normalizedValue; // Mappa [0..1]
-        if (id === "chorus-depth-knob") chorus.depth = normalizedValue; // Mappa [0..1]
-        if (id === "chorus-spread-knob") chorus.spread = normalizedValue * 360; // Mappa [0..1] in [0..360]
-      };
-
+        
+        // In base all'id del knob, imposta il parametro reale
+        switch (id) {
+          // Controlli dei volumi: range [0,1]
+          case "volume1-knob":
+            setOscVolume(osc1Gain, normalizedValue);
+            break;
+          case "volume2-knob":
+            setOscVolume(osc2Gain, normalizedValue);
+            break;
+          case "volume3-knob":
+            setOscVolume(osc3Gain, normalizedValue);
+            break;
+            
+          // Controlli ADSR: ad es. per Attack range [0.1, 5] (modifica gli altri se il range è diverso)
+          case "attack-knob":
+            envelope.attack = minVal + normalizedValue * (maxVal - minVal);
+            break;
+          case "decay-knob":
+            envelope.decay = minVal + normalizedValue * (maxVal - minVal);
+            break;
+          case "sustain-knob":
+            envelope.sustain = minVal + normalizedValue * (maxVal - minVal);
+            break;
+          case "release-knob":
+            envelope.release = minVal + normalizedValue * (maxVal - minVal);
+            break;
+            
+          case "lfo-frequency-knob":
+            lfo.frequency.value = minVal + normalizedValue * (maxVal - minVal);
+            break;
+            
+          // Controllo del filtro: ad es. per la frequenza [50, 10000]
+          case "filter-frequency-knob":
+            filter.frequency.value = minVal + normalizedValue * (maxVal - minVal);
+            break;
+          case "filter-resonance-knob":
+            filter.Q.value = minVal + normalizedValue * (maxVal - minVal);
+            break;
+            
+          // Distorsione: assume un range [0,1]
+          case "distortion-knob":
+            distortion.distortion = normalizedValue;
+            break;
+            
+          // Chorus: depth (range [0,1]) e spread (range [0,360])
+          case "chorus-depth-knob":
+            chorus.depth = normalizedValue;
+            break;
+          case "chorus-spread-knob":
+            chorus.spread = normalizedValue * 360;
+            break;
+            
+          default:
+            console.warn(`Nessun case definito per il knob ${id}`);
+        }
+      }
+      
+      
       // 2) Aggiorna i knob e i relativi valori logici
-      updateKnob("volume1-knob", preset.volume1);
-      updateKnob("volume2-knob", preset.volume2);
-      updateKnob("volume3-knob", preset.volume3);
+      updateKnob("volume1-knob", preset.volume1, 0, 1);
+      updateKnob("volume2-knob", preset.volume2, 0, 1);
+      updateKnob("volume3-knob", preset.volume3, 0, 1);
 
-      updateKnob("attack-knob", preset.attack / 5, 0, 5); // Normalizza su [0..1]
+      updateKnob("attack-knob", (preset.attack - 0.1) / (5 - 0.1), 0.1, 5);
+      // Decay: range [0,5]
       updateKnob("decay-knob", preset.decay / 5, 0, 5);
+      // Sustain: range [0,1]
       updateKnob("sustain-knob", preset.sustain, 0, 1);
+      // Release: range [0,5]
       updateKnob("release-knob", preset.release / 5, 0, 5);
 
       document.getElementById("lfo-waveform").value = preset.lfoWaveform ?? "sine";
 
-      updateKnob("lfo-frequency-knob", (preset.lfoFrequency - 0.1) / (20 - 0.1), 0.1, 20);
-      updateKnob("filter-frequency-knob", (preset.filterFrequency - 50) / (10000 - 50), 50, 10000);
-      updateKnob("filter-resonance-knob", (preset.filterResonance - 0.1) / (10 - 0.1), 0.1, 10);
-
-      updateKnob("distortion-knob", preset.distortion, 0, 1);
-      updateKnob("chorus-depth-knob", preset.chorusDepth, 0, 1);
-      updateKnob("chorus-spread-knob", preset.chorusSpread / 360, 0, 360);
+       updateKnob("lfo-frequency-knob", (preset.lfoFrequency - 0) / (10 - 0), 0, 10);
+      
+       // Filtro:
+       // Frequency: range [50, 10000]
+       updateKnob("filter-frequency-knob", (preset.filterFrequency - 50) / (10000 - 50), 50, 10000);
+       updateKnob("filter-resonance-knob", (preset.filterResonance - 0) / (50 - 0), 0, 50);
+       
+       // Distorsione: range [0,1]
+       updateKnob("distortion-knob", preset.distortion, 0, 1);
+       
+       // Chorus:
+       updateKnob("chorus-depth-knob", preset.chorusDepth, 0, 1);
+       // Per lo spread, se il valore salvato è in gradi (0–360) lo normalizziamo
+       updateKnob("chorus-spread-knob", preset.chorusSpread / 360, 0, 360);
 
       alert(`Preset "${preset.name}" loaded successfully!`);
     } else {
