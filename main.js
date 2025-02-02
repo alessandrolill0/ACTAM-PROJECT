@@ -676,10 +676,10 @@ const chorus = new Tone.Chorus({
   spread: 180,
 }).start();
 
-const filter = new Tone.Filter({
-  frequency: 500,
+var filter = new Tone.Filter({
+  frequency: 200,
   type: "lowpass",
-  rolloff: -12,
+  rolloff: -24,
   Q: 1,
 });
 
@@ -688,20 +688,25 @@ const distortion = new Tone.Distortion({
   oversample: "4x",
 });
 
-// Chain effects
-filter.connect(distortion);
-distortion.connect(chorus);
-chorus.connect(envelope);
-envelope.toDestination();
-
 const lfo = new Tone.LFO({
   type: "sine",
-  frequency: 0.5,
+  frequency: 5,
   min: 50,
   max: 1000,
 }).start();
 
-lfo.connect(filter.frequency);
+
+const baseFreq = new Tone.Signal(200);
+const frequencySum = new Tone.Add();
+
+// Chain effects
+baseFreq.connect(frequencySum);
+lfo.connect(frequencySum);
+frequencySum.connect(filter.frequency);
+filter.connect(distortion);
+distortion.connect(chorus);
+chorus.connect(envelope);
+envelope.toDestination();
 
 
 // Update the LFO waveform
@@ -1102,12 +1107,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mappa [0..1] su [50..10000] (o altro range desiderato)
     // Esempio lineare semplice:
-    const MIN_FREQ = 50;   
-    const MAX_FREQ = 10000;
+    const MIN_FREQ = 20;   
+    const MAX_FREQ = 1000;
     const freqValue = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
 
     // Aggiorna il filtro
-    filter.frequency.value = freqValue;
+    baseFreq.value = freqValue;
     console.log("Filter Frequency =>", freqValue.toFixed(2));
     updateParameterDisplay("filterFrequency", freqValue);
   }
@@ -1191,6 +1196,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inizializza l'angolo
   updateFilterResonanceRotation(currentAngleR);
 });
+
+
+////////////LFO////////////
 document.addEventListener("DOMContentLoaded", () => {
   // LFO Frequency
   const lfoFreqImg = document.getElementById("lfo-frequency-knob");
@@ -1218,6 +1226,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 5) Aggiorna lfo
     lfo.frequency.value = newFreq;
+    if(newFreq < 0.01)
+      baseFreq.value = 20;
     console.log("LFO Frequency =>", newFreq.toFixed(2));
     updateParameterDisplay("lfoFrequency", newFreq);
   }
@@ -1750,11 +1760,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 document.getElementById("shift-octave-up").addEventListener("click", () => shiftOctave(1));
 
 document.getElementById("shift-octave-down").addEventListener("click", () => shiftOctave(-1));
-
-//Filter frequency slider
-document.getElementById("filter-frequency-knob").addEventListener("input", (event) => {
-  setFilterFrequency(parseFloat(event.target.value));
-});
 
 //Envelope sliders
 document.querySelectorAll(".adsr-knob").forEach(slider => {
