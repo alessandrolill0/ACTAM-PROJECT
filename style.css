@@ -16,11 +16,9 @@
   padding: 20px;
   padding-top: 100px;
   padding-bottom: 220px; /* extra space for piano roll */
-  border-radius: 15px; /* Angoli arrotondati */
+  border-radius: 15px; /* rounded angles */
   transition: box-shadow 0.3s ease-in-out, transform 0.3s ease;
 }
-
-
 
 .container > div {
   display: flex;
@@ -59,8 +57,8 @@ h1 {
   font-weight: bold;
   top: -100px;
   left: 399px;
-  font-size: 42px; /* Dimensione del testo */
-  text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* Ombra scura più realistica */
+  font-size: 42px; /* Text font */
+  text-shadow: 4px 4px 7px rgba(0, 0, 20, 0.7); /* More realistic shadow */
 }
 
 
@@ -122,8 +120,7 @@ h2{
 h3{
   color: lightskyblue;
   margin: 20px 0;
-  text-shadow: 3px 3px 3px rgba(0, 0, 18, 0.6); /* Ombra scura più realistica */
-
+  text-shadow: 3px 3px 3px rgba(0, 0, 18, 0.6);
   font-size: 20px;
 }
 
@@ -165,51 +162,47 @@ button:hover:not(:disabled) {
 
 /* START RECORDING BUTTON */
 #start {
-  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
+  background-color: rgba(255, 255, 255, 0.9); /* Traslucid white color */
   color: white;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 5px; /* Angoli arrotondati */
-  width: 37px; /* Rimpicciolito il tasto */
-  height: 37px; /* Rimpicciolito il tasto */
+  border-radius: 5px; /* Rounded angles */
+  width: 37px; 
+  height: 37px; 
   box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.1), /* Ombra esterna ancora più chiara */
-    inset 0 0 4px rgba(0, 0, 0, 0.05); /* Ombra interna ancora più leggera */
-  border: 2px solid rgba(200, 200, 200, 0.4); /* Bordo semi-trasparente */
-  transition: all 0.2s ease-in-out; /* Transizione per un aspetto fluido */
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    inset 0 0 4px rgba(0, 0, 0, 0.05); 
+  border: 2px solid rgba(200, 200, 200, 0.4); 
+  transition: all 0.2s ease-in-out;
 }
 
-/* Cerchio interno (spia) */
+/* CIntern circle */
 .rec-circle {
   width: 14.5px; 
   height: 14.5px;
-  background-color: rgb(124, 15, 15); /* Rosso scuro per inattivo */
+  background-color: rgb(124, 15, 15); /* Red for inactive  */
   border-radius: 50%; 
   border: 1px solid black;
-  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3); /* Effetto luminoso più leggero per il cerchio */
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transizione per cambiamenti di stato */
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3); /* luminance effect */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Change of state transition*/
 }
 
-/* Stato attivo temporaneo */
 #start:active .rec-circle {
-  background-color: rgb(255, 50, 50); /* Rosso acceso temporaneo */
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6); /* Glow accentuato, ma non troppo */
+  background-color: rgb(255, 50, 50); 
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
 }
 
-/* Stato persistente durante la registrazione */
 #start.recording .rec-circle {
-  background-color: rgb(255, 0, 0); /* Rosso acceso persistente */
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Glow luminoso ma controllato */
+  background-color: rgb(255, 0, 0); 
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); 
 }
-
-
 
 /* STOP RECORDING BUTTON */
 #stop {
-  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
+  background-color: rgba(255, 255, 255, 0.9); 
   color: white;
   position: relative;
   display: flex;
@@ -218,37 +211,36 @@ button:hover:not(:disabled) {
   align-items: center; 
   justify-content: center; 
   cursor: pointer; 
-  border-radius: 5px; /* Angoli arrotondati */
+  border-radius: 5px;
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.1), /* Ombra esterna più marcata per maggiore profondità */
-    inset 0 0 8px rgba(0, 0, 0, 0.05); /* Ombra interna più evidente */
-  border: 2px solid rgba(200, 200, 200, 0.4); /* Bordo semi-trasparente */
+    0 8px 16px rgba(0, 0, 0, 0.1), 
+    inset 0 0 8px rgba(0, 0, 0, 0.05); 
+  border: 2px solid rgba(200, 200, 200, 0.4); 
 }
 
-/* Luminanza nera quando il tasto è premuto */
+/* Black luminance when button pressed */
 #stop:active {
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più scura e intensa */
-    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più intensa */
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    inset 0 0 8px rgba(0, 0, 0, 0.3); 
 }
 
-/* Quadrato all'interno del tasto */
 .stop-square {
   width: 16px;
   height: 15px;
-  background-color: black; /* Colore del quadrato */
-  transition: background-color 0.3s ease; /* Animazione del colore */
+  background-color: black; 
+  transition: background-color 0.3s ease;
 }
 
-/* Cambia colore quando il tasto è attivo */
+/* change of color when button is active*/
 #stop:active .stop-square {
-  background-color: rgba(0, 0, 0, 0.7); /* Colore più scuro */
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 
 /* PLAY MELODY BUTTON */
 #play-melody {
-  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
+  background-color: rgba(255, 255, 255, 0.9); 
   color: white;
   position: relative;
   display: flex;
@@ -260,12 +252,11 @@ button:hover:not(:disabled) {
   height: 35px;
   padding: 0;
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.3), /* Ombra esterna più marcata */
-    inset 0 0 8px rgba(0, 0, 0, 0.2); /* Ombra interna per maggiore profondità */
-  border: 2px solid rgba(200, 200, 200, 0.6); /* Bordo semi-trasparente */
+    0 8px 16px rgba(0, 0, 0, 0.3), 
+    inset 0 0 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(200, 200, 200, 0.6);
 }
 
-/* Triangolo all'interno del tasto */
 .play-triangle {
   width: 0;
   height: 0;
@@ -275,22 +266,19 @@ button:hover:not(:disabled) {
   transition: border-left-color 0.3s ease;
 }
 
-/* Effetto quando il tasto è premuto */
 #play-melody:active {
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più forte quando premuto */
-    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più forte */
+    0 8px 16px rgba(0, 0, 0, 0.4), 
+    inset 0 0 8px rgba(0, 0, 0, 0.3); 
 }
 
 #play-melody:active .play-triangle {
-  border-left-color: rgb(150, 150, 150); /* Colore più chiaro per il triangolo quando premuto */
+  border-left-color: rgb(150, 150, 150);
 }
-
-
 
 /* STOP PLAYBACK MELODY BUTTON */
 #stop-playback {
-  background-color: rgba(255, 255, 255, 0.9); /* Colore bianco leggermente traslucido */
+  background-color: rgba(255, 255, 255, 0.9); 
   color: white;
   position: relative;
   display: flex;
@@ -302,14 +290,14 @@ button:hover:not(:disabled) {
   height: 35.5px;
   padding: 0;
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.3), /* Ombra esterna marcata */
-    inset 0 0 8px rgba(0, 0, 0, 0.2); /* Ombra interna per maggiore profondità */
-  border: 2px solid rgba(200, 200, 200, 0.6); /* Bordo semi-trasparente */
+    0 8px 16px rgba(0, 0, 0, 0.3), 
+    inset 0 0 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(200, 200, 200, 0.6); 
 }
 
-/* Barre di pausa all'interno del tasto */
+/* Pause bar */
 .pause-bar {
-  flex-shrink: 0;  /* Barre uguali */
+  flex-shrink: 0;  /* bars equals*/
   width: 6px;
   height: 20px;
   background-color: black;
@@ -317,24 +305,15 @@ button:hover:not(:disabled) {
   transition: background-color 0.3s ease;
 }
 
-/* Effetto quando il tasto è premuto */
 #stop-playback:active {
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.4), /* Ombra esterna più forte */
-    inset 0 0 8px rgba(0, 0, 0, 0.3); /* Ombra interna più intensa */
+    0 8px 16px rgba(0, 0, 0, 0.4), 
+    inset 0 0 8px rgba(0, 0, 0, 0.3); 
 }
 
 #stop-playback:active .pause-bar {
-  background-color: rgb(150, 150, 150); /* Colore più chiaro per le barre quando premuto */
+  background-color: rgb(150, 150, 150);
 }
-
-
-
-/*
-#save-melody:active .button-text {
-  color: rgb(0, 128, 0); 
-}
-  */
 
 /*/////////SELECT BUTTONS, LOAD AND SAVE PRESET BUTTONS,LOAD MELODY BUTTON, BPM AND METRONOME///////////*/
 
@@ -353,32 +332,31 @@ select {
   outline: none;
 }
 
-/* Stile per le opzioni della tendina */
+/* Option tend down */
 select option {
-  background-color: #6fa3c1; /* Stesso colore di sfondo del pulsante */
-  color: #ffffff; /* Testo visibile */
+  background-color: #6fa3c1; 
+  color: #ffffff; 
   padding: 10px;
   border: none;
 }
 
-/* Quando un'opzione è selezionata o in hover */
+/*When one option is selected */
 select option:checked,
 select option:hover {
-  background-color: #5286a5; /* Colore più scuro per la selezione */
+  background-color: #5286a5;
   color: #ffffff;
 }
 
-
 #preset-dropdown {
   width: 205px;
-  height: 43px; /* Imposta l'altezza desiderata */
+  height: 43px; 
   text-align: center;
   margin-top: 200px;
 }
 #melody-dropdown{
   width: 245px;
   position:relative;
-  height: 41px; /* Imposta l'altezza desiderata */
+  height: 41px;
   text-align: center;
   margin-top: 200px;
   right: 7px;
@@ -386,90 +364,83 @@ select option:hover {
 }
 
 #save-preset {
-  padding: 10px 10px; /* Dimensioni dei pulsanti */
-  font-size: 16px; /* Dimensione del testo */
+  padding: 10px 10px; 
+  font-size: 16px; 
   font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   left: -10px;
 
-  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
-  color: #ffffff; /* Colore del testo */
+  background: linear-gradient(145deg, #73adcf, #3884af); /* 3d Effect*/
+  color: #ffffff; 
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
-              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
+              -2px -2px 4px rgba(0, 0, 0, 0.2); 
   transition: background-color 0.3s ease, transform 0.2s ease;
-  position: relative; /* Posizionamento relativo */
-  top: 100px; /* Sposta i pulsanti di 20px verso il basso */
+  position: relative; 
+  top: 100px; 
   gap: 5px;
 }
 
 #load-preset {
-  padding: 10px 10px; /* Dimensioni dei pulsanti */
-  font-size: 16px; /* Dimensione del testo */
+  padding: 10px 10px; 
+  font-size: 16px; 
   font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 
-  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
-  color: #ffffff; /* Colore del testo */
+  background: linear-gradient(145deg, #73adcf, #3884af); 
+  color: #ffffff; 
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
-              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
+              -2px -2px 4px rgba(0, 0, 0, 0.2); 
   transition: background-color 0.3s ease, transform 0.2s ease;
-  position: relative; /* Posizionamento relativo */
-  top: 100px; /* Sposta i pulsanti di 20px verso il basso */
+  position: relative; 
+  top: 100px; 
   gap: 5px;
 }
 
-
-
 #load-melody-button {
-  padding: 10px 10px; /* Dimensioni interne del pulsante */
-  font-size: 16px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
+  padding: 10px 10px; 
+  font-size: 16px; 
+  font-weight: bold; 
+  border: none; 
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #73adcf, #3884af); 
+  color: #ffffff; 
+  cursor: pointer;
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
-              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+              -2px -2px 4px rgba(0, 0, 0, 0.2); 
+  transition: background-color 0.3s ease, transform 0.2s ease; 
   position: relative;
 
 }
 
-
-
  #save-melody {
-  padding: 10px 10px; /* Dimensioni interne del pulsante */
-  font-size: 16px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #73adcf, #3884af); /* Effetto 3D */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
+  padding: 10px 10px; 
+  font-size: 16px; 
+  font-weight: bold;
+  border: none;
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #73adcf, #3884af); 
+  color: #ffffff; 
+  cursor: pointer; 
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.4), 
-              -2px -2px 4px rgba(0, 0, 0, 0.2); /* Ombreggiatura */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+              -2px -2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease; 
   position: relative;
   left: -8px;
 }
 
-
-
-
 #control-sequencer{
-  padding: 8px 8px; /* Dimensioni interne del pulsante */
-  font-size: 40px !important; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
+  padding: 8px 8px; 
+  font-size: 40px !important; 
+  font-weight: bold;
   justify-content: right; 
-  border-radius: 5px; /* Angoli arrotondati */
-  color: #fff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transizione su hover */
+  border-radius: 5px; 
+  color: #fff; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease;
   align-items: flex-end;
   position: relative;
   bottom: 68.5%;
@@ -477,143 +448,129 @@ select option:hover {
   left: 43%;
 }  
 
-/* Tasti grigi piccoli con effetto uniforme */
 #delete-note {
-  padding: 8px 8px; /* Dimensioni interne del pulsante */
-  font-size: 15px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione su hover e colore */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+  padding: 8px 8px; 
+  font-size: 15px; 
+  font-weight: bold;
+  border: none; 
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #5e5d5d, #343030); 
+  color: #ffffff; 
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
 }
 
 /* Hover effect */
 #delete-note:hover {
-  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+  background: linear-gradient(145deg, #6b6b6b, #595757);
 }
 
-/* Effetto clic */
+/* Click effect*/
 #delete-note:active {
   transform: scale(0.95); /* Riduzione alla pressione */
 }
 
-/* Effetto di illuminazione per la scritta quando viene cliccato */
+/* Illumination when something is pressed */
 #delete-note:active {
-  color: rgb(255, 0, 0); /* Colore della scritta che diventa grigio chiaro */
-  text-shadow: 0 0 8px rgb(152, 0, 0), 0 0 12px lightgray; /* Luminanza grigia per la scritta */
+  color: rgb(255, 0, 0);
+  text-shadow: 0 0 8px rgb(152, 0, 0), 0 0 12px lightgray; 
 }
 
-/* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
-  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+  transform: scale(0.95); 
 }
 
-
-/* Tasti grigi piccoli con effetto uniforme */
 #reset-melody {
-  padding: 8px 6.9px; /* Dimensioni interne del pulsante */
-  font-size: 15px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione su hover e colore */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+  padding: 8px 6.9px; 
+  font-size: 15px;
+  font-weight: bold; 
+  border: none; 
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #5e5d5d, #343030);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
 }
 
 /* Hover effect */
 #reset-melody:hover {
-  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+  background: linear-gradient(145deg, #6b6b6b, #595757); 
 }
 
-/* Effetto clic */
 #reset-melody:active {
-  transform: scale(0.95); /* Riduzione alla pressione */
+  transform: scale(0.95); /* Reduction when clicked */
 }
 
-/* Effetto di illuminazione per la scritta quando viene cliccato */
 #reset-melody:active {
-  color: lightgray; /* Colore della scritta che diventa grigio chiaro */
-  text-shadow: 0 0 4px lightgray, 0 0 6px lightgray; /* Luminanza grigia per la scritta */
+  color: lightgray;
+  text-shadow: 0 0 4px lightgray, 0 0 6px lightgray;
 }
 
-/* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
-  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+  transform: scale(0.95);
 }
 
-
-/* Tasti grigi piccoli con effetto uniforme */
 #shift-octave-up {
-  padding: 8px 12.2px; /* Dimensioni interne del pulsante */
-  font-size: 15px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione per hover e glow */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+  padding: 8px 12.2px; 
+  font-size: 15px;
+  font-weight: bold; 
+  border: none; 
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #5e5d5d, #343030); 
+  color: #ffffff;
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Hover effect */
 #shift-octave-up:hover {
-  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+  background: linear-gradient(145deg, #6b6b6b, #595757); 
 }
 
 /* Effetto clic */
 #shift-octave-up:active {
-  transform: scale(0.95); /* Riduzione alla pressione */
-  color: lightskyblue; /* Colore del testo cambia a lightskyblue */
-  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; /* Aggiunge l'effetto di illuminazione (glow) */
+  transform: scale(0.95); 
+  color: lightskyblue; 
+  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; 
 }
 
-/* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
-  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+  transform: scale(0.95); 
 }
 
-/* Tasti grigi con effetto uniforme */
 #shift-octave-down {
-  padding: 8px 13.2px; /* Dimensioni interne del pulsante */
-  font-size: 15px; /* Dimensione del testo */
-  font-weight: bold; /* Grassetto */
-  border: none; /* Nessun bordo visibile */
-  border-radius: 5px; /* Angoli arrotondati */
-  background: linear-gradient(145deg, #5e5d5d, #343030); /* Sfumatura uniforme */
-  color: #ffffff; /* Colore del testo */
-  cursor: pointer; /* Mostra il cursore a mano su hover */
-  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; /* Transizione per hover e glow */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra morbida e diffusa */
+  padding: 8px 13.2px; 
+  font-size: 15px; 
+  font-weight: bold;
+  border: none;
+  border-radius: 5px; 
+  background: linear-gradient(145deg, #5e5d5d, #343030); 
+  color: #ffffff;
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, text-shadow 0.3s ease; 
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
 }
 
 /* Hover effect */
 #shift-octave-down:hover {
-  background: linear-gradient(145deg, #6b6b6b, #595757); /* Sfumatura più chiara quando hover */
+  background: linear-gradient(145deg, #6b6b6b, #595757); 
 }
 
-/* Effetto clic */
 #shift-octave-down:active {
-  transform: scale(0.95); /* Riduzione alla pressione */
-  color: lightskyblue; /* Colore del testo cambia a lightskyblue */
-  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; /* Aggiunge l'effetto di illuminazione (glow) */
+  transform: scale(0.95); 
+  color: lightskyblue; 
+  text-shadow: 0 0 8px lightskyblue, 0 0 12px lightskyblue, 0 0 20px lightskyblue; 
 }
 
-/* Quando si clicca su uno dei tasti */
 #delete-note:active, #reset-melody:active, #shift-octave-up:active, #shift-octave-down:active {
-  transform: scale(0.95); /* Effetto di riduzione quando cliccato */
+  transform: scale(0.95); /* reduction effect when clicked */
 }
 
-/* Hover (effetto quando si passa sopra) */
 #delete-note:hover, #reset-melody:hover, #shift-octave-up:hover, #shift-octave-down:hover {
-  background-color: #666; /* Cambia il colore di sfondo quando hover */
+  background-color: #666; /* color changes when hover */
 }
 
 
@@ -625,28 +582,22 @@ select option:hover {
   color: rgb(255, 0, 0); 
 }
 
-
-
-
-
 #bpm-control {
   position: relative;
-  top: -23px !important; /* Sposta verso l'alto o il basso */
-  left: -690px !important;  /* Sposta verso sinistra o destra */
+  top: -23px !important; 
+  left: -690px !important;  
   display: flex;
   align-items: center;
-  gap: 10px; /* Spaziatura tra gli elementi */
-  
+  gap: 10px; 
 }
 
 #bpm-control > label {
-  font-size: 24px; /* Dimensione del testo */
-  font-weight: 600; /* Peso del testo */
-  color: #f0f0f0; /* Colore del testo */
-  letter-spacing: 1px; /* Spaziatura tra lettere */
-  transition: color 0.3s ease, text-shadow 0.3s ease; /* Transizioni fluide */
+  font-size: 24px; 
+  font-weight: 600; 
+  color: #f0f0f0; 
+  letter-spacing: 1px; 
+  transition: color 0.3s ease, text-shadow 0.3s ease; 
 }
-
 
 /* BPM INPUT */
 #bpm-input {
@@ -654,22 +605,22 @@ select option:hover {
   width: 100px;
   text-align: center;
   padding: 5px;
-  font-weight: 5300; /* Grassetto */
+  font-weight: 5300; 
   position: relative;
-  background-color: #ffffff; /* Colore di sfondo chiaro */
-  border: 3px solid #606060; /* Bordo sottile grigio */
-  border-radius: 8px; /* Angoli leggermente arrotondati */
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Effetto ombra */
-  transition: all 0.2s ease; /* Transizione per un effetto fluido */
+  background-color: #ffffff; 
+  border: 3px solid #606060; 
+  border-radius: 8px; 
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease; 
   left: -10px;
 }
 
-/* Etichetta BPM */
+/*BPM */
 .bpm-label {
   display: inline-block;
   padding: 5px 10px;
   background: linear-gradient(145deg, #5e5d5d, #363232);
-  color: #ffffff !important; /* Colore bianco di default */
+  color: #ffffff !important; 
   font-size: 20px !important;
   font-weight: bold;
   border-radius: 5px;
@@ -678,29 +629,26 @@ select option:hover {
   margin-right: 10px;
   position: relative;
   bottom: -2px;
-  transition: color 0.3s ease; /* Transizione per il cambio di colore */
+  transition: color 0.3s ease;
 }
 
-/* Cambia il colore della scritta BPM e aggiungi un effetto luminoso quando l'input è in focus */
 #bpm-control:focus-within .bpm-label {
   color: lightskyblue !important; /* Colore blu chiaro */
-  text-shadow: 0 0 1px lightskyblue, 0 0 3px lightskyblue, 0 0 7.5px lightskyblue; /* Aggiunge il glow blu */
+  text-shadow: 0 0 1px lightskyblue, 0 0 3px lightskyblue, 0 0 7.5px lightskyblue;
 }
 
-/* Quando l'elemento è attivo o in focus */
 #bpm-input:focus {
-  border-color: lightskyblue; /* Cambia colore del bordo */
-  box-shadow: 0 0 2px lightskyblue; /* Aggiunge un'ombra luminosa */
-  outline: none; /* Rimuove il contorno predefinito */
+  border-color: lightskyblue; 
+  box-shadow: 0 0 2px lightskyblue; 
+  outline: none; 
 }
 
-/* Quando l'elemento è hover */
 #bpm-input:hover {
-  background-color: #fff; /* Cambia leggermente il colore di sfondo */
-  border-color: #888; /* Bordo più scuro per il passaggio del mouse */
+  background-color: #fff; 
+  border-color: #888;
 }
 
-/* Stile base del pulsante metronomo (OFF e ON) */
+/* Metronome state */
 .metronome-button {
   display: flex;
   justify-content: center;
@@ -713,8 +661,8 @@ select option:hover {
   border-radius: 15px;
   cursor: pointer;
   text-align: center;
-  width: 255px; /* Mantieni uguale per tutti gli stati */
-  height: 35px; /* Mantieni uguale per tutti gli stati */
+  width: 255px; 
+  height: 35px; 
   transition: background-color 0.3s, transform 0.2s;
   background: linear-gradient(145deg, #626262, #373333);
   color: #ffffff;
@@ -722,28 +670,25 @@ select option:hover {
               -2px -2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Stile hover quando OFF */
 .metronome-button:hover {
   background: linear-gradient(145deg, #666, #555);
 }
 
-/* Stile attivo quando cliccato */
 .metronome-button:active {
   transform: scale(0.95);
 }
 
-/* Stile ON (quando il metronomo è abilitato) */
 #metronome-toggle:checked + .metronome-button {
   background: linear-gradient(145deg, #73adcf, #3884af);
   color: #ffffff;
 }
 
-/* Stile hover per stato ON */
 #metronome-toggle:checked + .metronome-button:hover {
   background: linear-gradient(145deg, #8bc9e0, #4aa2c6);
 }
 
 /*/////////KNOB AND OSCILLATORS///////////*/
+
 .knob-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -871,7 +816,6 @@ select option:hover {
   right: 1.4%;
 }
 
-
 .chorus-container {
   display: flex;
   flex-direction: column;
@@ -896,7 +840,6 @@ select option:hover {
   top: 12%;
   right: 3%;
 }
-
 
 .lfo-container {
   display: flex;
@@ -1047,7 +990,6 @@ canvas {
 #recording-progress::-webkit-progress-value {
   background: linear-gradient(90deg, #007BFF, #00FFFF);
   border-radius: 10px;
- 
 }
 
 #recording-progress::-moz-progress-bar {
@@ -1078,7 +1020,6 @@ canvas {
   display: flex;
   justify-content: center;
 }
-
 
 #oscilloscope {
 width : 300px; 
