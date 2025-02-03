@@ -16,9 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig); //Initialize Firebase
 const db = getFirestore(app);
 
-//DOM Elements Selection
-//const pitchDisplay = document.getElementById("pitch");
-//const noteDisplay = document.getElementById("note");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const playMelodyButton = document.getElementById("play-melody");
@@ -29,7 +26,7 @@ const ctx = sequencerCanvas.getContext("2d");
 const bpmInput = document.getElementById("bpm-input");
 const metronomeToggle = document.getElementById("metronome-toggle");
 const metronomeButton = document.getElementById("metronome-button");
-const stopPlaybackButton = document.getElementById("stop-playback"); // Get the button element
+const stopPlaybackButton = document.getElementById("stop-playback");
 
 //Global Variables
 const A4 = 440;
@@ -108,7 +105,7 @@ function getSemitoneDifference(note1, note2) {
 //Function that finds if a note is a diesis or not
 function isBlackKey(note) {
   const blackKeys = ["C#", "D#", "F#", "G#", "A#"];
-  const name = note.slice(0, -1); //Get the note name without the octave
+  const name = note.slice(0, -1);
   return blackKeys.includes(name);
 }
  
@@ -138,7 +135,7 @@ noteRange.forEach((_, index) => {
 });
 const whiteKeyWidth = 60; // white notes width
 const blackKeyWidth = 47; //black notes width
-const keyHeight = rowHeight; // Altezza di ogni tasto
+const keyHeight = rowHeight;
 
 noteRange.forEach((note, index) => {
   const y = index * rowHeight; //Vertical position
@@ -191,7 +188,7 @@ noteRange.forEach((note, index) => {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, sequencerCanvas.height);
     ctx.stroke();
-    ctx.fillStyle = "#333";    //Each bar has an associated number
+    ctx.fillStyle = "#333";
     ctx.font = "10px Arial";
     ctx.textAlign = "center";
     ctx.fillText(` ${bar}`, x, 10);
@@ -201,7 +198,7 @@ noteRange.forEach((note, index) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
     //Calc Y position
-    const noteIndex = midiNumber - 36; // Offset C2=36
+    const noteIndex = midiNumber - 36;
     const y = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
     //Calc X position
     const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
@@ -231,14 +228,14 @@ noteRange.forEach((note, index) => {
 //Start pitch detection
 async function startPitchDetection() {
   try {
-    startButton.classList.add("recording"); // Aggiungi lo stato "recording"
+    startButton.classList.add("recording");
 
-    recordedNotes = []; // the previous array is deleted
+    recordedNotes = [];
     clearTimeout(recordingTimeout);
-    if (progressTimer !== null) { // Clear existing progressTimer if any
+    if (progressTimer !== null) { 
       clearInterval(progressTimer);
       progressTimer = null;
-      progressBar.value = 0; // Reset the progress bar
+      progressBar.value = 0;
     }
     if (isDetecting) return;
     if (melodyPart) {
@@ -256,7 +253,6 @@ async function startPitchDetection() {
       chorus.dispose();
     });
 
-    // Preparazione iniziale
     isDetecting = true;
     startButton.disabled = true;
     stopButton.disabled = true;
@@ -268,8 +264,8 @@ async function startPitchDetection() {
 // Container for countdown
 const countdownContainer = document.createElement("div");
 countdownContainer.style.position = "fixed";
-countdownContainer.style.top = "68.5%";  // Spostato leggermente più in basso
-countdownContainer.style.left = "52%"; // Spostato leggermente più a destra
+countdownContainer.style.top = "68.5%";
+countdownContainer.style.left = "52%";
 countdownContainer.style.transform = "translate(-50%, -50%)";
 countdownContainer.style.fontSize = "50px"; 
 countdownContainer.style.fontWeight = "normal";
@@ -296,13 +292,13 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
     // Start metronome with the rec
     if (metronomeToggle.checked) {
       console.log("Start metronome with recording.");
-      startMetronome(); // Il metronomo inizia con la registrazione
+      startMetronome();
     }
 
     // Delay before recording
     const recordingDelay = 350; // Milliseconds delay
     console.log(`La registrazione inizierà tra ${recordingDelay}ms.`);
-    await new Promise((resolve) => setTimeout(resolve, recordingDelay)); // Aspetta il ritardo
+    await new Promise((resolve) => setTimeout(resolve, recordingDelay));
 
     // Access to microphone
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -314,15 +310,12 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
     source.connect(analyser);
     startTime = audioContext.currentTime;
 
-    // Configurazione della barra di avanzamento della registrazione
-    const totalDuration = calculateTotalDuration(bpm, 16); // Durata totale per 16 misure
+    const totalDuration = calculateTotalDuration(bpm, 16);
     const progressContainer = document.getElementById("recording-progress-container");
     const progressBar = document.getElementById("recording-progress");
     progressContainer.style.display = "block";
     progressBar.value = 0;
-
-    // Aggiorna la barra di avanzamento periodicamente
-    const updateInterval = 100; // Aggiorna ogni 100ms
+    const updateInterval = 100;
     const totalIntervals = (totalDuration * 1000) / updateInterval;
     let currentInterval = 0;
     progressTimer = setInterval(() => {
@@ -335,9 +328,8 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
       }
     }, updateInterval);
 
-    // Interrompi la registrazione automaticamente dopo la durata totale
     recordingTimeout = setTimeout(() => {
-      stopPitchDetection(); // Interrompi la registrazione
+      stopPitchDetection();
       alert("Recording stopped after 16 bars.");
     }, totalDuration * 1000);
 
@@ -387,17 +379,13 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
       } else {
         activeNote = { frequency, note, startTime: currentTime, duration: 0 };
       }
-      //pitchDisplay.textContent = `Pitch: ${frequency.toFixed(2)} Hz`;
-      //noteDisplay.textContent = `Detected Note: ${note}`;
       renderSequencer();
       requestAnimationFrame(detectPitch);
     }
     detectPitch();
-    stopButton.disabled = false; // Abilita il pulsante "Stop" dopo l'inizio della registrazione
+    stopButton.disabled = false;
   } catch (err) {
     console.error("Errore durante il rilevamento del pitch:", err);
-    //pitchDisplay.textContent = "Pitch: Error";
-    //noteDisplay.textContent = "Detected Note: N/A";
     stopPitchDetection();
   }
   toggleSaveButtonState();
@@ -409,7 +397,7 @@ setTimeout(() => document.body.removeChild(countdownContainer), beatDuration * 1
 function stopPitchDetection() {
   if (!isDetecting) return;
 
-  startButton.classList.remove("recording"); // Rimuovi lo stato "recording"
+  startButton.classList.remove("recording");
 
   isDetecting = false;
   startButton.disabled = false;
@@ -417,16 +405,14 @@ function stopPitchDetection() {
   playMelodyButton.disabled = recordedNotes.length === 0;
   resetMelodyButton.disabled = recordedNotes.length === 0;
   deleteNoteButton.disabled = recordedNotes.length === 0;
-  //pitchDisplay.textContent = "Pitch: N/A";
-  //noteDisplay.textContent = "Detected Note: N/A";
 
-  if (source) source.disconnect(); // Disconnect audio context and stop stream
+  if (source) source.disconnect();
   if (audioContext) audioContext.close();
   if (stream) {
     stream.getTracks().forEach((track) => track.stop());
   }
 
-  if (recordingTimeout) { // Clear and reset the recording timeout
+  if (recordingTimeout) {
     clearTimeout(recordingTimeout);
     recordingTimeout = null;
   }
@@ -439,7 +425,7 @@ function stopPitchDetection() {
   const progressContainer = document.getElementById("recording-progress-container");
   const progressBar = document.getElementById("recording-progress");
   progressContainer.style.display = "none";
-  progressBar.value = 0; // Reset the progress bar to 0
+  progressBar.value = 0;
   progressContainer.style.display = "none";
 
   // Stop the metronome when the rec stops
@@ -475,15 +461,15 @@ function startMetronome() {
   if (metronomeActive) return;
   metronomeActive = true;
   metronomeToggle.textContent = "Stop Metronome";
-  const beatsPerBar = 4; // Numero di battiti per misura
+  const beatsPerBar = 4;
   let currentBeat = 0;
-  const interval = getMetronomeInterval(bpm) * 1000; // Intervallo in millisecondi
+  const interval = getMetronomeInterval(bpm) * 1000;
   metronomeInterval = setInterval(() => {
     currentBeat++;
     const isLastBeat = currentBeat === beatsPerBar;
     playMetronomeClick(isLastBeat);
     if (isLastBeat) {
-      currentBeat = 0; // Resetta il conteggio
+      currentBeat = 0;
     }
   }, interval);
 }
@@ -605,7 +591,6 @@ function shiftOctave(direction) {
   const A4 = 440;
   let isOutOfRange = false;
 
-  // Verifica se almeno una nota eccede il range prima di applicare la modifica
   for (const note of recordedNotes) {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) continue;
@@ -619,10 +604,8 @@ function shiftOctave(direction) {
     }
   }
 
-  // Se almeno una nota è fuori range, annulla l'operazione
   if (isOutOfRange) return;
 
-  // Se tutte le note sono valide, applica lo shift
   recordedNotes.forEach((note) => {
     const midiNumber = midiFromNoteName(note.note);
     if (midiNumber === null) return;
@@ -638,7 +621,6 @@ function shiftOctave(direction) {
   renderSequencer();
 }
 
-//Checks if a new note position overlaps with existing notes.
 function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
   for (let i = 0; i < recordedNotes.length; i++) {
     if (i === excludeIndex) continue; // Skip the note being moved
@@ -652,10 +634,10 @@ function isOverlapping(newStartTime, newMidiNumber, excludeIndex) {
       newStartTime < noteEnd &&
       newStartTime + recordedNotes[excludeIndex].duration > noteStart
     ) {
-      return true; // Overlap detected
+      return true;
     }
   }
-  return false; // No overlap
+  return false;
 }
 
 
@@ -709,7 +691,6 @@ chorus.connect(envelope);
 envelope.toDestination();
 
 
-// Update the LFO waveform
 function setLfoWaveform(type) {
   lfo.type = type;
 }
@@ -744,49 +725,44 @@ function setOscVolume(gain, value) {
 
 //CUSTOM LOGIC FOR PNG Knob1
 document.addEventListener("DOMContentLoaded", () => {
-  const volume1Img = document.getElementById("volume1-knob"); //Getting the volume
+  const volume1Img = document.getElementById("volume1-knob"); 
   let isDragging = false;
   let knobCenter = { x: 0, y: 0 };
   const MIN_ANGLE = -135;
   const MAX_ANGLE = 135;
-  let currentAngle = 0; //Initial angle for the volume set to the maximum
+  let currentAngle = 0; 
 
   function updateVolume1Rotation(angleDeg) {
     const clamped = Math.max(MIN_ANGLE, Math.min(MAX_ANGLE, angleDeg));
-    volume1Img.style.transform = `rotate(${clamped}deg)`; //Rotat the image
+    volume1Img.style.transform = `rotate(${clamped}deg)`; 
     currentAngle = clamped;
-    //Convert angle range into [0..1] for the gain
     const angleRange = MAX_ANGLE - MIN_ANGLE; 
     const normalized = (clamped - MIN_ANGLE) / angleRange;
     setOscVolume(osc1Gain, normalized); //Pass to setOscVolume()
     console.log("Osc1 volume =>", normalized.toFixed(2));
     updateParameterDisplay("volume1", osc1Gain.gain.value);
   }
-  // When user presses mouse on the knob:
+  
   volume1Img.addEventListener("mousedown", (e) => {
     isDragging = true;
-    const rect = volume1Img.getBoundingClientRect(); //Calculate the center of the knob (for angle math)
+    const rect = volume1Img.getBoundingClientRect();
     knobCenter.x = rect.left + rect.width / 2;
     knobCenter.y = rect.top + rect.height / 2;
     e.preventDefault();
   });
 
-  //On mouse move, if dragging, rotate based on mouse angle:
+  
   document.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
     const dx = e.clientX - knobCenter.x;
     const dy = e.clientY - knobCenter.y;
-    let angleRad = Math.atan2(dy, dx); //atan2 returns angle in radians relative to +X axis
-    //Convert to degrees
+    let angleRad = Math.atan2(dy, dx); 
     let angleDeg = (angleRad * 180) / Math.PI;
-    //You can shift by 90 if you want 0 deg to be at top, etc.
     angleDeg += 90;
-    //Now update the knob rotation + volume
     if (angleDeg > 180) angleDeg -= 360;
     updateVolume1Rotation(angleDeg);
   });
 
-  //Stop dragging when mouse goes up anywhere
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
@@ -803,19 +779,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let knobCenterVol2 = { x: 0, y: 0 };
   const MIN_ANGLE_2 = -135;
   const MAX_ANGLE_2 = 135;
-  let currentAngleVol2 = 0; // Start at the minimum angle
-
+  let currentAngleVol2 = 0;
   function updateVolume2Rotation(angleDeg) {
-    // Clamp the angle between MIN_ANGLE_2 and MAX_ANGLE_2
     const clamped = Math.max(MIN_ANGLE_2, Math.min(MAX_ANGLE_2, angleDeg));
     volume2Img.style.transform = `rotate(${clamped}deg)`;
     currentAngleVol2 = clamped;
 
-    // Normalize the clamped angle to a 0–1 range
     const angleRange = MAX_ANGLE_2 - MIN_ANGLE_2;
     const normalized = (clamped - MIN_ANGLE_2) / angleRange;
 
-    // Set the volume based on normalized value
     setOscVolume(osc2Gain, normalized);
     console.log("Osc2 volume =>", normalized.toFixed(2));
     updateParameterDisplay("volume2", osc2Gain.gain.value);
@@ -835,7 +807,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dx = e.clientX - knobCenterVol2.x;
     const dy = e.clientY - knobCenterVol2.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    angleDeg += 90; // Align the 0° position to the top
+    angleDeg += 90;
     if (angleDeg > 180) angleDeg -= 360;
     updateVolume2Rotation(angleDeg);
   });
@@ -846,7 +818,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize the knob to the minimum angle
   updateVolume2Rotation(currentAngleVol2);
 });
 
@@ -880,7 +851,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dx = e.clientX - knobCenterVol3.x;
     const dy = e.clientY - knobCenterVol3.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    angleDeg += 90; // shift
+    angleDeg += 90;
     if (angleDeg > 180) angleDeg -= 360;
     updateVolume3Rotation(angleDeg);
   });
@@ -907,11 +878,9 @@ document.addEventListener("DOMContentLoaded", () => {
     attackImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleA = clamped;
 
-    // Normalizza [0..1]
-    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A; // 260
+    const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
 
-    // Mappa su [0..5] secondi
     const minVal = 0.1;
     const maxVal = 5;
     const attackValue = minVal + normalized * (maxVal - minVal);
@@ -943,7 +912,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isDraggingA) isDraggingA = false;
   });
 
-  // Imposta un iniziale
   updateAttack(currentAngleA);
 
   // === DECAY KNOB ===
@@ -960,7 +928,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
 
-    // Mappa su [0..5]
     const decayValue = 0 + normalized * (5 - 0);
     envelope.decay = decayValue;
     console.log("Decay =>", decayValue.toFixed(2));
@@ -1005,7 +972,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
 
-    // Mappa su [0..1]
     const sustainValue = 0 + normalized * (1 - 0);
     envelope.sustain = sustainValue;
     console.log("Sustain =>", sustainValue.toFixed(2));
@@ -1050,7 +1016,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const angleRange = MAX_ANGLE_A - MIN_ANGLE_A;
     const normalized = (clamped - MIN_ANGLE_A) / angleRange;
 
-    // Mappa su [0..5]
     const releaseValue = 0 + normalized * (5 - 0);
     envelope.release = releaseValue;
     console.log("Release =>", releaseValue.toFixed(2));
@@ -1092,26 +1057,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let centerFreq = { x: 0, y: 0 };
   const MIN_ANGLE_F = -135;
   const MAX_ANGLE_F = 135;
-  let currentAngleF = 0; // offset iniziale
+  let currentAngleF = 0;
 
   function updateFilterFrequencyRotation(angleDeg) {
-    // Clampa l'angolo
     const clamped = Math.max(MIN_ANGLE_F, Math.min(MAX_ANGLE_F, angleDeg));
-    // Ruota l'immagine
     filterFreqImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleF = clamped;
 
-    // Normalizza l'angolo in [0..1]
-    const angleRange = MAX_ANGLE_F - MIN_ANGLE_F; // es. 260
-    const normalized = (clamped - MIN_ANGLE_F) / angleRange; // => 0..1
-
-    // Mappa [0..1] su [50..10000] (o altro range desiderato)
-    // Esempio lineare semplice:
+    const angleRange = MAX_ANGLE_F - MIN_ANGLE_F;
+    const normalized = (clamped - MIN_ANGLE_F) / angleRange;
     const MIN_FREQ = 20;   
     const MAX_FREQ = 1000;
     const freqValue = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
-
-    // Aggiorna il filtro
     baseFreq.value = freqValue;
     console.log("Filter Frequency =>", freqValue.toFixed(2));
     updateParameterDisplay("filterFrequency", freqValue);
@@ -1130,7 +1087,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dx = e.clientX - centerFreq.x;
     const dy = e.clientY - centerFreq.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    angleDeg += 90; // shift di 90° per far coincidere "alto" con 0 gradi
+    angleDeg += 90;
     if (angleDeg > 180) angleDeg -= 360;
     updateFilterFrequencyRotation(angleDeg);
   });
@@ -1138,8 +1095,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("mouseup", () => {
     if (isDraggingFreq) isDraggingFreq = false;
   });
-
-  // Imposta un angolo iniziale
   updateFilterFrequencyRotation(currentAngleF);
 
   // === FILTER RESONANCE KNOB ===
@@ -1151,17 +1106,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentAngleR = 0;
 
   function updateFilterResonanceRotation(angleDeg) {
-    // Clampa l'angolo
     const clamped = Math.max(MIN_ANGLE_R, Math.min(MAX_ANGLE_R, angleDeg));
-    // Ruota l'immagine
     filterResImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleR = clamped;
-
-    // Normalizza [0..1]
     const angleRange = MAX_ANGLE_R - MIN_ANGLE_R;
-    const normalized = (clamped - MIN_ANGLE_R) / angleRange; // => 0..1
-
-    // Mappa su [0.1..50], ad esempio
+    const normalized = (clamped - MIN_ANGLE_R) / angleRange;
     const MIN_RES = 0;
     const MAX_RES = 50;
     const resValue = MIN_RES + normalized * (MAX_RES - MIN_RES);
@@ -1192,8 +1141,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("mouseup", () => {
     if (isDraggingRes) isDraggingRes = false;
   });
-
-  // Inizializza l'angolo
   updateFilterResonanceRotation(currentAngleR);
 });
 
@@ -1206,25 +1153,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let centerLfoF = { x: 0, y: 0 };
   const MIN_ANGLE_LFOF = -135;
   const MAX_ANGLE_LFOF = 135;
-  let currentAngleLfoF = 0; // offset iniziale
+  let currentAngleLfoF = 0;
 
   function updateLfoFrequency(angleDeg) {
-    // 1) clampa l'angolo
     const clamped = Math.max(MIN_ANGLE_LFOF, Math.min(MAX_ANGLE_LFOF, angleDeg));
-    // 2) ruota l'immagine
     lfoFreqImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleLfoF = clamped;
 
-    // 3) normalizza [0..1]
-    const angleRange = MAX_ANGLE_LFOF - MIN_ANGLE_LFOF; // 260
-    const normalized = (clamped - MIN_ANGLE_LFOF) / angleRange; // => 0..1
+    const angleRange = MAX_ANGLE_LFOF - MIN_ANGLE_LFOF;
+    const normalized = (clamped - MIN_ANGLE_LFOF) / angleRange;
 
-    // 4) Mappa [0..1] su [0.1..10]
     const MIN_FREQ = 0;
     const MAX_FREQ = 10;
     const newFreq = MIN_FREQ + normalized * (MAX_FREQ - MIN_FREQ);
 
-    // 5) Aggiorna lfo
     lfo.frequency.value = newFreq;
     if(newFreq < 0.01)
       baseFreq.value = 20;
@@ -1245,7 +1187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dx = e.clientX - centerLfoF.x;
     const dy = e.clientY - centerLfoF.y;
     let angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-    angleDeg += 90; // shift
+    angleDeg += 90;
     if (angleDeg > 180) angleDeg -= 360;
     updateLfoFrequency(angleDeg);
   });
@@ -1254,9 +1196,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isDraggingLfoF) isDraggingLfoF = false;
   });
 
-  // Imposta un angolo iniziale
   updateLfoFrequency(currentAngleLfoF);
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // DISTORTION AMOUNT
@@ -1272,10 +1214,9 @@ document.addEventListener("DOMContentLoaded", () => {
     distImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleDist = clamped;
 
-    const angleRange = MAX_ANGLE_DIST - MIN_ANGLE_DIST; // 260
-    const normalized = (clamped - MIN_ANGLE_DIST) / angleRange; // => 0..1
+    const angleRange = MAX_ANGLE_DIST - MIN_ANGLE_DIST;
+    const normalized = (clamped - MIN_ANGLE_DIST) / angleRange;
 
-    // Distortion in [0..1]
     const newDist = 0 + normalized * (1 - 0);
     distortion.distortion = newDist;
     console.log("Distortion =>", newDist.toFixed(2));
@@ -1304,9 +1245,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isDraggingDist) isDraggingDist = false;
   });
 
-  // inizializza
   updateDistortion(currentAngleDist);
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // CHORUS DEPTH
@@ -1322,10 +1263,9 @@ document.addEventListener("DOMContentLoaded", () => {
     chorusDepthImg.style.transform = `rotate(${clamped}deg)`;
     currentAngleDepth = clamped;
 
-    const angleRange = MAX_ANGLE_DEPTH - MIN_ANGLE_DEPTH; // 260
-    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange; // => 0..1
+    const angleRange = MAX_ANGLE_DEPTH - MIN_ANGLE_DEPTH;
+    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange;
 
-    // chorus.depth in [0..1]
     chorus.depth = normalized;
     console.log("Chorus Depth =>", normalized.toFixed(2));
     updateParameterDisplay("chorusDepth", normalized);
@@ -1367,9 +1307,8 @@ document.addEventListener("DOMContentLoaded", () => {
     currentAngleSpread = clamped;
 
     const angleRange = MAX_ANGLE_DEPTH - MIN_ANGLE_DEPTH;
-    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange; // => 0..1
+    const normalized = (clamped - MIN_ANGLE_DEPTH) / angleRange;
 
-    // chorus.spread in [0..360]
     const newSpread = 0 + normalized * 360;
     chorus.spread = newSpread;
     console.log("Chorus Spread =>", newSpread.toFixed(2));
@@ -1459,47 +1398,38 @@ resetMelodyButton.addEventListener("click", () => {
   }
    //Reset variables
    recordedNotes = [];
-   selectedNoteIndex = null; // Deselect any selected note
+   selectedNoteIndex = null; 
    renderSequencer();
-  //Update button states
   playMelodyButton.disabled = true;
   resetMelodyButton.disabled = true;
   stopPlaybackButton.disabled = true;
-  //Reset visual displays
-  //pitchDisplay.textContent = "Pitch: N/A";
-  //noteDisplay.textContent = "Note: N/A";
 });
 
 //Bpm input Button Event Listener
 bpmInput.addEventListener("input", (event) => {
-  const oldBpm = bpm; // Store the previous BPM
-  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
-  // If BPM has changed, update recorded notes and melodyPart
+  const oldBpm = bpm;
+  bpm = parseInt(event.target.value, 10) || 120; 
   if (oldBpm !== bpm) {
-    const timeScale = oldBpm / bpm; // Calculate scaling factor for time adjustments
-    // Update recorded notes' timings
+    const timeScale = oldBpm / bpm;
     recordedNotes = recordedNotes.map(note => ({
       ...note,
       startTime: note.startTime * timeScale,
       duration: note.duration * timeScale,
     }));
-    // Update Tone.Transport BPM and recreate melodyPart
     Tone.Transport.bpm.value = bpm;
     if (melodyPart) {
       recreateMelodyPart();
     }
   }
   if (metronomeActive) {
-    stopMetronome(); // Stop current metronome
-    startMetronome(); // Restart metronome with new BPM
+    stopMetronome();
+    startMetronome();
   }
-  //Disable BPM input during recording to maintain consistent recording duration
   bpmInput.disabled = isDetecting;
-  //Re-render sequencer to reflect changes
   renderSequencer();
 });
 
-startButton.addEventListener("click", startPitchDetection);//Add event listeners to pitch control buttons
+startButton.addEventListener("click", startPitchDetection);
 stopButton.addEventListener("click", stopPitchDetection);
 
 //Handles the mouseup event to stop dragging or resizing.
@@ -1508,15 +1438,13 @@ window.addEventListener("mouseup", () => {
     isDragging = false;
     isResizingStart = false;
     isResizingEnd = false;
-    //selectedNoteIndex = null;
-    //createAndStartMelodyPart()
-    renderSequencer(); // Finalize the sequencer visualization
+    renderSequencer();
   }
 });
 
 sequencerCanvas.addEventListener("mousemove", (event) => {
   if (!isDragging || selectedNoteIndex === null)
-    return; // Exit if not dragging
+    return;
   const rect = sequencerCanvas.getBoundingClientRect();
   // Adjust coordinates based on canvas scaling
   const scaleX = sequencerCanvas.width / rect.width;
@@ -1532,7 +1460,7 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
     const newStartTime = Math.max(0, (x - labelWidth) / (PIXELS_PER_BAR / BEATS_PER_BAR) * (60 / bpm));
     const newDuration = draggedNote.startTime + draggedNote.duration - newStartTime;
 
-    if (newDuration > 0.1) { // Ensure a minimum duration
+    if (newDuration > 0.1) {
       draggedNote.startTime = newStartTime;
       draggedNote.duration = newDuration;
     }
@@ -1561,8 +1489,6 @@ sequencerCanvas.addEventListener("mousemove", (event) => {
 }
 );
 
-//Handles the mousedown event on the sequencer canvas.
-//Determines if a note is being selected for dragging or resizing
 sequencerCanvas.addEventListener("mousedown", (event) => {
   const rect = sequencerCanvas.getBoundingClientRect();
   const lastNote=null;
@@ -1598,8 +1524,8 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         console.log("near the end clicked");
         selectedNoteIndex = i;
         isResizingEnd = true;
-        dragOffsetX = x - xEnd; // Calculate horizontal offset
-        isDragging = true; // Enter dragging mode
+        dragOffsetX = x - xEnd;
+        isDragging = true;
         createMelody()
         return;
       } else if (x >= xStart && x <= xEnd) {
@@ -1607,16 +1533,15 @@ sequencerCanvas.addEventListener("mousedown", (event) => {
         console.log("inside clicked");
         selectedNoteIndex = i;
         lastSelectedNoteIndex= i;
-        dragOffsetX = x - xStart; // Calculate horizontal offset
-        dragOffsetY = y - yCenter; // Calculate vertical offset
-        isDragging = true; // Enter dragging mode
+        dragOffsetX = x - xStart;
+        dragOffsetY = y - yCenter;
+        isDragging = true;
         document.getElementById("delete-note").disabled=false;
         createMelody()
         return;
       }
     }
   }
-  //If no note is selected, deselect any previously selected note
   selectedNoteIndex = null;
   renderSequencer();
 });
@@ -1636,7 +1561,7 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
     const yCenter = sequencerCanvas.height - (noteIndex * rowHeight + rowHeight / 2);
 
     // Calculate X position based on beats
-    const beatsPerNote = note.duration / (60 / bpm); // Duration in beats
+    const beatsPerNote = note.duration / (60 / bpm);
     const xStart = labelWidth + (note.startTime / (60 / bpm)) * (PIXELS_PER_BAR / BEATS_PER_BAR);
     const xEnd = xStart + beatsPerNote * (PIXELS_PER_BAR / BEATS_PER_BAR);
 
@@ -1644,10 +1569,10 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
     if (x >= xStart && x <= xEnd && y >= yCenter - rowHeight / 2 && y <= yCenter + rowHeight / 2) {
       lastSelectedNoteIndex = i;
       selectedNoteIndex = i;
-      dragOffsetX = x - xStart; // Calculate horizontal offset
-      dragOffsetY = y - yCenter; // Calculate vertical offset
-      isDragging = true; // Enter dragging mode
-      renderSequencer(); // Update the sequencer visualization
+      dragOffsetX = x - xStart; 
+      dragOffsetY = y - yCenter; 
+      isDragging = true;
+      renderSequencer(); 
       return;
     }
   }
@@ -1656,10 +1581,8 @@ sequencerCanvas.addEventListener("touchstart", (event) => {
   renderSequencer();
 });
 
-//Handles the touchmove event on the sequencer canvas.
-//Allows for dragging and resizing of notes based on touch movement.
 sequencerCanvas.addEventListener("touchmove", (event) => {
-  if (!isDragging || selectedNoteIndex === null) return; //Exit if not dragging
+  if (!isDragging || selectedNoteIndex === null) return; 
 
   const touch = event.touches[0];
   const rect = sequencerCanvas.getBoundingClientRect();
@@ -1674,10 +1597,10 @@ sequencerCanvas.addEventListener("touchmove", (event) => {
 
   // Prevent overlapping with other notes
   if (!isOverlapping(newStartTime, clampedMidiNumber, selectedNoteIndex)) {
-    draggedNote.startTime = Math.max(0, newStartTime); //Update start time
-    draggedNote.note = newNoteName;                   //Update note name
-    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); //Update frequency
-    renderSequencer(); //Update the sequencer visualization
+    draggedNote.startTime = Math.max(0, newStartTime); 
+    draggedNote.note = newNoteName;
+    draggedNote.frequency = A4 * Math.pow(2, (clampedMidiNumber - 69) / 12); 
+    renderSequencer();
   }
 });
 
@@ -1697,18 +1620,17 @@ document.addEventListener("keydown", (event) => {
     if (confirmDelete) {
       recordedNotes.splice(selectedNoteIndex, 1);
       selectedNoteIndex = null;
-     // createMelody()
-      renderSequencer(); // Update the sequencer visualization
+      renderSequencer();
     }
   }
 });
 
 //Updates the BPM based on user input.
 bpmInput.addEventListener("input", (event) => {
-  bpm = parseInt(event.target.value, 10) || 120; // Default to 120 BPM if input is invalid
+  bpm = parseInt(event.target.value, 10) || 120;
   if (metronomeActive) {
-    stopMetronome(); // Stop current metronome
-    startMetronome(); // Restart metronome with new BPM
+    stopMetronome(); 
+    startMetronome();
   }
   // Disable BPM input during recording to maintain consistent recording duration
   if (isDetecting) {
@@ -1890,11 +1812,11 @@ function loadMelodyToSequencer(melody) {
     duration: note.duration,
   }));
   resetMelodyButton.disabled = false; 
-  bpm = melody.bpm; // Set the sequencer's BPM to the melody's BPM
-  document.getElementById("bpm-input").value = bpm; // Update the BPM input field if it exists
+  bpm = melody.bpm;
+  document.getElementById("bpm-input").value = bpm;
   alert(`Melody "${melody.name}" loaded successfully!`);
-  renderSequencer(); // Re-render the sequencer with the loaded notes
-  toggleSaveButtonState(); // Update the Save button state
+  renderSequencer();
+  toggleSaveButtonState();
 }
 
 ///////////////////////////// PRESET-SAVING FUNCTIONS /////////////////////////////
@@ -1962,12 +1884,12 @@ async function savePreset() {
     waveform2,
     waveform3,
 
-    // Volume (ottenuto dai knob)
+    // Volume
     volume1: getKnobValue("volume1-knob"),
     volume2: getKnobValue("volume2-knob"),
     volume3: getKnobValue("volume3-knob"),
 
-    // ADSR (Attack, Decay, Sustain, Release)
+    // ADSR
     attack: getKnobValue("attack-knob", 0.1, 5),
     decay: getKnobValue("decay-knob", 0, 5),
     sustain: getKnobValue("sustain-knob", 0, 1),
@@ -1989,13 +1911,12 @@ async function savePreset() {
     chorusSpread: getKnobValue("chorus-spread-knob", 0, 360),
   };
 
-  console.log("Preset data to be saved:", presetData); // Debug finale
+  console.log("Preset data to be saved:", presetData);
 
   try {
-    // Salva i dati su Firestore
     await addDoc(collection(db, "presets"), presetData);
     alert(`Preset "${presetName}" saved successfully!`);
-    fetchPresets(); // Ricarica la lista dei preset
+    fetchPresets();
   } catch (error) {
     console.error("Error saving preset:", error);
     alert("Error saving preset. Please try again.");
@@ -2021,23 +1942,19 @@ async function loadPreset() {
       document.getElementById("waveform2-select").value = preset.waveform2;
       document.getElementById("waveform3-select").value = preset.waveform3;
 
-      setOscWaveType(osc1, preset.waveform1); // Aggiorna il tipo di onda per l'oscillatore 1
-      setOscWaveType(osc2, preset.waveform2); // Oscillatore 2
-      setOscWaveType(osc3, preset.waveform3); // Oscillatore 3
+      setOscWaveType(osc1, preset.waveform1);
+      setOscWaveType(osc2, preset.waveform2);
+      setOscWaveType(osc3, preset.waveform3);
 
-      // Helper function per aggiornare i knob visivamente e logicamente
       function updateKnob(id, normalizedValue, minVal, maxVal, minAngle = -135, maxAngle = 135) {
         const knob = document.getElementById(id);
         if (!knob) return;
         
-        // Calcola l'angolo in base al valore normalizzato
         const angleRange = maxAngle - minAngle;
         const angle = minAngle + normalizedValue * angleRange;
         knob.style.transform = `rotate(${angle}deg)`;
         
-        // In base all'id del knob, imposta il parametro reale
         switch (id) {
-          // Controlli dei volumi: range [0,1]
           case "volume1-knob":
             setOscVolume(osc1Gain, normalizedValue);
             break;
@@ -2047,8 +1964,6 @@ async function loadPreset() {
           case "volume3-knob":
             setOscVolume(osc3Gain, normalizedValue);
             break;
-            
-          // Controlli ADSR: ad es. per Attack range [0.1, 5] (modifica gli altri se il range è diverso)
           case "attack-knob":
             envelope.attack = minVal + normalizedValue * (maxVal - minVal);
             break;
@@ -2066,20 +1981,17 @@ async function loadPreset() {
             lfo.frequency.value = minVal + normalizedValue * (maxVal - minVal);
             break;
             
-          // Controllo del filtro: ad es. per la frequenza [50, 10000]
           case "filter-frequency-knob":
             filter.frequency.value = minVal + normalizedValue * (maxVal - minVal);
             break;
           case "filter-resonance-knob":
             filter.Q.value = minVal + normalizedValue * (maxVal - minVal);
             break;
-            
-          // Distorsione: assume un range [0,1]
+          
           case "distortion-knob":
             distortion.distortion = normalizedValue;
             break;
             
-          // Chorus: depth (range [0,1]) e spread (range [0,360])
           case "chorus-depth-knob":
             chorus.depth = normalizedValue;
             break;
@@ -2093,7 +2005,6 @@ async function loadPreset() {
       }
       
       
-      // 2) Aggiorna i knob e i relativi valori logici
       updateKnob("volume1-knob", preset.volume1, 0, 1);
       updateKnob("volume2-knob", preset.volume2, 0, 1);
       updateKnob("volume3-knob", preset.volume3, 0, 1);
@@ -2110,7 +2021,7 @@ async function loadPreset() {
 
        updateKnob("lfo-frequency-knob", (preset.lfoFrequency - 0) / (10 - 0), 0, 10);
       
-       // Filtro:
+       // Filter:
        // Frequency: range [50, 10000]
        updateKnob("filter-frequency-knob", (preset.filterFrequency - 50) / (10000 - 50), 50, 10000);
        updateKnob("filter-resonance-knob", (preset.filterResonance - 0) / (50 - 0), 0, 50);
@@ -2120,7 +2031,6 @@ async function loadPreset() {
        
        // Chorus:
        updateKnob("chorus-depth-knob", preset.chorusDepth, 0, 1);
-       // Per lo spread, se il valore salvato è in gradi (0–360) lo normalizziamo
        updateKnob("chorus-spread-knob", preset.chorusSpread / 360, 0, 360);
 
       alert(`Preset "${preset.name}" loaded successfully!`);
@@ -2145,12 +2055,10 @@ function updateParameterDisplay(parameter, value) {
   const display = document.getElementById("parameter-values");
   if (!display) return;
 
-  // Formatta il valore
   const formatValue = (label, value) => `${label}: ${value.toFixed(2)}`;
 
   let label = "";
 
-  // Associa il parametro al testo da visualizzare
   switch (parameter) {
     case "volume1":
       label = "Volume 1";
@@ -2194,8 +2102,6 @@ function updateParameterDisplay(parameter, value) {
     default:
       return;
   }
-
-  // Mostra solo il valore del parametro modificato
   display.innerHTML = formatValue(label, value);
 }
 
@@ -2203,16 +2109,14 @@ const oscilloscopeCanvas = document.getElementById("oscilloscope");
 document.body.appendChild(oscilloscopeCanvas);
 const oscilloscopeCtx = oscilloscopeCanvas.getContext("2d");
 
-// === CREAZIONE DELL'ANALYZER PER L'ONDA ===
+//===WAVE ANALYZER===
 const oscilloscopeAnalyzer = Tone.context.createAnalyser();
 oscilloscopeAnalyzer.fftSize = 2048;
 const bufferLength = oscilloscopeAnalyzer.fftSize;
 const dataArray = new Uint8Array(bufferLength);
 
-// Connettiamo l'analizzatore all'uscita finale del synth
 envelope.connect(oscilloscopeAnalyzer);
 
-// === FUNZIONE PER DISEGNARE L'ONDA IN TEMPO REALE ===
 function drawOscilloscope() {
     requestAnimationFrame(drawOscilloscope);
     oscilloscopeAnalyzer.getByteTimeDomainData(dataArray);
@@ -2239,6 +2143,4 @@ function drawOscilloscope() {
     oscilloscopeCtx.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
     oscilloscopeCtx.stroke();
 }
-
-// Avvia il rendering dell'oscilloscopio
 drawOscilloscope();
